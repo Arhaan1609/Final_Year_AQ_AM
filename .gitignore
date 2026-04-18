@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data directories (to prevent pushing large raw/processed files)
+Raw Data/
+processed_data/
+
+# Model binaries and large evaluation arrays
+models/*.pkl
+models/*.keras
+models/*.h5
+results/*.npy
+
+# Logs
+logs/

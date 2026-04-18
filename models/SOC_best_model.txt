@@ -1,0 +1,3 @@
+Best Model: RandomForest
+Test Metrics: {'RMSE': np.float64(1.1457), 'MAE': np.float64(0.4177), 'R2': 0.9973, 'MAPE': np.float64(0.72)}
+Train Time: 25.33s

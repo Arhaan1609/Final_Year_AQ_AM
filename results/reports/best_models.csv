@@ -1,0 +1,5 @@
+Task,Model,Type,RMSE,MAE,R2,MAPE%,FitStatus
+SOC,RandomForest,ML,1.1457,0.4177,0.9973,0.72,Underfitting
+SOH,ExtraTrees,ML,0.2001,0.0147,0.999,0.02,Underfitting
+RUL,RandomForest,ML,0.0455,0.0262,1.0,0.0,Underfitting
+Mileage,XGBoost,ML,7.4424,3.7726,0.9466,4.42,Underfitting

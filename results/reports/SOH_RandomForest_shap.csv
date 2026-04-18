@@ -1,0 +1,16 @@
+feature,importance
+odometer,3.2284420136863843
+battery_temp,1.2765049725186772
+abs_current,0.6231035756905832
+voltage_deviation,0.36906353176485074
+battery_voltage,0.3515977211185187
+temp_stress_index,0.06870631493296007
+odometer_diff,0.016401795380497214
+battery_current,0.011743367253483992
+charge_cycle_count,0.0
+mile_avg,0.0
+miles_per_charge,0.0
+degradation_factor,0.0
+days_in_service,0.0
+oem_encoded,0.0
+model_encoded,0.0

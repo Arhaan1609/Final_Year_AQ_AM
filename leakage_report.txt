@@ -1,0 +1,75 @@
+﻿=================================================================
+  DATA LEAKAGE & ACCURACY INVESTIGATION
+=================================================================
+
+=================================================================
+  TASK: SOC  |  target=soc
+  Rows: 10,000  |  Features: 21
+  All feature columns: ['battery_voltage', 'battery_temp', 'battery_current', 'odometer', 'charge_state_pct', 'drive_mode_encoded', 'hour', 'day_of_week', 'month', 'is_weekend', 'is_peak', 'temp_stress_index', 'voltage_deviation', 'abs_current', 'rolling_soc_5', 'rolling_soc_10', 'rolling_soc_20', 'rolling_soc_std_5', 'rolling_soc_std_10', 'oem_encoded', 'model_encoded']
+
+  Target 'soc' stats:
+    mean=77.762  std=23.741  min=15.610  max=100.000
+    unique values: 3904  |  range: 84.390
+
+  TOP correlations with [soc]:
+    rolling_soc_5                          r=0.9990 <<< LEAKAGE?
+    rolling_soc_10                         r=0.9972 <<< LEAKAGE?
+    battery_voltage                        r=0.9947 <<< LEAKAGE?
+    voltage_deviation                      r=0.9947 <<< LEAKAGE?
+    rolling_soc_20                         r=0.9924 <<< LEAKAGE?
+    abs_current                            r=0.3498
+    battery_current                        r=0.3125
+    rolling_soc_std_10                     r=0.3077
+    day_of_week                            r=0.2571
+    rolling_soc_std_5                      r=0.2510
+    odometer                               r=0.1993
+    is_weekend                             r=0.1990
+
+  Features that CONTAIN the target name 'soc':
+    *** rolling_soc_5  <-- LIKELY LEAKAGE
+    *** rolling_soc_10  <-- LIKELY LEAKAGE
+    *** rolling_soc_20  <-- LIKELY LEAKAGE
+    *** rolling_soc_std_5  <-- LIKELY LEAKAGE
+    *** rolling_soc_std_10  <-- LIKELY LEAKAGE
+
+  Rolling / lag features of target:
+    rolling_soc_5                          r=0.9990
+    rolling_soc_10                         r=0.9972
+    rolling_soc_20                         r=0.9924
+    rolling_soc_std_5                      r=0.2510
+    rolling_soc_std_10                     r=0.3077
+
+=================================================================
+  TASK: SOH  |  target=soh
+  Rows: 10,000  |  Features: 16
+  All feature columns: ['battery_voltage', 'battery_temp', 'battery_current', 'odometer', 'soc', 'charge_cycle_count', 'mile_avg', 'miles_per_charge', 'days_in_service', 'degradation_factor', 'temp_stress_index', 'voltage_deviation', 'rolling_soc_5', 'rolling_soc_10', 'oem_encoded', 'model_encoded']
+
+  Target 'soh' stats:
+    mean=84.627  std=5.733  min=79.535  max=91.080
+    unique values: 2  |  range: 11.545
+  Too few rows for correlation
+
+=================================================================
+  TASK: RUL  |  target=rul_proxy
+  Rows: 9,923  |  Features: 12
+  All feature columns: ['charge_cycle_count', 'odometer', 'soc_at_charge', 'mile_avg', 'miles_per_charge', 'days_in_service', 'degradation_factor', 'cycle_usage_ratio', 'charge_frequency', 'oem_encoded', 'model_encoded', 'soh_mean']
+
+  Target 'rul_proxy' stats:
+    mean=1396.667  std=83.224  min=1187.761  max=1500.000
+    unique values: 9726  |  range: 312.239
+  Too few rows for correlation
+
+=================================================================
+  TASK: Mileage  |  target=mileage_per_charge
+  Rows: 10,000  |  Features: 22
+  All feature columns: ['soc_at_start', 'soc_at_end', 'soc_drain', 'run_kms', 'energy_utilized', 'avg_speed', 'max_speed', 'trip_duration_hrs', 'stoppage_count', 'soc_drain_rate', 'energy_efficiency', 'distance_per_soc_drop', 'trip_intensity', 'speed_ratio', 'stoppage_density', 'energy_per_soc', 'hour', 'day_of_week', 'month', 'is_weekend', 'is_peak', 'city_encoded']
+
+  Target 'mileage_per_charge' stats:
+    mean=94.223  std=38.019  min=4.545  max=213.592
+    unique values: 3826  |  range: 209.047
+  Too few rows for correlation
+
+=================================================================
+  SUMMARY: Look for r > 0.99 or feature names matching target.
+  These cause near-perfect R2 scores.
+=================================================================

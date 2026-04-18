@@ -1,0 +1,9 @@
+task,model,mean_error,std_error,max_error,p95_error,pct_within_5pct
+SOC,RandomForest,-0.0018,1.1457,76.5501,2.1726,96.99
+SOC,ExtraTrees,-0.0026,1.2064,74.2479,2.3805,96.5
+SOH,ExtraTrees,0.0016,0.2001,20.465,0.0019,99.96
+SOH,RandomForest,0.0036,0.2732,20.465,0.0,99.93
+RUL,RandomForest,-0.0017,0.0455,0.5244,0.0948,100.0
+RUL,GradientBoosting,-0.0049,0.1616,0.6925,0.3325,100.0
+Mileage,XGBoost,-0.0227,7.4423,77.0405,15.0027,74.75
+Mileage,GradientBoosting,-0.0163,7.5153,75.7078,14.9482,74.77

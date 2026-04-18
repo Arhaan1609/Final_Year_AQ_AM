@@ -1,0 +1,14 @@
+feature,importance
+charge_frequency,41.53864713776605
+miles_per_charge_rolling_3,0.0021562928537591005
+degradation_factor,0.0019442465902210374
+miles_per_charge_rolling_5,0.0015685958196270406
+miles_per_charge_rolling_10,0.0010365948583417935
+soc_at_charge,0.0008635054386211708
+miles_per_charge,0.0007874363926238782
+odometer,0.0007828109493304044
+mile_avg,0.0006697448043416085
+days_in_service,0.0
+soh_mean,0.0
+oem_encoded,0.0
+model_encoded,0.0
