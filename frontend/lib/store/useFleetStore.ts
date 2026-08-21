@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { FleetVehicle, CopilotMessage } from "../api/types";
-import { MOCK_VEHICLES } from "../api/mock";
+import { MOCK_VEHICLES, getOrCreateCustomVehicle } from "../api/mock";
 import { isMockMode, setMockModeOverride } from "../api/client";
 
 export type DashboardTab =
@@ -12,6 +12,7 @@ export type DashboardTab =
   | "meta-ensemble";
 
 export type ThemeMode = "light" | "dark";
+export type VehicleStatusFilter = "all" | "active" | "warning" | "critical" | "charging";
 
 interface TelemetryInputs {
   voltage: number;
@@ -37,6 +38,11 @@ interface FleetStoreState {
   telemetry: TelemetryInputs;
   isLiveUpdating: boolean;
 
+  // Enterprise Search & Filters
+  searchQuery: string;
+  statusFilter: VehicleStatusFilter;
+  hubFilter: string;
+
   // Actions
   setTheme: (theme: ThemeMode) => void;
   toggleTheme: () => void;
@@ -49,19 +55,26 @@ interface FleetStoreState {
   updateTelemetry: (inputs: Partial<TelemetryInputs>) => void;
   toggleLiveUpdating: () => void;
   getSelectedVehicle: () => FleetVehicle;
+
+  // Enterprise lookup actions
+  setSearchQuery: (q: string) => void;
+  setStatusFilter: (s: VehicleStatusFilter) => void;
+  setHubFilter: (h: string) => void;
+  lookupOrAddVehicle: (id: string) => FleetVehicle;
+  getFilteredVehicles: () => FleetVehicle[];
 }
 
 const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
   {
     id: "welcome-1",
     sender: "assistant",
-    text: "👋 **Hello! I am your AI Fleet Copilot.**\n\nI have direct tool-calling access to your 74 trained models across all 3 modules. You can ask me about live vehicle thermal risks, knee-point aging, driver behavior aggression, or full digital-twin health reports.",
+    text: "👋 **Hello! I am your Enterprise Fleet Copilot.**\n\nI have direct access to your 74 trained models across all 3 modules. You can ask me to evaluate ANY vehicle in the enterprise fleet, lookup thermal hazards, predict knee points, or analyze driver strain.",
     timestamp: "Just now",
   },
 ];
 
 export const useFleetStore = create<FleetStoreState>((set, get) => ({
-  theme: "light", // Default to clean light mode as required
+  theme: "light",
   vehicles: MOCK_VEHICLES,
   selectedVehicleId: MOCK_VEHICLES[0].id,
   activeTab: "fleet",
@@ -69,6 +82,10 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
   copilotOpen: false,
   copilotMessages: INITIAL_COPILOT_MESSAGES,
   isLiveUpdating: true,
+
+  searchQuery: "",
+  statusFilter: "all",
+  hubFilter: "all",
 
   telemetry: {
     voltage: 75.8,
@@ -87,10 +104,15 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
   toggleTheme: () => set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
 
   setSelectedVehicle: (id: string) => {
-    const v = get().vehicles.find((item) => item.id === id);
+    const cleanId = id.trim();
+    let v = get().vehicles.find((item) => item.id.toUpperCase() === cleanId.toUpperCase());
+    if (!v) {
+      v = get().lookupOrAddVehicle(cleanId);
+    }
+
     if (v) {
       set({
-        selectedVehicleId: id,
+        selectedVehicleId: v.id,
         telemetry: {
           voltage: v.voltage,
           current: v.current,
@@ -139,6 +161,44 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
 
   getSelectedVehicle: () => {
     const { vehicles, selectedVehicleId } = get();
-    return vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
+    return (
+      vehicles.find((v) => v.id.toUpperCase() === selectedVehicleId.toUpperCase()) ||
+      vehicles[0]
+    );
+  },
+
+  setSearchQuery: (q: string) => set({ searchQuery: q }),
+  setStatusFilter: (s: VehicleStatusFilter) => set({ statusFilter: s }),
+  setHubFilter: (h: string) => set({ hubFilter: h }),
+
+  lookupOrAddVehicle: (id: string) => {
+    const vehicle = getOrCreateCustomVehicle(id);
+    set((state) => {
+      const exists = state.vehicles.some((v) => v.id === vehicle.id);
+      return exists ? {} : { vehicles: [vehicle, ...state.vehicles] };
+    });
+    return vehicle;
+  },
+
+  getFilteredVehicles: () => {
+    const { vehicles, searchQuery, statusFilter, hubFilter } = get();
+    const query = searchQuery.trim().toLowerCase();
+
+    return vehicles.filter((v) => {
+      const matchesSearch =
+        !query ||
+        v.id.toLowerCase().includes(query) ||
+        v.driver.toLowerCase().includes(query) ||
+        v.model.toLowerCase().includes(query) ||
+        v.fleet.toLowerCase().includes(query);
+
+      const matchesStatus =
+        statusFilter === "all" || v.status === statusFilter;
+
+      const matchesHub =
+        hubFilter === "all" || v.fleet.toLowerCase().includes(hubFilter.toLowerCase());
+
+      return matchesSearch && matchesStatus && matchesHub;
+    });
   },
 }));

@@ -26,198 +26,206 @@ import {
 } from "./types";
 
 // Static fleet of commercial vehicles
-export const MOCK_VEHICLES: FleetVehicle[] = [
-  {
-    id: "GJ05CV6564",
-    model: "Euler HiLoad EV (12.4 kWh)",
-    fleet: "Ahmedabad Logistics Hub 1",
-    driver: "Rajesh Sharma",
-    soc: 82.4,
-    soh: 94.2,
-    rul: 1180,
-    mileage: 108.5,
-    battery_temp: 33.2,
-    controller_temp: 41.5,
-    motor_temp: 54.0,
-    voltage: 75.8,
-    current: -18.4,
-    speed: 34.2,
-    charge_cycle_count: 215,
-    status: "active",
-    lastPing: "Just now",
-  },
-  {
-    id: "GJ05CU1234",
-    model: "Euler HiLoad EV (12.4 kWh)",
-    fleet: "Ahmedabad Express Cargo",
-    driver: "Amit Patel",
-    soc: 45.1,
-    soh: 88.6,
-    rul: 760,
-    mileage: 92.0,
-    battery_temp: 42.8,
-    controller_temp: 56.2,
-    motor_temp: 71.4,
-    voltage: 71.2,
-    current: -38.2,
-    speed: 48.0,
-    charge_cycle_count: 512,
-    status: "warning",
-    lastPing: "2 mins ago",
-  },
-  {
-    id: "GJ05BT9988",
-    model: "Mahindra Treo Zor",
-    fleet: "Surat Last-Mile Delivery",
-    driver: "Vikram Desai",
-    soc: 96.0,
-    soh: 98.4,
-    rul: 1450,
-    mileage: 118.2,
-    battery_temp: 29.5,
-    controller_temp: 36.0,
-    motor_temp: 46.5,
-    voltage: 78.4,
-    current: 12.0,
-    speed: 0.0,
-    charge_cycle_count: 85,
-    status: "charging",
-    lastPing: "1 min ago",
-  },
-  {
-    id: "GJ05AX4321",
-    model: "Euler HiLoad EV (12.4 kWh)",
-    fleet: "Vadodara Pharma Cold-Chain",
-    driver: "Sunil Verma",
-    soc: 24.5,
-    soh: 81.3,
-    rul: 310,
-    mileage: 84.5,
-    battery_temp: 48.6,
-    controller_temp: 64.0,
-    motor_temp: 82.5,
-    voltage: 68.4,
-    current: -45.0,
-    speed: 55.0,
-    charge_cycle_count: 890,
-    status: "critical",
-    lastPing: "30 secs ago",
-  },
-  {
-    id: "GJ01AB7890",
-    model: "Tata Ace EV (8.2 kWh)",
-    fleet: "Ahmedabad Industrial Logistics",
-    driver: "Hardik Shah",
-    soc: 68.2,
-    soh: 91.5,
-    rul: 980,
-    mileage: 102.0,
-    battery_temp: 34.0,
-    controller_temp: 43.0,
-    motor_temp: 56.5,
-    voltage: 74.2,
-    current: -22.5,
-    speed: 38.0,
-    charge_cycle_count: 340,
-    status: "active",
-    lastPing: "Just now",
-  },
-  {
-    id: "GJ06XY5521",
-    model: "Piaggio Ape E-City",
-    fleet: "Vadodara Urban Transit",
-    driver: "Mehul Dave",
-    soc: 74.0,
-    soh: 93.0,
-    rul: 1050,
-    mileage: 104.5,
-    battery_temp: 31.8,
-    controller_temp: 39.5,
-    motor_temp: 50.0,
-    voltage: 75.0,
-    current: -16.0,
-    speed: 31.0,
-    charge_cycle_count: 280,
-    status: "active",
-    lastPing: "Just now",
-  },
-  {
-    id: "GJ03KL4411",
-    model: "Euler HiLoad EV (12.4 kWh)",
-    fleet: "Rajkot Heavy Freight",
-    driver: "Sanjay Joshi",
-    soc: 52.6,
-    soh: 86.4,
-    rul: 640,
-    mileage: 89.0,
-    battery_temp: 38.5,
-    controller_temp: 48.0,
-    motor_temp: 63.2,
-    voltage: 72.0,
-    current: -28.0,
-    speed: 42.0,
-    charge_cycle_count: 620,
-    status: "active",
-    lastPing: "3 mins ago",
-  },
-  {
-    id: "GJ05EF9012",
-    model: "Mahindra Treo Zor",
-    fleet: "Surat E-Commerce Hub",
-    driver: "Dinesh Parmar",
-    soc: 88.0,
-    soh: 96.2,
-    rul: 1320,
-    mileage: 114.0,
-    battery_temp: 30.2,
-    controller_temp: 37.8,
-    motor_temp: 48.0,
-    voltage: 76.8,
-    current: -15.0,
-    speed: 35.0,
-    charge_cycle_count: 140,
-    status: "active",
-    lastPing: "1 min ago",
-  },
-  {
-    id: "GJ01MN3344",
-    model: "Tata Ace EV (8.2 kWh)",
-    fleet: "Ahmedabad Retail Supply",
-    driver: "Pradeep Yadav",
-    soc: 38.0,
-    soh: 84.0,
-    rul: 480,
-    mileage: 86.0,
-    battery_temp: 41.0,
-    controller_temp: 52.0,
-    motor_temp: 68.0,
-    voltage: 70.5,
-    current: -32.0,
-    speed: 40.0,
-    charge_cycle_count: 750,
-    status: "warning",
-    lastPing: "4 mins ago",
-  },
-  {
-    id: "GJ05GH6677",
-    model: "Euler HiLoad EV (12.4 kWh)",
-    fleet: "Surat Textile Express",
-    driver: "Naresh Rathod",
-    soc: 91.5,
-    soh: 97.0,
-    rul: 1390,
-    mileage: 116.5,
-    battery_temp: 28.5,
-    controller_temp: 35.0,
-    motor_temp: 44.0,
-    voltage: 77.6,
-    current: 18.0,
-    speed: 0.0,
-    charge_cycle_count: 110,
-    status: "charging",
-    lastPing: "Just now",
-  },
+// Enterprise Fleet Generation Helper
+const HUBS = [
+  { city: "Ahmedabad", name: "Ahmedabad Logistics Hub 1", prefix: "GJ01" },
+  { city: "Surat", name: "Surat Textile Express Hub", prefix: "GJ05" },
+  { city: "Vadodara", name: "Vadodara Pharma Cold-Chain", prefix: "GJ06" },
+  { city: "Rajkot", name: "Rajkot Heavy Freight Hub", prefix: "GJ03" },
+  { city: "Mumbai", name: "Mumbai Central Cargo Hub", prefix: "MH01" },
+  { city: "Pune", name: "Pune Auto Cluster Depot", prefix: "MH12" },
+  { city: "Bengaluru", name: "Bengaluru Tech Logistics Hub", prefix: "KA03" },
+  { city: "Delhi NCR", name: "Delhi NCR Northern Corridor", prefix: "DL01" },
+  { city: "Hyderabad", name: "Hyderabad Cyber Fleet Depot", prefix: "TS09" },
+  { city: "Chennai", name: "Chennai Port Transit Facility", prefix: "TN09" },
 ];
+
+const OEM_MODELS = [
+  { model: "Euler HiLoad EV (12.4 kWh)", capacity: 12.4, nominalV: 76.8 },
+  { model: "Tata Ace EV (8.2 kWh)", capacity: 8.2, nominalV: 74.0 },
+  { model: "Mahindra Treo Zor (7.37 kWh)", capacity: 7.37, nominalV: 72.0 },
+  { model: "Piaggio Ape E-City (5.4 kWh)", capacity: 5.4, nominalV: 51.2 },
+  { model: "Altigreen neEV (11.0 kWh)", capacity: 11.0, nominalV: 76.8 },
+  { model: "Ashok Leyland Bada Dost EV (15.0 kWh)", capacity: 15.0, nominalV: 96.0 },
+];
+
+const DRIVER_NAMES = [
+  "Rajesh Sharma", "Amit Patel", "Vikram Desai", "Sunil Verma", "Hardik Shah",
+  "Mehul Dave", "Sanjay Joshi", "Dinesh Parmar", "Pradeep Yadav", "Naresh Rathod",
+  "Kiran Reddy", "Anil Kulkarni", "Manoj Singh", "Prakash Rao", "Vinod Nair",
+  "Ramesh Gupta", "Suresh Kumar", "Santosh Jha", "Deepak Solanki", "Ajay Chauhan",
+  "Girish Bhatt", "Ravi Shankar", "Mahesh Chandra", "Jignesh Thakor", "Chetan Mehta",
+];
+
+function buildEnterpriseFleet(): FleetVehicle[] {
+  const fleet: FleetVehicle[] = [];
+
+  // 1. Primary Benchmark Vehicles
+  fleet.push(
+    {
+      id: "GJ05CV6564",
+      model: "Euler HiLoad EV (12.4 kWh)",
+      fleet: "Ahmedabad Logistics Hub 1",
+      driver: "Rajesh Sharma",
+      soc: 82.4,
+      soh: 94.2,
+      rul: 1180,
+      mileage: 108.5,
+      battery_temp: 33.2,
+      controller_temp: 41.5,
+      motor_temp: 54.0,
+      voltage: 75.8,
+      current: -18.4,
+      speed: 34.2,
+      charge_cycle_count: 215,
+      status: "active",
+      lastPing: "Just now",
+    },
+    {
+      id: "GJ05CU1234",
+      model: "Euler HiLoad EV (12.4 kWh)",
+      fleet: "Ahmedabad Express Cargo",
+      driver: "Amit Patel",
+      soc: 45.1,
+      soh: 88.6,
+      rul: 760,
+      mileage: 92.0,
+      battery_temp: 42.8,
+      controller_temp: 56.2,
+      motor_temp: 71.4,
+      voltage: 71.2,
+      current: -38.2,
+      speed: 48.0,
+      charge_cycle_count: 512,
+      status: "warning",
+      lastPing: "2 mins ago",
+    },
+    {
+      id: "GJ05BT9988",
+      model: "Mahindra Treo Zor",
+      fleet: "Surat Last-Mile Delivery",
+      driver: "Vikram Desai",
+      soc: 96.0,
+      soh: 98.4,
+      rul: 1450,
+      mileage: 118.2,
+      battery_temp: 29.5,
+      controller_temp: 36.0,
+      motor_temp: 46.5,
+      voltage: 78.4,
+      current: 12.0,
+      speed: 0.0,
+      charge_cycle_count: 85,
+      status: "charging",
+      lastPing: "1 min ago",
+    },
+    {
+      id: "GJ05AX4321",
+      model: "Euler HiLoad EV (12.4 kWh)",
+      fleet: "Vadodara Pharma Cold-Chain",
+      driver: "Sunil Verma",
+      soc: 24.5,
+      soh: 81.3,
+      rul: 310,
+      mileage: 84.5,
+      battery_temp: 48.6,
+      controller_temp: 64.0,
+      motor_temp: 82.5,
+      voltage: 68.4,
+      current: -45.0,
+      speed: 55.0,
+      charge_cycle_count: 890,
+      status: "critical",
+      lastPing: "30 secs ago",
+    }
+  );
+
+  // 2. Generate 46 additional realistic enterprise chassis (Total 50)
+  for (let i = 5; i <= 50; i++) {
+    const hub = HUBS[(i - 1) % HUBS.length];
+    const oem = OEM_MODELS[(i - 1) % OEM_MODELS.length];
+    const driver = DRIVER_NAMES[(i - 1) % DRIVER_NAMES.length];
+
+    const alpha1 = String.fromCharCode(65 + ((i * 3) % 26));
+    const alpha2 = String.fromCharCode(65 + ((i * 7) % 26));
+    const num = String(1000 + ((i * 137) % 9000));
+    const id = `${hub.prefix}${alpha1}${alpha2}${num}`;
+
+    // Status distribution: 70% active, 15% warning, 10% charging, 5% critical
+    const statusRand = ((i * 17) % 100);
+    let status: FleetVehicle["status"] = "active";
+    if (statusRand > 92) status = "critical";
+    else if (statusRand > 75) status = "warning";
+    else if (statusRand > 65) status = "charging";
+
+    const cycles = 50 + ((i * 29) % 950);
+    const soh = Math.max(76.0, 99.5 - (cycles * 0.022) + ((i % 5) * 0.4));
+    const soc = status === "charging" ? 92.0 + (i % 8) : 20.0 + ((i * 19) % 75);
+    const tempBase = status === "critical" ? 47.0 : status === "warning" ? 41.0 : 30.0 + (i % 7);
+    const speed = status === "charging" ? 0 : 25 + ((i * 7) % 35);
+    const current = status === "charging" ? 15.0 + (i % 10) : -(12.0 + ((i * 5) % 35));
+    const voltage = oem.nominalV + (soc / 100) * 6.0 - 3.0;
+    const rul = Math.max(150, Math.floor(1500 - cycles * 1.3));
+    const mileage = 75 + (soh * 0.42);
+
+    fleet.push({
+      id,
+      model: oem.model,
+      fleet: hub.name,
+      driver,
+      soc: Math.round(soc * 10) / 10,
+      soh: Math.round(soh * 10) / 10,
+      rul,
+      mileage: Math.round(mileage * 10) / 10,
+      battery_temp: Math.round(tempBase * 10) / 10,
+      controller_temp: Math.round((tempBase + 8.5) * 10) / 10,
+      motor_temp: Math.round((tempBase + 18.0) * 10) / 10,
+      voltage: Math.round(voltage * 10) / 10,
+      current: Math.round(current * 10) / 10,
+      speed: Math.round(speed * 10) / 10,
+      charge_cycle_count: cycles,
+      status,
+      lastPing: `${(i % 5) + 1} mins ago`,
+    });
+  }
+
+  return fleet;
+}
+
+export const MOCK_VEHICLES: FleetVehicle[] = buildEnterpriseFleet();
+
+// Dynamic Custom Vehicle Resolver for any search query
+export function getOrCreateCustomVehicle(chassisQuery: string): FleetVehicle {
+  const cleanId = chassisQuery.trim().toUpperCase();
+  const existing = MOCK_VEHICLES.find(
+    (v) => v.id.toUpperCase() === cleanId || v.id.includes(cleanId)
+  );
+  if (existing) return existing;
+
+  // On-demand provision a new digital twin for any custom chassis!
+  const customVehicle: FleetVehicle = {
+    id: cleanId,
+    model: "Enterprise Commercial EV (Custom Pack)",
+    fleet: "National Dynamic Fleet Registry",
+    driver: "Enterprise Operator",
+    soc: 78.5,
+    soh: 92.4,
+    rul: 1050,
+    mileage: 104.0,
+    battery_temp: 32.5,
+    controller_temp: 40.0,
+    motor_temp: 52.0,
+    voltage: 75.2,
+    current: -19.5,
+    speed: 35.0,
+    charge_cycle_count: 240,
+    status: "active",
+    lastPing: "Just now (Live Query)",
+  };
+
+  MOCK_VEHICLES.unshift(customVehicle);
+  return customVehicle;
+}
 
 // Helper: random jitter
 function jitter(base: number, percent: number = 2): number {

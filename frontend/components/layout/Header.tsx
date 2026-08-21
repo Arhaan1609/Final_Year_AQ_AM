@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useFleetStore } from "../../lib/store/useFleetStore";
 import { Badge } from "../ui/Badge";
-import { Sparkles, Sun, Moon, Radio, ChevronLeft } from "lucide-react";
+import { Sparkles, Sun, Moon, Radio, Search } from "lucide-react";
 
 export const Header: React.FC = () => {
   const {
@@ -18,6 +18,17 @@ export const Header: React.FC = () => {
     copilotOpen,
     setCopilotOpen,
   } = useFleetStore();
+
+  const [headerSearch, setHeaderSearch] = useState("");
+
+  const matchingVehicles = headerSearch
+    ? vehicles.filter(
+        (v) =>
+          v.id.toLowerCase().includes(headerSearch.toLowerCase()) ||
+          v.driver.toLowerCase().includes(headerSearch.toLowerCase()) ||
+          v.fleet.toLowerCase().includes(headerSearch.toLowerCase())
+      )
+    : vehicles;
 
   return (
     <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-[#0A0D14]/80 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-30 transition-colors">
@@ -38,22 +49,22 @@ export const Header: React.FC = () => {
             <Badge variant="emerald" size="sm" dot>v1.0</Badge>
           </div>
           <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono hidden sm:block">
-            74 ML & DL Models • Tri-Pillar Engine
+            {vehicles.length} Fleet Vehicles • 74 Models
           </p>
         </div>
       </div>
 
-      {/* Center Vehicle Switcher */}
+      {/* Center Vehicle Switcher & Fast Search */}
       <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl">
         <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Chassis:</span>
         <select
           value={selectedVehicleId}
           onChange={(e) => setSelectedVehicle(e.target.value)}
-          className="bg-transparent text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 focus:outline-none cursor-pointer"
+          className="bg-transparent text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 focus:outline-none cursor-pointer max-w-[260px]"
         >
           {vehicles.map((v) => (
             <option key={v.id} value={v.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">
-              {v.id} — {v.model.split(" ")[0]} ({v.status.toUpperCase()})
+              {v.id} — {v.model.split(" ")[0]} ({v.status.toUpperCase()}) • {v.driver.split(" ")[0]}
             </option>
           ))}
         </select>
