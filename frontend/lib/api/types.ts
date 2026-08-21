@@ -169,6 +169,9 @@ export interface DriverBehaviorRequest {
   max_speed: number;
   battery_temp_max: number;
   max_discharge_current: number;
+  overspeed_count?: number;
+  voltage_variance?: number;
+  soc_drain_rate?: number;
 }
 
 export interface DriverBehaviorResponse {
@@ -181,12 +184,15 @@ export interface DriverBehaviorResponse {
 
 export interface KneePredictionRequest {
   charge_cycle_count: number;
-  capacity: number;
-  voltage: number;
-  battery_temp: number;
-  current: number;
-  soc: number;
-  speed: number;
+  capacity?: number;
+  voltage?: number;
+  battery_temp?: number;
+  current?: number;
+  soc?: number;
+  speed?: number;
+  run_kms?: number;
+  energy_kwh?: number;
+  [key: string]: any;
 }
 
 export interface KneePredictionResponse {
