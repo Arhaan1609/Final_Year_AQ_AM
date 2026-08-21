@@ -27,8 +27,8 @@ _BEST_MODEL_NAMES: dict = {}
 
 
 def _load_best_model(task: str):
-    """Load the best pkl model for a given task using the best_model.txt pointer."""
-    txt = os.path.join(cfg.MODELS_DIR, f"{task}_best_model.txt")
+    """Load the best pkl model for a given task using task subfolder or root models dir."""
+    txt = cfg.get_model_file_path(task, f"{task}_best_model.txt")
     model_name = None
     if os.path.exists(txt):
         with open(txt) as f:
@@ -40,7 +40,7 @@ def _load_best_model(task: str):
     candidates = [model_name] + preference if model_name else preference
 
     for name in candidates:
-        pkl = os.path.join(cfg.MODELS_DIR, f"{task}_{name}.pkl")
+        pkl = cfg.get_model_file_path(task, f"{task}_{name}.pkl")
         if os.path.exists(pkl):
             return name, joblib.load(pkl)
     return None, None

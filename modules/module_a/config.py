@@ -22,8 +22,36 @@ PLOTS_DIR      = os.path.join(RESULTS_DIR, "plots")
 REPORTS_DIR    = os.path.join(RESULTS_DIR, "reports")
 LOGS_DIR       = os.path.join(BASE_DIR, "logs")
 
+# Task-specific model subfolders
+TASK_MODEL_DIRS = {
+    "SOC": os.path.join(MODELS_DIR, "soc"),
+    "SOH": os.path.join(MODELS_DIR, "soh"),
+    "RUL": os.path.join(MODELS_DIR, "rul"),
+    "Mileage": os.path.join(MODELS_DIR, "mileage"),
+    "soc": os.path.join(MODELS_DIR, "soc"),
+    "soh": os.path.join(MODELS_DIR, "soh"),
+    "rul": os.path.join(MODELS_DIR, "rul"),
+    "mileage": os.path.join(MODELS_DIR, "mileage"),
+}
+
+def get_task_model_dir(task: str) -> str:
+    d = TASK_MODEL_DIRS.get(task, os.path.join(MODELS_DIR, task.lower()))
+    os.makedirs(d, exist_ok=True)
+    return d
+
+def get_model_file_path(task: str, filename: str) -> str:
+    """Return model file path checking task subfolder first, then root models dir."""
+    task_dir = get_task_model_dir(task)
+    p = os.path.join(task_dir, filename)
+    if os.path.exists(p):
+        return p
+    root_p = os.path.join(MODELS_DIR, filename)
+    if os.path.exists(root_p):
+        return root_p
+    return p
+
 # Create all output directories
-for d in [PROCESSED_DIR, MODELS_DIR, RESULTS_DIR, PLOTS_DIR, REPORTS_DIR, LOGS_DIR]:
+for d in [PROCESSED_DIR, MODELS_DIR, RESULTS_DIR, PLOTS_DIR, REPORTS_DIR, LOGS_DIR] + list(TASK_MODEL_DIRS.values()):
     os.makedirs(d, exist_ok=True)
 
 # ─────────────────────────────────────────────

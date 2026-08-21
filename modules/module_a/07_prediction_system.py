@@ -90,19 +90,19 @@ BEST_MODEL_PREFERENCE = [
 
 def find_best_model(task: str):
     """Find the best pkl model for a given task."""
-    # Check if a best_model.txt exists
-    txt = os.path.join(cfg.MODELS_DIR, f"{task}_best_model.txt")
+    # Check if a best_model.txt exists in task subfolder or root
+    txt = cfg.get_model_file_path(task, f"{task}_best_model.txt")
     if os.path.exists(txt):
         with open(txt) as f:
             line = f.readline().strip()
             best_name = line.replace("Best Model: ", "").strip()
-        pkl = os.path.join(cfg.MODELS_DIR, f"{task}_{best_name}.pkl")
+        pkl = cfg.get_model_file_path(task, f"{task}_{best_name}.pkl")
         if os.path.exists(pkl):
             return best_name, joblib.load(pkl)
 
     # Fallback: try preference list
     for name in BEST_MODEL_PREFERENCE:
-        pkl = os.path.join(cfg.MODELS_DIR, f"{task}_{name}.pkl")
+        pkl = cfg.get_model_file_path(task, f"{task}_{name}.pkl")
         if os.path.exists(pkl):
             return name, joblib.load(pkl)
 
@@ -111,7 +111,7 @@ def find_best_model(task: str):
 
 def find_scaler(task_key: str):
     """Load scaler for a given task."""
-    path = os.path.join(cfg.MODELS_DIR, f"scaler_{task_key}.pkl")
+    path = cfg.get_model_file_path(task_key.upper(), f"scaler_{task_key.lower()}.pkl")
     if os.path.exists(path):
         return joblib.load(path)
     return None

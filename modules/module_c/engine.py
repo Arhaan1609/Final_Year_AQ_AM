@@ -16,6 +16,20 @@ import xgboost as xgb
 from typing import Dict, Any, Optional, List, Tuple
 
 _MODULE_C_ROOT = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT  = os.path.abspath(os.path.join(_MODULE_C_ROOT, "..", ".."))
+_MODELS_ROOT   = os.path.join(_PROJECT_ROOT, "models")
+
+
+def _resolve_c_model_path(filename: str) -> str:
+    """Check models/knee_prognostics/ first, then fallback to module_c/."""
+    p_primary = os.path.join(_MODELS_ROOT, "knee_prognostics", filename)
+    if os.path.exists(p_primary):
+        return p_primary
+    p_fallback = os.path.join(_MODULE_C_ROOT, filename)
+    if os.path.exists(p_fallback):
+        return p_fallback
+    return p_primary
+
 
 KNEE_FEATURE_NAMES = [
     'charge_cycle_count', 'oem_encoded', 'model_encoded', 'capacity',
@@ -38,8 +52,8 @@ class BABMSEngine:
       - Knee-Point Remaining Useful Life Prognostics
     """
     def __init__(self, model_path: Optional[str] = None, scaler_path: Optional[str] = None):
-        self.model_path = model_path or os.path.join(_MODULE_C_ROOT, "best_xgboost_model.json")
-        self.scaler_path = scaler_path or os.path.join(_MODULE_C_ROOT, "feature_scaler.pkl")
+        self.model_path = model_path or _resolve_c_model_path("best_xgboost_model.json")
+        self.scaler_path = scaler_path or _resolve_c_model_path("feature_scaler.pkl")
         
         self.booster: Optional[xgb.Booster] = None
         self.scaler = None

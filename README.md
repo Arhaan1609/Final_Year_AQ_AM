@@ -15,67 +15,46 @@
 ```
 Final_Year_Project_1/
 │
-├── run_all.py                       ← Master entry point (API + CLI launcher for all 3 modules)
-├── cli.py                           ← Master CLI shortcut (12 prediction options)
-├── requirements_unified.txt         ← Unified dependencies (Modules A + B + C)
-├── INTEGRATION_REPORT.md            ← Master Technical & Integration Report (Detailed 74-Model Inventory)
+├── run_all.py                       ← Master Launcher (API, CLI, Check, Retrain)
+├── retrain_all.py                   ← Autonomous Master Retraining Pipeline (All 3 Modules)
+├── cli.py                           ← Interactive Terminal Prediction CLI
+├── requirements.txt                 ← Consolidated Dependencies
+├── README.md                        ← Project Overview & Quickstart
 │
-├── modules/                         ← All Machine Learning Modules
-│   ├── module_a/                    ← Module A: Fleet Prediction Pipeline (56 Models)
-│   │   ├── config.py                   Central config (paths, features, hyperparams)
-│   │   ├── utils.py                    Shared utilities & loggers
-│   │   ├── 01_data_ingestion.py        Load raw Excel + JSON fleet data
-│   │   ├── 02_preprocessing.py         Clean, clip outliers, merge datasets
-│   │   ├── 03_feature_engineering.py   Build leak-free feature sets & degradation factors
-│   │   ├── 04_model_training.py        Train 9 ML + 5 DL models per task (56 models total)
-│   │   ├── 05_evaluation.py            RMSE/MAE/R² + SHAP + robustness tests
-│   │   ├── 06_visualization.py         Generate all plots
-│   │   ├── 07_prediction_system.py     Interactive CLI (12 prediction options)
-│   │   └── retrain_clean.py            Re-run pipeline steps 3-7 cleanly
-│   │
-│   ├── module_b/                    ← Module B: Cyber-Physical Health & Thermal Management (8 Models)
-│   │   ├── src/
-│   │   │   ├── core/                   schemas.py, preprocessor.py, exceptions.py
-│   │   │   └── models/                 engine.py, soh_champion.py, thermal_champion.py
-│   │   ├── weights/                    Pre-trained model weights (.pt, .joblib)
-│   │   ├── data/                       Test splits, sample telemetry JSON
-│   │   ├── config/settings.yaml        Thermal thresholds and model config
-│   │   └── tests/                      Automated pytest test suite (13 tests)
-│   │
-│   └── module_c/                    ← Module C: Behavior-Aware BMS & Knee Prognostics (10 Models)
-│       ├── engine.py                   BABMSEngine wrapper (AI, BSI, Knee Booster)
-│       ├── best_xgboost_model.json     Pre-trained Knee-Point XGBoost Booster (28 features)
-│       ├── feature_scaler.pkl          Pre-trained 28-feature StandardScaler
-│       ├── knee_detection.py           Piecewise linear fit knee detector
-│       ├── knee_final.py               Multi-Head Attention CNN-BiLSTM knee model
-│       ├── unified_ensemble.py         Multi-target meta-ensemble training (LSTM + GRU)
-│       ├── demo_ensemble.py            Visual performance demonstration tool
-│       ├── data_integrator.py          Cross-vehicle rank mapping synthesizer
-│       ├── improved_data_processing.py Behavioral index feature engineering (AI & BSI)
-│       └── tests/                      Automated pytest test suite (7 tests)
+├── docs/                            ← [CONSOLIDATED] ALL DOCUMENTATION
+│   ├── INTEGRATION_REPORT.md        ← Master 74-Model Report & Architecture Reference
+│   ├── architecture.md              ← High-Level System Architecture
+│   ├── module_a/                    ← Module A Pipeline Documentation
+│   ├── module_b/                    ← Module B Documentation (ARCHITECTURE, INTEGRATION_GUIDE, etc.)
+│   └── module_c/                    ← Module C Documentation (DATA_SPECIFICATIONS, PROJECT_REPORT, etc.)
 │
-├── api/                             ← Unified REST API (FastAPI)
+├── models/                          ← [STRUCTURED] 8 TASK-SPECIFIC SUBFOLDERS
+│   ├── soc/                         ← SOC Models (SOC_KNN.pkl, SOC_ANN_best.keras, scaler_soc.pkl)
+│   ├── soh/                         ← Tabular SOH Models (SOH_XGBoost.pkl, SOH_ANN_best.keras, scaler_soh.pkl)
+│   ├── rul/                         ← Global RUL Models (RUL_GradientBoosting.pkl, RUL_ANN_best.keras, scaler_rul.pkl)
+│   ├── mileage/                     ← Mileage Models (Mileage_XGBoost.pkl, Mileage_ANN_best.keras, scaler_mileage.pkl)
+│   ├── thermal/                     ← Multi-Zone Thermal Safety RF & Scalers (thermal_rf_multizone.joblib)
+│   ├── soh_deep/                    ← Spatial-Temporal SOH Hybrid CNN-LSTM (soh_hybrid_cnn_lstm.pt)
+│   ├── knee_prognostics/            ← Knee-Point XGBoost Booster (best_xgboost_model.json, feature_scaler.pkl)
+│   └── driver_behavior/             ← Behavioral parameters, metadata, rule configurations
+│
+├── data/                            ← [UNIFIED] ALL FLEET DATA
+│   ├── raw/                         ← Raw Excel & JSON Telematics files
+│   ├── processed/                   ← Cleaned CSV feature tables & feature matrices
+│   └── splits/                      ← Train/Test benchmark splits and manifests
+│
+├── modules/                         ← [CLEAN PYTHON CODE ONLY]
+│   ├── module_a/                    ← Fleet Analytics Code (01 to 07, config.py, utils.py)
+│   ├── module_b/                    ← BatteryIQ Core Engine (src/, config/, tests/)
+│   └── module_c/                    ← BA-BMS & Knee Detection (engine.py, knee_detection.py, tests/)
+│
+├── api/                             ← Unified REST API Layer (FastAPI)
 │   ├── main.py                         FastAPI app registering all 11 endpoints
 │   ├── schemas.py                      Unified Pydantic request/response models
-│   └── routers/
-│       ├── module_a.py                 SOC / SOH / RUL / Mileage endpoints
-│       ├── module_b.py                 Thermal / SOH-Deep / Diagnose endpoints
-│       └── module_c.py                 Driver Behavior / Knee-Point / Meta-Ensemble
+│   └── routers/                        Routers for Module A, Module B, and Module C
 │
-├── data/
-│   ├── raw/                         ← Raw fleet data (930MB — Excel + JSON)
-│   └── processed/                   ← Cleaned CSVs + feature sets (~480MB)
-│
-├── models/                          ← Module A trained model artifacts (62 model files)
-│   ├── SOC_KNN.pkl                     Best SOC model (R²=0.9958)
-│   ├── SOH_XGBoost.pkl                 Best SOH model (R²=0.9672)
-│   ├── RUL_GradientBoosting.pkl        Best RUL model (R²=0.9997)
-│   ├── Mileage_XGBoost.pkl             Best Mileage model (R²=0.9445)
-│   ├── *_ANN_best.keras                Deep learning Keras models
-│   └── scaler_*.pkl                    Feature scalers
-│
-├── results/                         ← Plots, comparison tables, evaluation reports
-└── logs/                            ← System execution logs
+├── results/                         ← Plots & Comparison Reports (plots/, reports/)
+└── logs/                            ← System Execution Logs
 ```
 
 ---

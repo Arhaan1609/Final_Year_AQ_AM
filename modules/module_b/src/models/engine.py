@@ -24,8 +24,21 @@ from ..core.preprocessor import BatteryDataPreprocessor
 from .soh_champion import SOHModelWrapper
 from .thermal_champion import MultiZoneThermalRandomForest
 
-# Absolute path to the module_b root (modules/module_b/) — works regardless of cwd
+# Absolute paths
 _MODULE3_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_PROJECT_ROOT = os.path.abspath(os.path.join(_MODULE3_ROOT, "..", ".."))
+_MODELS_ROOT  = os.path.join(_PROJECT_ROOT, "models")
+
+
+def _resolve_weight_path(subfolder: str, filename: str, fallback_relative: str) -> str:
+    """Check models/<subfolder>/ first, then fallback to module_b/weights/."""
+    p_primary = os.path.join(_MODELS_ROOT, subfolder, filename)
+    if os.path.exists(p_primary):
+        return p_primary
+    p_fallback = os.path.join(_MODULE3_ROOT, fallback_relative)
+    if os.path.exists(p_fallback):
+        return p_fallback
+    return p_primary
 
 
 class BatteryIQEngine:
@@ -41,23 +54,29 @@ class BatteryIQEngine:
             window_length=self.config.get("models", {}).get("soh", {}).get("input_window_length", 10)
         )
         
-        # Paths from resolved config
-        soh_weights = self.config.get("models", {}).get("soh", {}).get("weights_path", os.path.join(_MODULE3_ROOT, "weights", "soh_hybrid_cnn_lstm.pt"))
-        thermal_weights = self.config.get("models", {}).get("thermal", {}).get("weights_path", os.path.join(_MODULE3_ROOT, "weights", "thermal_rf_multizone.joblib"))
+        # Paths from resolved config with models/ subfolder resolution
+        default_soh = _resolve_weight_path("soh_deep", "soh_hybrid_cnn_lstm.pt", "weights/soh_hybrid_cnn_lstm.pt")
+        default_thermal = _resolve_weight_path("thermal", "thermal_rf_multizone.joblib", "weights/thermal_rf_multizone.joblib")
+
+        soh_weights = self.config.get("models", {}).get("soh", {}).get("weights_path", default_soh)
+        thermal_weights = self.config.get("models", {}).get("thermal", {}).get("weights_path", default_thermal)
         
         # Initialize Champion Models
         self.soh_model = SOHModelWrapper(weights_path=soh_weights)
         self.thermal_model = MultiZoneThermalRandomForest(weights_path=thermal_weights)
 
     def _load_config(self, path: Optional[str]) -> Dict[str, Any]:
+        default_soh = _resolve_weight_path("soh_deep", "soh_hybrid_cnn_lstm.pt", "weights/soh_hybrid_cnn_lstm.pt")
+        default_thermal = _resolve_weight_path("thermal", "thermal_rf_multizone.joblib", "weights/thermal_rf_multizone.joblib")
+
         default_config = {
             "models": {
                 "soh": {
-                    "weights_path": os.path.join(_MODULE3_ROOT, "weights", "soh_hybrid_cnn_lstm.pt"),
+                    "weights_path": default_soh,
                     "input_window_length": 10,
                 },
                 "thermal": {
-                    "weights_path": os.path.join(_MODULE3_ROOT, "weights", "thermal_rf_multizone.joblib")
+                    "weights_path": default_thermal
                 }
             }
         }

@@ -115,6 +115,20 @@ def retrain_module_b():
 
     script = "prepare_artifacts.py"
     ok = _run_cmd([sys.executable, script], _MODULE_B_DIR, "Module B: SOH CNN-LSTM (PyTorch) + Thermal RF (200T)")
+    if ok:
+        import shutil
+        weights_src = os.path.join(_MODULE_B_DIR, "weights")
+        thermal_dst = os.path.join(_PROJECT_ROOT, "models", "thermal")
+        soh_dst = os.path.join(_PROJECT_ROOT, "models", "soh_deep")
+        os.makedirs(thermal_dst, exist_ok=True)
+        os.makedirs(soh_dst, exist_ok=True)
+        for f in ["thermal_rf_multizone.joblib", "scalers.joblib"]:
+            p = os.path.join(weights_src, f)
+            if os.path.exists(p):
+                shutil.copy2(p, os.path.join(thermal_dst, f))
+        p_soh = os.path.join(weights_src, "soh_hybrid_cnn_lstm.pt")
+        if os.path.exists(p_soh):
+            shutil.copy2(p_soh, os.path.join(soh_dst, "soh_hybrid_cnn_lstm.pt"))
     return ok
 
 
@@ -129,6 +143,14 @@ def retrain_module_c():
     
     # 2. XGBoost Booster & Feature Scaler Retraining
     ok2 = _run_cmd([sys.executable, "train_evaluate.py"], _MODULE_C_DIR, "Module C: XGBoost Knee Booster + StandardScaler")
+    if ok2:
+        import shutil
+        knee_dst = os.path.join(_PROJECT_ROOT, "models", "knee_prognostics")
+        os.makedirs(knee_dst, exist_ok=True)
+        for f in ["best_xgboost_model.json", "feature_scaler.pkl"]:
+            p = os.path.join(_MODULE_C_DIR, f)
+            if os.path.exists(p):
+                shutil.copy2(p, os.path.join(knee_dst, f))
     return ok2
 
 

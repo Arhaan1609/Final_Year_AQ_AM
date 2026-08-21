@@ -55,62 +55,50 @@ def _banner():
 
 
 def _check_models():
-    """Print status of all trained models and weights across all 3 modules."""
+    """Print status of all trained models across all 8 task subfolders."""
     import config as cfg
 
-    print("  ── Module A Models  (models/) ──────────────────────────────────────")
-    tasks = ["SOC", "SOH", "RUL", "Mileage"]
+    print("  ── Task Models  (models/) ──────────────────────────────────────────")
+    task_map = {
+        "SOC": ("soc", ["SOC_KNN.pkl", "scaler_soc.pkl"]),
+        "SOH": ("soh", ["SOH_XGBoost.pkl", "scaler_soh.pkl"]),
+        "RUL": ("rul", ["RUL_GradientBoosting.pkl", "scaler_rul.pkl"]),
+        "Mileage": ("mileage", ["Mileage_XGBoost.pkl", "scaler_mileage.pkl"]),
+        "Thermal Safety": ("thermal", ["thermal_rf_multizone.joblib"]),
+        "SOH Deep": ("soh_deep", ["soh_hybrid_cnn_lstm.pt"]),
+        "Knee Prognostics": ("knee_prognostics", ["best_xgboost_model.json", "feature_scaler.pkl"]),
+        "Driver Behavior": ("driver_behavior", ["behavior_rules.json"]),
+    }
+
     all_ok = True
-    for task in tasks:
-        txt = os.path.join(cfg.MODELS_DIR, f"{task}_best_model.txt")
-        if os.path.exists(txt):
-            with open(txt) as f:
-                name = f.readline().strip().replace("Best Model: ", "")
-            pkl = os.path.join(cfg.MODELS_DIR, f"{task}_{name}.pkl")
-            if os.path.exists(pkl):
-                size = os.path.getsize(pkl) / 1024
-                print(f"  ✔  {task:<10} {name:<25} ({size:.0f} KB)")
-            else:
-                print(f"  ✘  {task}: {name} — .pkl file missing!")
-                all_ok = False
+    models_dir = cfg.MODELS_DIR
+
+    for label, (subfolder, expected_files) in task_map.items():
+        folder_path = os.path.join(models_dir, subfolder)
+        folder_exists = os.path.exists(folder_path)
+        if not folder_exists:
+            print(f"  ✘  models/{subfolder:<18} (Folder missing!)")
+            all_ok = False
+            continue
+
+        files = os.listdir(folder_path)
+        missing = [ef for ef in expected_files if ef not in files]
+
+        if not missing:
+            total_size_kb = sum(os.path.getsize(os.path.join(folder_path, f)) for f in files if os.path.isfile(os.path.join(folder_path, f))) / 1024
+            print(f"  ✔  {label:<18} models/{subfolder:<18} ({len(files)} files, {total_size_kb:.0f} KB)")
         else:
-            print(f"  ✘  {task}: not trained yet")
+            print(f"  ✘  {label:<18} models/{subfolder:<18} (Missing: {missing})")
             all_ok = False
 
-    print("\n  ── Module B Weights  (modules/module_b/weights/) ──────────────────")
-    weights_b = {
-        "SOH CNN-LSTM":  os.path.join(_MODULE_B_DIR, "weights", "soh_hybrid_cnn_lstm.pt"),
-        "Thermal RF":    os.path.join(_MODULE_B_DIR, "weights", "thermal_rf_multizone.joblib"),
-        "Scalers":       os.path.join(_MODULE_B_DIR, "weights", "scalers.joblib"),
-    }
-    for name, path in weights_b.items():
-        if os.path.exists(path):
-            size_mb = os.path.getsize(path) / (1024 * 1024)
-            print(f"  ✔  {name:<20} ({size_mb:.1f} MB)")
-        else:
-            print(f"  ✘  {name:<20} MISSING: {path}")
-            all_ok = False
-
-    print("\n  ── Module C Models  (modules/module_c/) ───────────────────────────")
-    models_c = {
-        "Knee XGBoost Booster": os.path.join(_MODULE_C_DIR, "best_xgboost_model.json"),
-        "Feature Scaler":       os.path.join(_MODULE_C_DIR, "feature_scaler.pkl"),
-    }
-    for name, path in models_c.items():
-        if os.path.exists(path):
-            size_kb = os.path.getsize(path) / 1024
-            print(f"  ✔  {name:<22} ({size_kb:.0f} KB)")
-        else:
-            print(f"  ✘  {name:<22} MISSING: {path}")
-            all_ok = False
-
-    print("\n  ── Data Folders ────────────────────────────────────────────────────")
+    print("\n  ── Data & Documentation Folders ────────────────────────────────────")
     data_folders = {
-        "Raw data":   os.path.join(_PROJECT_ROOT, "data", "raw"),
-        "Processed":  os.path.join(_PROJECT_ROOT, "data", "processed"),
-        "Models":     cfg.MODELS_DIR,
-        "Results":    cfg.RESULTS_DIR,
-        "Logs":       cfg.LOGS_DIR,
+        "Raw Data":        os.path.join(_PROJECT_ROOT, "data", "raw"),
+        "Processed Data":  os.path.join(_PROJECT_ROOT, "data", "processed"),
+        "Documentation":   os.path.join(_PROJECT_ROOT, "docs"),
+        "Results Plots":   cfg.PLOTS_DIR,
+        "Results Reports": cfg.REPORTS_DIR,
+        "System Logs":     cfg.LOGS_DIR,
     }
     for label, path in data_folders.items():
         exists = os.path.exists(path)
