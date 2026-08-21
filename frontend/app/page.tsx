@@ -2,8 +2,7 @@
 
 import React from "react";
 import { LandingNavbar } from "../components/landing/LandingNavbar";
-import { HeroSection } from "../components/landing/HeroSection";
-import { AppleScrollSequence } from "../components/landing/AppleScrollSequence";
+import { HeroScrollStory } from "../components/landing/HeroScrollStory";
 import { ScrollIntelligenceStory } from "../components/landing/ScrollIntelligenceStory";
 import { LiveModelSandbox } from "../components/landing/LiveModelSandbox";
 import { BentoArchitectureGrid } from "../components/landing/BentoArchitectureGrid";
@@ -17,28 +16,25 @@ export default function MasterLandingPage() {
       {/* 1. Sleek Floating Header */}
       <LandingNavbar />
 
-      {/* 2. Venture-Grade Hero with 3D Cybernetic Canvas */}
-      <HeroSection />
+      {/* 2. Apple-Style 300-Frame Pinned Hero: Truck appears first, opens up on scroll with 4-stage intelligence */}
+      <HeroScrollStory />
 
-      {/* 3. Apple-Style 300-Frame Pinned Canvas Scroll Sequence */}
-      <AppleScrollSequence />
-
-      {/* 4. Pinned 4-Stage Scroll-Scrubbed Intelligence Pipeline */}
+      {/* 3. Pinned 4-Stage Scroll-Scrubbed Intelligence Pipeline */}
       <ScrollIntelligenceStory />
 
-      {/* 5. Interactive Live Telemetry & Model Sandbox */}
+      {/* 4. Interactive Live Telemetry & Model Sandbox */}
       <LiveModelSandbox />
 
-      {/* 6. Enterprise Tri-Pillar Bento Grid */}
+      {/* 5. Enterprise Tri-Pillar Bento Grid */}
       <BentoArchitectureGrid />
 
-      {/* 7. Commercial Fleet ROI & Lifespan Calculator */}
+      {/* 6. Commercial Fleet ROI & Lifespan Calculator */}
       <FleetRoiCalculator />
 
-      {/* 8. Competitive Architecture Matrix (Legacy BMS vs Platform) */}
+      {/* 7. Competitive Architecture Matrix (Legacy BMS vs Platform) */}
       <TechComparisonSection />
 
-      {/* 9. High-Conversion Closing Section */}
+      {/* 8. High-Conversion Closing Section */}
       <FinalCallToAction />
     </div>
   );
