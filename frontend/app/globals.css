@@ -5,17 +5,21 @@
 @tailwind utilities;
 
 :root {
-  /* Light Theme (Default) */
-  --bg-primary: #F7F8FA;
+  --bg-page: #F7F8FA;
   --bg-card: #FFFFFF;
-  --bg-card-hover: #F1F3F7;
-  --border-color: #E4E7EC;
-  --border-subtle: #EEF2F6;
+  --border-subtle: #E4E7EC;
   --text-primary: #0F172A;
   --text-secondary: #475569;
-  --text-muted: #64748B;
-  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-elevated: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  --accent-safe: #059669;
+  --accent-telemetry: #0891B2;
+  --accent-warning: #D97706;
+  --accent-critical: #DC2626;
+  --font-mono-nums: 'Inter', monospace;
+
+  /* Aliases for components */
+  --bg-primary: #F7F8FA;
+  --bg-card-hover: #F1F3F7;
+  --border-color: #E4E7EC;
   --accent-emerald: #059669;
   --accent-cyan: #0891B2;
   --accent-amber: #D97706;
@@ -23,18 +27,16 @@
   --accent-purple: #7C3AED;
 }
 
-.dark {
-  /* Dark Theme */
-  --bg-primary: #0A0D14;
+[data-theme="dark"], .dark {
+  --bg-page: #0A0D14;
   --bg-card: #111622;
+  --border-subtle: #1E293B;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+
+  --bg-primary: #0A0D14;
   --bg-card-hover: #171F30;
   --border-color: #1E293B;
-  --border-subtle: #182234;
-  --text-primary: #F8FAFC;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.6);
   --accent-emerald: #10B981;
   --accent-cyan: #06B6D4;
   --accent-amber: #F59E0B;
@@ -43,16 +45,28 @@
 }
 
 body {
-  background-color: var(--bg-primary);
+  background: var(--bg-page);
   color: var(--text-primary);
   font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Tabular numerals prevent digits from jittering during animation */
-.tabular-nums {
+.stat-value, .telemetry-num, .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Glass & Card Utilities */
+.app-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 0.875rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.app-card:hover {
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
 }
 
 /* Custom scrollbar */
@@ -65,36 +79,11 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: #334155;
 }
-
-/* Clean Card Utility */
-.app-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-soft);
-  border-radius: 1rem;
-}
-
-.app-card-elevated {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-elevated);
-  border-radius: 1rem;
-}
-
-/* Landing background gradient */
-.hero-radial-light {
-  background: radial-gradient(circle at 50% -10%, rgba(8, 145, 178, 0.07) 0%, transparent 60%),
-              radial-gradient(circle at 85% 60%, rgba(5, 150, 105, 0.05) 0%, transparent 45%),
-              #F7F8FA;
-}
-
-.hero-radial-dark {
-  background: radial-gradient(circle at 50% -10%, rgba(6, 182, 212, 0.09) 0%, transparent 65%),
-              radial-gradient(circle at 85% 60%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
-              #0A0D14;
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }
