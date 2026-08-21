@@ -10,45 +10,7 @@ export default function TruckScrollStory() {
   useEffect(() => {
     if (!trackRef.current) return;
 
-    // Timeline using anime.js v4
-    let tl: any = null;
-    try {
-      tl = createTimeline({
-        autoplay: false, // We sync directly on scroll
-      });
-
-      tl
-        // Stage 1: Truck drives in from off-screen left (0% -> 35% scroll)
-        .add('.truck-group', { translateX: [-800, 0], duration: 1000, ease: 'linear' })
-        .add('.wheel-spin', { rotate: [0, 720], duration: 1000, ease: 'linear' }, '<')
-        // Stage 2: Cargo doors open wide (35% -> 60% scroll)
-        .add('.door-left', { scaleX: [1, 0.05], duration: 800, ease: 'inOutQuad' }, '+=100')
-        .add('.door-right', { scaleX: [1, 0.05], duration: 800, ease: 'inOutQuad' }, '<')
-        // Stage 3: Battery pack emerges and cells light up (60% -> 85% scroll)
-        .add('.battery-pack', { translateY: [30, 0], opacity: [0, 1], duration: 600 }, '-=300')
-        .add('.battery-cell', { fill: ['#CBD5E1', '#059669'], delay: stagger(60) }, '-=200')
-        .add('.telemetry-hud', { opacity: [0, 1], translateY: [20, 0], duration: 500 }, '-=100')
-        // Stage 4: Scene scales and transitions (85% -> 100% scroll)
-        .add('.truck-scene', { scale: [1, 0.9], opacity: [1, 0.2], duration: 600 }, '+=200');
-
-      // Also register anime.js native onScroll observer
-      onScroll({
-        target: trackRef.current,
-        sync: true,
-        enter: 'top top',
-        leave: 'bottom bottom',
-        onUpdate: (self) => {
-          if (tl && self.progress !== undefined) {
-            tl.seek(tl.duration * self.progress);
-            setScrollProgress(self.progress);
-          }
-        },
-      });
-    } catch (e) {
-      console.warn("Anime.js timeline init fallback:", e);
-    }
-
-    // Direct Window Scroll Listener (guarantees real-time scrub across all browsers)
+    // Direct Window Scroll Listener (guarantees real-time 60fps scrub across all browsers)
     const handleScroll = () => {
       if (!trackRef.current) return;
       const rect = trackRef.current.getBoundingClientRect();
@@ -57,10 +19,6 @@ export default function TruckScrollStory() {
 
       const progress = Math.max(0, Math.min(1, -rect.top / totalScroll));
       setScrollProgress(progress);
-
-      if (tl && tl.duration) {
-        tl.seek(tl.duration * progress);
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

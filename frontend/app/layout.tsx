@@ -28,6 +28,10 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={theme === "dark" ? "dark" : ""}>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <title>EV Battery Intelligence Platform</title>
+      </head>
       <body className="min-h-screen flex flex-col antialiased transition-colors selection:bg-cyan-500/20 selection:text-cyan-800 dark:selection:text-cyan-200">
         {isDashboard ? (
           <>

@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useFleetStore } from "../../lib/store/useFleetStore";
-import { Badge } from "../ui/Badge";
-import { Sparkles, Sun, Moon, Radio, Search } from "lucide-react";
+import { Sparkles, Sun, Moon, ArrowLeft, Activity } from "lucide-react";
 
 export const Header: React.FC = () => {
   const {
@@ -19,48 +18,43 @@ export const Header: React.FC = () => {
     setCopilotOpen,
   } = useFleetStore();
 
-  const [headerSearch, setHeaderSearch] = useState("");
-
-  const matchingVehicles = headerSearch
-    ? vehicles.filter(
-        (v) =>
-          v.id.toLowerCase().includes(headerSearch.toLowerCase()) ||
-          v.driver.toLowerCase().includes(headerSearch.toLowerCase()) ||
-          v.fleet.toLowerCase().includes(headerSearch.toLowerCase())
-      )
-    : vehicles;
+  const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
 
   return (
-    <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-[#0A0D14]/80 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-30 transition-colors">
-      {/* Brand Title with link back to landing page */}
-      <div className="flex items-center gap-3">
+    <header className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#0A0D14]/95 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30 transition-colors">
+      {/* Left: Brand Identity & Landing Link */}
+      <div className="flex items-center gap-4">
         <Link
           href="/"
-          className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-600 to-emerald-600 flex items-center justify-center text-white font-extrabold text-xs shadow-sm hover:scale-105 transition-transform"
-          title="Back to Landing Page"
+          className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
         >
-          EV
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Landing</span>
         </Link>
-        <div>
-          <div className="flex items-center gap-2">
-            <Link href="/" className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
-              EV Battery Intelligence
-            </Link>
-            <Badge variant="emerald" size="sm" dot>v1.0</Badge>
+
+        <div className="h-4 w-px bg-slate-200 dark:bg-slate-800" />
+
+        <div className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-extrabold text-[11px] shadow-sm">
+            EV
           </div>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono hidden sm:block">
-            {vehicles.length} Fleet Vehicles • 74 Models
-          </p>
+          <span className="text-sm font-bold text-slate-900 dark:text-slate-100 tracking-tight whitespace-nowrap">
+            EV Battery Intelligence
+          </span>
+          <span className="hidden lg:inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-medium bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            74 Models Live
+          </span>
         </div>
       </div>
 
-      {/* Center Vehicle Switcher & Fast Search */}
-      <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl">
-        <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Chassis:</span>
+      {/* Center: Clean Minimalist VIN Selector */}
+      <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-lg">
+        <span className="text-[10px] font-mono uppercase font-semibold text-slate-400">VIN:</span>
         <select
           value={selectedVehicleId}
           onChange={(e) => setSelectedVehicle(e.target.value)}
-          className="bg-transparent text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 focus:outline-none cursor-pointer max-w-[260px]"
+          className="bg-transparent text-xs font-mono font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer pr-1"
         >
           {vehicles.map((v) => (
             <option key={v.id} value={v.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">
@@ -70,38 +64,30 @@ export const Header: React.FC = () => {
         </select>
       </div>
 
-      {/* Right Controls: Theme toggle, Live/Mock toggle & Copilot */}
+      {/* Right: Controls & Copilot Button */}
       <div className="flex items-center gap-2.5">
-        {/* Theme Toggle */}
+        {/* Latency badge */}
+        <div className="hidden xl:flex items-center gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+          <Activity className="w-3.5 h-3.5 text-emerald-500" />
+          <span>12ms</span>
+        </div>
+
+        {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
           title={`Switch to ${theme === "light" ? "Dark" : "Light"} mode`}
         >
-          {theme === "light" ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
+          {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-amber-400" />}
         </button>
 
-        {/* Mock/Live Mode Toggle */}
-        <button
-          onClick={() => setIsMock(!isMock)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all ${
-            isMock
-              ? "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
-              : "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-300"
-          }`}
-          title="Toggle between Live FastAPI backend (8000) and realistic Mock Mode"
-        >
-          <Radio className={`w-3 h-3 ${isMock ? "text-slate-400" : "text-emerald-600 dark:text-emerald-400 animate-pulse"}`} />
-          <span className="hidden sm:inline">{isMock ? "Mock Mode" : "Live API"}</span>
-        </button>
-
-        {/* Copilot Button */}
+        {/* Copilot button */}
         <button
           onClick={() => setCopilotOpen(!copilotOpen)}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-semibold text-xs transition-all hover:scale-105 shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-semibold hover:opacity-90 transition-all shadow-sm"
         >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Fleet Copilot</span>
+          <Sparkles className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600" />
+          <span>Copilot</span>
         </button>
       </div>
     </header>

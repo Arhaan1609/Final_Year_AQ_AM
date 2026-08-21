@@ -26,6 +26,14 @@ _MODELS: dict = {}
 _BEST_MODEL_NAMES: dict = {}
 
 
+def _patch_model_compatibility(model):
+    if hasattr(model, "named_steps"):
+        for _, step_obj in model.named_steps.items():
+            if hasattr(step_obj, "missing_values") and not hasattr(step_obj, "_fill_dtype"):
+                step_obj._fill_dtype = np.float64
+    return model
+
+
 def _load_best_model(task: str):
     """Load the best pkl model for a given task using task subfolder or root models dir."""
     txt = cfg.get_model_file_path(task, f"{task}_best_model.txt")
@@ -39,10 +47,22 @@ def _load_best_model(task: str):
                   "Ridge", "KNN", "DecisionTree", "Lasso", "SVR"]
     candidates = [model_name] + preference if model_name else preference
 
-    for name in candidates:
+    seen = set()
+    deduped = []
+    for c in candidates:
+        if c and c not in seen:
+            seen.add(c)
+            deduped.append(c)
+
+    for name in deduped:
         pkl = cfg.get_model_file_path(task, f"{task}_{name}.pkl")
         if os.path.exists(pkl):
-            return name, joblib.load(pkl)
+            try:
+                model = joblib.load(pkl)
+                model = _patch_model_compatibility(model)
+                return name, model
+            except Exception:
+                continue
     return None, None
 
 

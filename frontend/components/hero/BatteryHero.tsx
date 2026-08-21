@@ -7,24 +7,30 @@ import { ArrowRight, Cpu, Sparkles } from 'lucide-react';
 export default function BatteryHero() {
   useEffect(() => {
     try {
-      animate('.hero-word', {
-        opacity: [0, 1],
-        translateY: [24, 0],
-        delay: stagger(80),
-        duration: 700,
-        ease: 'outExpo',
-      });
-
-      document.querySelectorAll<HTMLElement>('.stat-value').forEach((el) => {
-        const to = Number(el.dataset.value);
-        animate(el, {
-          innerHTML: [0, to],
-          modifier: utils.round(1),
-          duration: 1200,
+      const heroWords = document.querySelectorAll<HTMLElement>('.hero-word');
+      if (heroWords && heroWords.length > 0) {
+        animate(heroWords, {
+          opacity: [0, 1],
+          translateY: [24, 0],
+          delay: stagger(80),
+          duration: 700,
           ease: 'outExpo',
-          autoplay: onScroll({ target: el, sync: false }),
         });
-      });
+      }
+
+      const statValues = document.querySelectorAll<HTMLElement>('.stat-value');
+      if (statValues && statValues.length > 0) {
+        statValues.forEach((el) => {
+          const to = Number(el.dataset.value) || 0;
+          animate(el, {
+            innerHTML: [0, to],
+            modifier: utils.round(1),
+            duration: 1200,
+            ease: 'outExpo',
+            autoplay: onScroll({ target: el, sync: false }),
+          });
+        });
+      }
     } catch (e) {
       console.warn("Hero text animation fallback:", e);
     }
