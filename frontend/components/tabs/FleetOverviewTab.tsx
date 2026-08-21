@@ -188,38 +188,50 @@ export const FleetOverviewTab: React.FC = () => {
         </GlassCard>
       </div>
 
-      {/* Vehicle Grid Selector */}
+      {/* Vehicle Grid Selector with Filter Chips */}
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">
-          Select Fleet Vehicle Chassis
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              Commercial Fleet Chassis Inventory
+            </h3>
+            <Badge variant="cyan" size="sm">
+              {vehicles.length} Vehicles
+            </Badge>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
           {vehicles.map((v) => {
             const isSelected = v.id === selectedVehicleId;
             return (
               <div
                 key={v.id}
                 onClick={() => setSelectedVehicle(v.id)}
-                className={`vehicle-card p-4 rounded-xl border transition-all cursor-pointer select-none ${
+                className={`vehicle-card p-3.5 rounded-xl border transition-all cursor-pointer select-none ${
                   isSelected
-                    ? "bg-cyan-50 dark:bg-slate-800/90 border-cyan-500 shadow-sm"
-                    : "app-card hover:border-slate-300 dark:hover:border-slate-700"
+                    ? "bg-cyan-50 dark:bg-slate-800/90 border-cyan-500 shadow-md ring-1 ring-cyan-500"
+                    : "app-card hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm"
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono font-bold text-sm text-slate-900 dark:text-slate-100">{v.id}</span>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-mono font-bold text-xs text-slate-900 dark:text-slate-100">{v.id}</span>
                   <span
                     className={`w-2.5 h-2.5 rounded-full ${
                       v.status === "critical"
                         ? "bg-rose-500 animate-pulse"
                         : v.status === "warning"
                         ? "bg-amber-500"
+                        : v.status === "charging"
+                        ? "bg-cyan-500 animate-pulse"
                         : "bg-emerald-500"
                     }`}
+                    title={v.status.toUpperCase()}
                   />
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{v.model}</div>
-                <div className="mt-3 flex items-center justify-between text-xs font-mono">
+                <div className="text-[11px] font-medium text-slate-600 dark:text-slate-400 truncate">{v.model}</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{v.fleet.split(" ")[0]} Hub</div>
+                <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono">
                   <span className="text-slate-600 dark:text-slate-300">SOC: <strong className="text-cyan-600 dark:text-cyan-400">{v.soc.toFixed(0)}%</strong></span>
                   <span className="text-slate-600 dark:text-slate-300">SOH: <strong className="text-emerald-600 dark:text-emerald-400">{v.soh.toFixed(0)}%</strong></span>
                 </div>
