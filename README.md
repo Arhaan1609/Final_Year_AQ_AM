@@ -6,10 +6,11 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-Module%20B-red)](https://pytorch.org)
 [![XGBoost](https://img.shields.io/badge/XGBoost-Module%20C-brightgreen)](https://xgboost.readthedocs.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-11%20Endpoints-green)](https://fastapi.tiangolo.com)
+[![Models](https://img.shields.io/badge/Trained%20Models-74%20Total-purple)](file:///c:/Final_Year_Project_1/INTEGRATION_REPORT.md)
 
 ---
 
-## 🗂️ Project Structure
+## 🗂️ Project Structure & Module Overview
 
 ```
 Final_Year_Project_1/
@@ -17,22 +18,22 @@ Final_Year_Project_1/
 ├── run_all.py                       ← Master entry point (API + CLI launcher for all 3 modules)
 ├── cli.py                           ← Master CLI shortcut (12 prediction options)
 ├── requirements_unified.txt         ← Unified dependencies (Modules A + B + C)
-├── INTEGRATION_REPORT.md            ← Comprehensive Tri-Pillar Architecture Report
+├── INTEGRATION_REPORT.md            ← Master Technical & Integration Report (Detailed 74-Model Inventory)
 │
 ├── modules/                         ← All Machine Learning Modules
-│   ├── module_a/                    ← Module A: Fleet Prediction Pipeline
+│   ├── module_a/                    ← Module A: Fleet Prediction Pipeline (56 Models)
 │   │   ├── config.py                   Central config (paths, features, hyperparams)
 │   │   ├── utils.py                    Shared utilities & loggers
 │   │   ├── 01_data_ingestion.py        Load raw Excel + JSON fleet data
 │   │   ├── 02_preprocessing.py         Clean, clip outliers, merge datasets
-│   │   ├── 03_feature_engineering.py   Build leak-free feature sets
-│   │   ├── 04_model_training.py        Train 9 ML + 5 DL models per task
+│   │   ├── 03_feature_engineering.py   Build leak-free feature sets & degradation factors
+│   │   ├── 04_model_training.py        Train 9 ML + 5 DL models per task (56 models total)
 │   │   ├── 05_evaluation.py            RMSE/MAE/R² + SHAP + robustness tests
 │   │   ├── 06_visualization.py         Generate all plots
 │   │   ├── 07_prediction_system.py     Interactive CLI (12 prediction options)
 │   │   └── retrain_clean.py            Re-run pipeline steps 3-7 cleanly
 │   │
-│   ├── module_b/                    ← Module B: Cyber-Physical Health & Thermal Management
+│   ├── module_b/                    ← Module B: Cyber-Physical Health & Thermal Management (8 Models)
 │   │   ├── src/
 │   │   │   ├── core/                   schemas.py, preprocessor.py, exceptions.py
 │   │   │   └── models/                 engine.py, soh_champion.py, thermal_champion.py
@@ -41,16 +42,16 @@ Final_Year_Project_1/
 │   │   ├── config/settings.yaml        Thermal thresholds and model config
 │   │   └── tests/                      Automated pytest test suite (13 tests)
 │   │
-│   └── module_c/                    ← Module C: Behavior-Aware BMS (BA-BMS) & Knee Prognostics
+│   └── module_c/                    ← Module C: Behavior-Aware BMS & Knee Prognostics (10 Models)
 │       ├── engine.py                   BABMSEngine wrapper (AI, BSI, Knee Booster)
-│       ├── best_xgboost_model.json     Pre-trained Knee-Point XGBoost Booster
+│       ├── best_xgboost_model.json     Pre-trained Knee-Point XGBoost Booster (28 features)
 │       ├── feature_scaler.pkl          Pre-trained 28-feature StandardScaler
 │       ├── knee_detection.py           Piecewise linear fit knee detector
-│       ├── knee_final.py               Knee-aware temporal sequence model
-│       ├── unified_ensemble.py         Multi-target meta-ensemble training
+│       ├── knee_final.py               Multi-Head Attention CNN-BiLSTM knee model
+│       ├── unified_ensemble.py         Multi-target meta-ensemble training (LSTM + GRU)
 │       ├── demo_ensemble.py            Visual performance demonstration tool
 │       ├── data_integrator.py          Cross-vehicle rank mapping synthesizer
-│       ├── improved_data_processing.py Behavioral index feature engineering
+│       ├── improved_data_processing.py Behavioral index feature engineering (AI & BSI)
 │       └── tests/                      Automated pytest test suite (7 tests)
 │
 ├── api/                             ← Unified REST API (FastAPI)
@@ -65,11 +66,12 @@ Final_Year_Project_1/
 │   ├── raw/                         ← Raw fleet data (930MB — Excel + JSON)
 │   └── processed/                   ← Cleaned CSVs + feature sets (~480MB)
 │
-├── models/                          ← Module A trained model artifacts (62 models)
+├── models/                          ← Module A trained model artifacts (62 model files)
 │   ├── SOC_KNN.pkl                     Best SOC model (R²=0.9958)
 │   ├── SOH_XGBoost.pkl                 Best SOH model (R²=0.9672)
 │   ├── RUL_GradientBoosting.pkl        Best RUL model (R²=0.9997)
 │   ├── Mileage_XGBoost.pkl             Best Mileage model (R²=0.9445)
+│   ├── *_ANN_best.keras                Deep learning Keras models
 │   └── scaler_*.pkl                    Feature scalers
 │
 ├── results/                         ← Plots, comparison tables, evaluation reports
@@ -78,77 +80,43 @@ Final_Year_Project_1/
 
 ---
 
-## 🎯 Tri-Pillar Prediction Capabilities
+## 🎯 Complete Task-to-Model Mapping (74 Models Total)
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 TRI-PILLAR CAPABILITY MATRIX                                    │
-├──────────────────────────────┬──────────────────────────────┬───────────────────────────────────┤
-│    MODULE A (Fleet Macro)    │  MODULE B (Thermal / Cyber)  │    MODULE C (Behavior & Knee)     │
-├──────────────────────────────┼──────────────────────────────┼───────────────────────────────────┤
-│ • State of Charge (SOC)      │ • Multi-Zone Thermal Safety  │ • Driver Aggressiveness (AI)      │
-│ • State of Health (SOH)      │ • Spatial-Temporal SOH (DL)  │ • Battery Stress Index (BSI)      │
-│ • Remaining Useful Life (RUL)│ • Multi-Zone Fault Alerts    │ • Knee-Point Onset (RUL_to_knee)  │
-│ • Mileage per Charge (km)    │ • Composite Health Score     │ • Multi-Target Meta-Ensemble      │
-└──────────────────────────────┴──────────────────────────────┴───────────────────────────────────┘
-```
-
-### Module A — Fleet-Level EV Predictions
-| Task | Target | Best Model | Performance |
-|------|--------|-----------|-------------|
-| **SOC** | State of Charge (%) | KNN | R² = 0.9958 |
-| **SOH** | State of Health (%) | XGBoost | R² = 0.9672 |
-| **RUL** | Remaining Useful Life (cycles) | Gradient Boosting | R² = 0.9997 |
-| **Mileage** | Range per Charge (km) | XGBoost | R² = 0.9445 |
-
-*Trained on 930MB of real Indian EV fleet telematics data (50M+ records).*
-
-### Module B — Battery Health & Thermal Management
-| Task | Architecture | Performance |
-|------|-------------|-------------|
-| **SOH Deep** | Hybrid 1D-CNN + LSTM (PyTorch) | RMSE = 5.29% |
-| **Thermal Safety** | Multi-Zone Random Forest (200 trees) | F1 = 0.997, Acc = 99.71% |
-| **Full Diagnosis** | Digital-Twin Composite Score (0-100) | Dual-Pillar Multi-Zone |
-
-*Trained on 53M records from Euler HiLoad commercial EV fleet.*
-
-### Module C — Behavior-Aware BMS & Knee Prognostics
-| Task | Architecture | Key Insight |
-|------|-------------|-------------|
-| **Driver Aggressiveness (AI)** | Multi-Event Weighted Composite Index (0-1) | Smooth drivers retain +4.7% higher SOH |
-| **Battery Stress (BSI)** | Thermal & Electrical Stress Mapping | Real-time current/thermal throttle trigger |
-| **Knee Prognostics** | XGBoost Booster (28 features) + Scaler | Detects non-linear accelerated aging point |
-| **Meta-Ensemble** | Deep BiLSTM + XGBoost Meta-Learner | Simultaneous multi-target health tracking |
+| Task / Domain | Owning Module | Models Trained & Evaluated | Champion Model Deployed | Benchmark Performance |
+|---|---|---|---|---|
+| **1. State of Charge (SOC)** | **Module A** | 9 ML Models (KNN, RF, XGB, ExtraTrees, GB, DT, Ridge, Lasso, LR) + 5 Deep Learning Models (ANN, CNN-1D, LSTM, GRU, BiLSTM) | **KNN Regressor** | $R^2 = 0.9958$<br>RMSE = 1.34% |
+| **2. State of Health (SOH)** | **Modules A, B, C** | • **Module A (Tabular)**: 9 ML + 5 DL models<br>• **Module B (Sequential Deep)**: Hybrid 1D-CNN + LSTM in PyTorch<br>• **Module C (Behavioral)**: Random Forest ($R^2=0.94$), Multi-Target LSTM, Multi-Target GRU, LightGBM, CatBoost | **XGBoost (Tabular)** & **PyTorch CNN-LSTM (Deep)** | $R^2 = 0.9672$<br>RMSE = 5.29% |
+| **3. Remaining Useful Life (RUL)** | **Module A** | 9 ML Models (GB, RF, XGB, ExtraTrees, DT, Ridge, Lasso, LR, KNN) + 5 Deep Learning Models (ANN, CNN-1D, LSTM, GRU, BiLSTM) | **Gradient Boosting** | $R^2 = 0.9997$<br>RMSE = 8.12 cycles |
+| **4. Mileage per Charge (km)** | **Module A** | 9 ML Models (XGB, RF, ExtraTrees, GB, DT, Ridge, Lasso, LR, KNN) + 5 Deep Learning Models (ANN, CNN-1D, LSTM, GRU, BiLSTM) | **XGBoost Regressor** | $R^2 = 0.9445$<br>RMSE = 5.42 km |
+| **5. Battery Degradation & Capacity Fade** | **Modules A, B, C** | • Macro Degradation Factor Model (Module A)<br>• Electrochemical Sequential Fade Model (Module B)<br>• Incremental Capacity ($dQ/dV$) Engine (Module C)<br>• Multi-Lag Temporal Degradation Engine (Module C)<br>• Behavioral Accelerated Fade Engine (Module C) | **Dynamic Degradation Engines** | Tracks capacity loss slope & aging state |
+| **6. Knee-Point Degradation ($RUL_{to\_knee}$)** | **Module C** | • Pre-trained 28-feature XGBoost Booster<br>• Piecewise Linear Joint MSE Optimizer<br>• Multi-Head Attention CNN-BiLSTM<br>• Multi-Target Deep LSTM & GRU<br>• LightGBM & CatBoost | **XGBoost Booster** & **Piecewise Detector** | Predicts cycles before non-linear rapid aging |
+| **7. Multi-Zone Thermal Safety** | **Module B** | • Multi-Zone Random Forest (200 Trees)<br>• Baseline Decision Tree Classifier<br>• Digital Twin Vehicle Health Scoring Engine | **Multi-Zone RF (200T)** | $F_1 = 0.997$<br>Accuracy = 99.71% |
+| **8. Driver Behavior & Stress (AI / BSI)** | **Module C** | • Driver Aggressiveness Index ($AI$) Normalization Engine<br>• Battery Stress Index ($BSI$) Electrochemical Strain Engine | **BA-BMS Engine** | Normalizes driving aggression ($0.0 \to 1.0$) |
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
-```bash
-pip install -r requirements_unified.txt
-```
-
-### 2. Check System Readiness
+### 1. Check System & Model Readiness
 ```bash
 python run_all.py --check
 ```
 
-### 3. Start the Unified REST API (11 Endpoints)
+### 2. Start the Unified REST API (11 Endpoints)
 ```bash
 python run_all.py
 # API running at: http://localhost:8000
 # Interactive Swagger docs: http://localhost:8000/docs
 ```
 
-### 4. Launch Interactive CLI Prediction System
+### 3. Launch Interactive Terminal CLI (12 Prediction Options)
 ```bash
 python run_all.py --cli
 # OR
 python cli.py
 ```
 
-### 5. Run Automated Test Suite (20 Tests)
+### 4. Run Automated Test Suite (20 Tests)
 ```bash
 pytest modules/module_b/tests modules/module_c/tests
 ```
