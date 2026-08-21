@@ -147,27 +147,24 @@ def _start_api(host: str = "0.0.0.0", port: int = 8000, reload: bool = False):
 
 def _start_cli():
     """Launch the interactive CLI prediction system."""
-    script = os.path.join(_MODULE_A_DIR, "07_prediction_system.py")
-    subprocess.run([sys.executable, script], cwd=_MODULE_A_DIR)
-
-
-def _retrain():
-    """Run Module A's retrain_clean pipeline (steps 3-7)."""
-    script = os.path.join(_MODULE_A_DIR, "retrain_clean.py")
-    print(f"  Running Module A retrain pipeline ...\n")
-    result = subprocess.run([sys.executable, script], cwd=_MODULE_A_DIR)
+def _retrain_all():
+    """Run master autonomous retraining pipeline across all 3 modules."""
+    script = os.path.join(_PROJECT_ROOT, "retrain_all.py")
+    print(f"  Launching Master Retraining Pipeline (All 3 Modules) ...\n")
+    result = subprocess.run([sys.executable, script], cwd=_PROJECT_ROOT)
     return result.returncode == 0
 
 
 def main():
     _banner()
     parser = argparse.ArgumentParser(description="EV Battery Intelligence — Unified Launcher")
-    parser.add_argument("--cli",     action="store_true", help="Launch interactive CLI (12 prediction options)")
-    parser.add_argument("--check",   action="store_true", help="Check system status across all 3 modules and exit")
-    parser.add_argument("--retrain", action="store_true", help="Re-run Module A training pipeline first")
-    parser.add_argument("--port",    type=int,  default=8000, help="API port (default: 8000)")
-    parser.add_argument("--host",    type=str,  default="0.0.0.0", help="API host (default: 0.0.0.0)")
-    parser.add_argument("--reload",  action="store_true", help="Enable uvicorn hot-reload (dev mode)")
+    parser.add_argument("--cli",         action="store_true", help="Launch interactive CLI (12 prediction options)")
+    parser.add_argument("--check",       action="store_true", help="Check system status across all 3 modules and exit")
+    parser.add_argument("--retrain",     action="store_true", help="Re-train all models across Modules A, B, and C autonomously")
+    parser.add_argument("--retrain-all", action="store_true", help="Alias for --retrain")
+    parser.add_argument("--port",        type=int,  default=8000, help="API port (default: 8000)")
+    parser.add_argument("--host",        type=str,  default="0.0.0.0", help="API host (default: 0.0.0.0)")
+    parser.add_argument("--reload",      action="store_true", help="Enable uvicorn hot-reload (dev mode)")
     args = parser.parse_args()
 
     _check_models()
@@ -175,10 +172,10 @@ def main():
     if args.check:
         return
 
-    if args.retrain:
-        ok = _retrain()
+    if args.retrain or args.retrain_all:
+        ok = _retrain_all()
         if not ok:
-            print("  Retrain failed. Fix errors before starting API.")
+            print("  Retraining finished with errors. Fix before starting API.")
             sys.exit(1)
 
     if args.cli:
@@ -189,3 +186,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
