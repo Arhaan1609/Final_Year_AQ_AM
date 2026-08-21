@@ -1,0 +1,44 @@
+# BatteryIQ Production Configuration
+# Ground Truth Thresholds and Engine Parameters
+
+app:
+  name: "BatteryIQ Battery Intelligence & Thermal Management Suite"
+  version: "1.0.0"
+  env: "production"
+  host: "0.0.0.0"
+  port: 8000
+  log_level: "INFO"
+
+models:
+  soh:
+    name: "Hybrid 1D-CNN + LSTM Neural Network"
+    weights_path: "weights/soh_hybrid_cnn_lstm.pt"
+    scalers_path: "weights/scalers.joblib"
+    input_window_length: 10
+    features: ["voltage", "current", "battery_temp", "soc"]
+    rmse_benchmark: 5.29
+    target_capacity_nominal_ah: 200.0
+
+  thermal:
+    name: "Multi-Zone Random Forest Classifier"
+    weights_path: "weights/thermal_rf_multizone.joblib"
+    n_estimators: 200
+    features: ["vbt", "vct", "vmt", "vbv", "vbc", "soc", "speed"]
+    f1_benchmark: 0.997
+    decision_threshold: 0.50
+
+thresholds:
+  battery_temp_warning_c: 45.0
+  battery_temp_critical_c: 55.0
+  controller_temp_warning_c: 65.0
+  controller_temp_critical_c: 80.0
+  motor_temp_warning_c: 85.0
+  motor_temp_critical_c: 105.0
+  min_operational_voltage_v: 42.0
+  low_soc_warning_percent: 15.0
+  deep_discharge_critical_percent: 5.0
+
+data:
+  manifest_path: "data/DATA_MANIFEST.md"
+  balanced_dataset_path: "data/thermal_alerts_balanced_50_50.csv"
+  soh_dataset_path: "data/soh_timeseries_euler_processed.parquet"

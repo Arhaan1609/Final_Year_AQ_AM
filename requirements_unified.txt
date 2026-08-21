@@ -1,0 +1,50 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# requirements_unified.txt
+# Unified dependencies for the EV Battery Intelligence System
+# Covers: Module A (sklearn/XGBoost/Keras) + Module B (PyTorch/Pydantic)
+# Install: pip install -r requirements_unified.txt
+# ──────────────────────────────────────────────────────────────────────────────
+
+# ── Core data science
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# ── Machine learning (Module A)
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+joblib>=1.3.0
+
+# ── Deep learning — TensorFlow/Keras (Module A — LSTM/GRU/CNN models)
+tensorflow>=2.13.0
+
+# ── Deep learning — PyTorch (Module B — SOH Hybrid CNN-LSTM)
+torch>=2.0.0
+
+# ── Explainability (Module A — SHAP)
+shap>=0.43.0
+
+# ── Visualization (Module A)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# ── Data formats
+openpyxl>=3.1.0
+pyarrow>=14.0.0
+
+# ── API backend (Unified FastAPI layer)
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.0.0
+
+# ── Configuration
+pyyaml>=6.0.0
+
+# ── Progress bars
+tqdm>=4.65.0
+
+# ── Terminal colors (CLI)
+colorama>=0.4.6
+
+# ── Testing (Module B test suite)
+pytest>=7.0.0

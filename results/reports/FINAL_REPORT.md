@@ -1,0 +1,111 @@
+# EV Battery Analysis - Final Report (Leak-Free)
+
+**Generated**: 2026-08-20 22:31
+
+> Note: All data leakage issues resolved. Rolling SOC windows removed from SOC features,
+> cycle_usage_ratio/charge_cycle_count excluded from RUL, and algebraic Mileage derivatives removed.
+> Models now predict from genuine causal signals. Expected R2 ranges: SOC 0.80-0.92, SOH 0.75-0.90, RUL 0.65-0.85, Mileage 0.70-0.85.
+
+---
+
+## What Was Fixed (Data Leakage)
+| Task | Removed Feature | Why It Was Leakage |
+|------|----------------|-------------------|
+| SOC | `rolling_soc_5/10/20` | Rolling mean of target itself (r=0.999) |
+| SOH | `soc`, `rolling_soc_*` | Concurrent reading, not causal of degradation |
+| RUL | `charge_cycle_count`, `cycle_usage_ratio` | `rul = 1500 - count` (r=-1.0) |
+| Mileage | `soc_drain`, `distance_per_soc_drop`, `soc_drain_rate` | Algebraically define target |
+
+---
+
+## Model Performance Comparison
+
+| Task    | Model            | Type   |      RMSE |       MAE |        R2 |   MAPE% |   Train_R2 |   Train_RMSE | FitStatus    |   TrainTime_s |
+|:--------|:-----------------|:-------|----------:|----------:|----------:|--------:|-----------:|-------------:|:-------------|--------------:|
+| SOC     | RandomForest     | ML     |    1.6698 |    0.8976 |    0.9943 |    1.69 |     0.9954 |       1.5114 | Good Fit     |          2.37 |
+| SOC     | GradientBoosting | ML     |    1.4749 |    0.7948 |    0.9956 |    1.32 |     0.9959 |       1.4297 | Good Fit     |         39.03 |
+| SOC     | XGBoost          | ML     |    1.6447 |    0.8217 |    0.9945 |    1.37 |     0.9948 |       1.5999 | Good Fit     |          0.93 |
+| SOC     | ExtraTrees       | ML     |    4.2849 |    2.9964 |    0.9625 |    5.4  |     0.9639 |       4.2283 | Good Fit     |          1.64 |
+| SOC     | DecisionTree     | ML     |    2.459  |    1.1144 |    0.9877 |    1.91 |     0.9882 |       2.4209 | Good Fit     |          0.92 |
+| SOC     | KNN              | ML     |    1.4366 |    0.5426 |    0.9958 |    0.95 |     0.9974 |       1.1424 | Good Fit     |          0.3  |
+| SOC     | Ridge            | ML     |    4.4132 |    1.834  |    0.9603 |    3.23 |     0.9607 |       4.407  | Good Fit     |          0.34 |
+| SOC     | Lasso            | ML     |    4.4143 |    1.8359 |    0.9602 |    3.23 |     0.9607 |       4.4079 | Good Fit     |          0.42 |
+| SOC     | ANN              | DL     |    4.2789 |    2.1014 |    0.9626 |    3.59 |     0.9633 |       4.2631 | Good Fit     |         34.47 |
+| SOC     | LSTM             | DL     |   27.4343 |   24.6905 |   -0.5415 |   35    |    -0.5266 |      27.5267 | Underfitting |         44.25 |
+| SOC     | GRU              | DL     |   31.5581 |   28.3829 |   -1.0398 |   37.33 |    -1.0144 |      31.6201 | Underfitting |         39.65 |
+| SOC     | CNN              | DL     |   43.2427 |   39.159  |   -2.8299 |   46.74 |    -2.8015 |      43.4378 | Underfitting |          9.45 |
+| SOC     | CNN_LSTM         | DL     |   25.594  |   23.0353 |   -0.3416 |   34.24 |    -0.3314 |      25.7062 | Underfitting |         14.72 |
+| SOH     | RandomForest     | ML     |    1.286  |    0.6308 |    0.9581 |    0.71 |     0.9607 |       1.2502 | Good Fit     |          1.83 |
+| SOH     | GradientBoosting | ML     |    1.1799 |    0.5459 |    0.9647 |    0.61 |     0.9654 |       1.1726 | Good Fit     |         30.86 |
+| SOH     | XGBoost          | ML     |    1.138  |    0.5308 |    0.9672 |    0.59 |     0.9679 |       1.1305 | Good Fit     |          0.88 |
+| SOH     | ExtraTrees       | ML     |    4.0879 |    3.0224 |    0.5765 |    3.43 |     0.5771 |       4.1012 | Good Fit     |          0.99 |
+| SOH     | DecisionTree     | ML     |    1.7173 |    0.5368 |    0.9253 |    0.61 |     0.9282 |       1.69   | Good Fit     |          0.73 |
+| SOH     | KNN              | ML     |    1.1389 |    0.2305 |    0.9671 |    0.26 |     0.9773 |       0.9492 | Good Fit     |          1.05 |
+| SOH     | Ridge            | ML     |    5.1365 |    3.9366 |    0.3313 |    4.42 |     0.3299 |       5.1626 | Underfitting |          0.32 |
+| SOH     | Lasso            | ML     |    5.1365 |    3.9342 |    0.3313 |    4.42 |     0.3299 |       5.1627 | Underfitting |          0.32 |
+| SOH     | ANN              | DL     |    1.6669 |    0.7372 |    0.9296 |    0.81 |     0.9301 |       1.6674 | Good Fit     |         65.28 |
+| SOH     | LSTM             | DL     |   25.2632 |   24.4807 |  -15.3957 |   25.97 |   -15.0287 |      25.2349 | Underfitting |         44.52 |
+| SOH     | GRU              | DL     |   22.379  |   21.4917 |  -11.8657 |   22.74 |   -11.5768 |      22.3531 | Underfitting |         39.05 |
+| SOH     | CNN              | DL     |   48.1034 |   47.6086 |  -58.4436 |   50.96 |   -57.1952 |      48.0835 | Underfitting |          9.91 |
+| SOH     | CNN_LSTM         | DL     |   19.0978 |   18.0497 |   -8.3696 |   19.02 |    -8.16   |      19.0766 | Underfitting |         15.88 |
+| RUL     | RandomForest     | ML     |    9.4078 |    6.4747 |    0.9873 |    0.48 |     0.9906 |       8.0446 | Good Fit     |          0.12 |
+| RUL     | GradientBoosting | ML     |    1.4703 |    0.876  |    0.9997 |    0.07 |     0.9999 |       0.996  | Good Fit     |          2.14 |
+| RUL     | XGBoost          | ML     |    1.5111 |    0.8562 |    0.9997 |    0.06 |     0.9998 |       1.023  | Good Fit     |          0.08 |
+| RUL     | ExtraTrees       | ML     |   21.3595 |   17.4836 |    0.9348 |    1.28 |     0.9365 |      20.9376 | Good Fit     |          0.13 |
+| RUL     | SVR              | ML     |    4.3272 |    1.4247 |    0.9973 |    0.11 |     0.9974 |       4.2121 | Good Fit     |          1.96 |
+| RUL     | DecisionTree     | ML     |    3.9137 |    2.7016 |    0.9978 |    0.2  |     0.9986 |       3.0955 | Good Fit     |          0.04 |
+| RUL     | KNN              | ML     |    8.4266 |    6.1955 |    0.9898 |    0.45 |     0.9923 |       7.3093 | Good Fit     |          0.01 |
+| RUL     | Ridge            | ML     |    7.9209 |    5.1616 |    0.991  |    0.38 |     0.9909 |       7.9339 | Good Fit     |          0.01 |
+| RUL     | Lasso            | ML     |    7.9285 |    5.1678 |    0.991  |    0.38 |     0.9909 |       7.9381 | Good Fit     |          0.01 |
+| RUL     | ANN              | DL     | 1365.92   | 1363.47   | -265.84   |   97.6  |  -268.841  |    1365.4    | Underfitting |          4.37 |
+| RUL     | LSTM             | DL     | 1339.07   | 1336.45   | -254.869  |   95.66 |  -258.346  |    1338.73   | Underfitting |         14.9  |
+| RUL     | GRU              | DL     | 1351.55   | 1348.96   | -259.662  |   96.56 |  -263.205  |    1351.22   | Underfitting |         15.74 |
+| RUL     | CNN              | DL     |  692.828  |  656.779  |  -67.4957 |   46.79 |   -67.5375 |     688.206  | Underfitting |          6.2  |
+| RUL     | CNN_LSTM         | DL     | 1347.4    | 1344.8    | -258.063  |   96.26 |  -261.585  |    1347.07   | Underfitting |          7.93 |
+| Mileage | RandomForest     | ML     |    8.6298 |    4.9057 |    0.9282 |    5.92 |     0.9467 |       7.5168 | Good Fit     |          0.22 |
+| Mileage | GradientBoosting | ML     |    7.7318 |    4.0873 |    0.9423 |    4.73 |     0.9555 |       6.8669 | Good Fit     |          4.02 |
+| Mileage | XGBoost          | ML     |    7.5871 |    3.9345 |    0.9445 |    4.6  |     0.9596 |       6.5413 | Good Fit     |          0.16 |
+| Mileage | ExtraTrees       | ML     |   11.3924 |    7.8099 |    0.8748 |   10.16 |     0.8895 |      10.8223 | Good Fit     |          0.17 |
+| Mileage | SVR              | ML     |   12.0571 |    5.4139 |    0.8598 |    5.97 |     0.872  |      11.6465 | Good Fit     |         19.3  |
+| Mileage | DecisionTree     | ML     |    9.344  |    5.0775 |    0.9158 |    5.85 |     0.9298 |       8.6236 | Good Fit     |          0.08 |
+| Mileage | KNN              | ML     |   13.5222 |    9.0376 |    0.8236 |   10.82 |     0.875  |      11.5115 | Good Fit     |          0.02 |
+| Mileage | Ridge            | ML     |   16.2499 |   11.8238 |    0.7453 |   14.42 |     0.7638 |      15.8244 | Good Fit     |          0.02 |
+| Mileage | Lasso            | ML     |   16.2521 |   11.8286 |    0.7452 |   14.44 |     0.7638 |      15.8253 | Good Fit     |          0.26 |
+| Mileage | ANN              | DL     |   21.9135 |   16.2428 |    0.5368 |   16.51 |     0.5603 |      21.5898 | Good Fit     |          7.85 |
+| Mileage | LSTM             | DL     |   32.1965 |   25.3974 |   -0.0004 |   43.38 |    -0      |      32.5574 | Underfitting |         33.61 |
+| Mileage | GRU              | DL     |   32.2143 |   25.4784 |   -0.0015 |   43.18 |    -0.0002 |      32.5605 | Underfitting |         32.93 |
+| Mileage | CNN              | DL     |   38.2419 |   31.2904 |   -0.4114 |   40.75 |    -0.3529 |      37.8691 | Underfitting |         10.09 |
+| Mileage | CNN_LSTM         | DL     |   32.2129 |   25.4738 |   -0.0014 |   43.19 |    -0.0002 |      32.5597 | Underfitting |         14.05 |
+
+---
+
+## Best Model Per Task
+
+| Task    | Model            | Type   |   RMSE |    MAE |     R2 |   MAPE% | FitStatus   |
+|:--------|:-----------------|:-------|-------:|-------:|-------:|--------:|:------------|
+| SOC     | KNN              | ML     | 1.4366 | 0.5426 | 0.9958 |    0.95 | Good Fit    |
+| SOH     | XGBoost          | ML     | 1.138  | 0.5308 | 0.9672 |    0.59 | Good Fit    |
+| RUL     | GradientBoosting | ML     | 1.4703 | 0.876  | 0.9997 |    0.07 | Good Fit    |
+| Mileage | XGBoost          | ML     | 7.5871 | 3.9345 | 0.9445 |    4.6  | Good Fit    |
+
+---
+
+## Robustness Analysis
+
+| task    | model            |   base_R2 |   R2_noise_1pct |   R2_noise_5pct |   R2_noise_10pct |
+|:--------|:-----------------|----------:|----------------:|----------------:|-----------------:|
+| SOC     | KNN              |    0.9958 |          0.9956 |          0.9943 |           0.9907 |
+| SOH     | XGBoost          |    0.9672 |          0.7353 |          0.544  |           0.3704 |
+| RUL     | GradientBoosting |    0.9997 |          0.9995 |          0.9975 |           0.9926 |
+| Mileage | XGBoost          |    0.9445 |          0.8317 |          0.796  |           0.7119 |
+
+---
+
+## Error Analysis
+
+| task    | model            |   mean_error |   std_error |   max_error |   p95_error |
+|:--------|:-----------------|-------------:|------------:|------------:|------------:|
+| SOC     | KNN              |      -0.053  |      1.4356 |     71.7329 |      2.6571 |
+| SOH     | XGBoost          |       0.004  |      1.138  |     17.6899 |      2.3015 |
+| RUL     | GradientBoosting |       0.0089 |      1.4702 |     18.8668 |      2.706  |
+| Mileage | XGBoost          |      -0.0278 |      7.587  |     75.9311 |     14.6457 |

@@ -1,0 +1,54 @@
+[
+  {
+    "vehicle_id": "GJ05CV6564",
+    "oem_model": "Euler HiLoad",
+    "scenario": "Normal City Cruising (Nominal Balance)",
+    "soc": 82.5,
+    "voltage": 78.4,
+    "current": -18.2,
+    "battery_temp": 28.5,
+    "controller_temp": 38.2,
+    "motor_temp": 52.0,
+    "speed": 34.0,
+    "expected_status": "SAFE"
+  },
+  {
+    "vehicle_id": "DL51EV3619",
+    "oem_model": "Altigreen neEV",
+    "scenario": "Severe Drivetrain Incline: Motor Overheating while Battery is Cool",
+    "soc": 65.0,
+    "voltage": 72.0,
+    "current": -65.0,
+    "battery_temp": 32.0,
+    "controller_temp": 71.5,
+    "motor_temp": 98.4,
+    "speed": 22.0,
+    "expected_status": "CRITICAL"
+  },
+  {
+    "vehicle_id": "MH43CA1287",
+    "oem_model": "Tata Ace EV",
+    "scenario": "Deep Discharge Crisis (Cell Voltage Collapse)",
+    "soc": 3.2,
+    "voltage": 44.1,
+    "current": -42.0,
+    "battery_temp": 46.8,
+    "controller_temp": 58.0,
+    "motor_temp": 64.0,
+    "speed": 12.0,
+    "expected_status": "CRITICAL"
+  },
+  {
+    "vehicle_id": "KA05AP4679",
+    "oem_model": "Tata Ace EV",
+    "scenario": "Highway Cruising with Moderate Thermal Equilibrium",
+    "soc": 91.0,
+    "voltage": 81.2,
+    "current": -22.5,
+    "battery_temp": 31.0,
+    "controller_temp": 42.0,
+    "motor_temp": 58.5,
+    "speed": 48.0,
+    "expected_status": "SAFE"
+  }
+]

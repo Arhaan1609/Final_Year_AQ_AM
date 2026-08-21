@@ -1,3 +1,3 @@
-Best Model: ExtraTrees
-Test Metrics: {'RMSE': np.float64(0.2001), 'MAE': np.float64(0.0147), 'R2': 0.999, 'MAPE': np.float64(0.02)}
-Train Time: 6.82s
+Best Model: XGBoost
+Test Metrics: {'RMSE': np.float64(1.138), 'MAE': np.float64(0.5308), 'R2': 0.9672, 'MAPE': np.float64(0.59)}
+Train Time: 0.88s

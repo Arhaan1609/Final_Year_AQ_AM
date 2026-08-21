@@ -1,5 +1,5 @@
-base_R2,R2_noise_1pct,R2_noise_5pct,R2_noise_10pct,task,model
-0.9973,0.9601,0.952,0.9529,SOC,RandomForest
-0.999,0.8919,0.7497,0.5912,SOH,ExtraTrees
-1.0,0.9999,0.9982,0.9931,RUL,RandomForest
-0.9466,0.8248,0.7702,0.7044,Mileage,XGBoost
+task,model,base_R2,R2_noise_1pct,R2_noise_5pct,R2_noise_10pct
+SOC,KNN,0.9958,0.9956,0.9943,0.9907
+SOH,XGBoost,0.9672,0.7353,0.544,0.3704
+RUL,GradientBoosting,0.9997,0.9995,0.9975,0.9926
+Mileage,XGBoost,0.9445,0.8317,0.796,0.7119

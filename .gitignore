@@ -1,16 +1,15 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
 
-# Data directories (to prevent pushing large raw/processed files)
-Raw Data/
-processed_data/
+# Large raw & processed telemetry datasets (>100MB rejected by GitHub)
+data/raw/
+data/processed/
 
-# Model binaries and large evaluation arrays
-models/*.pkl
-models/*.keras
-models/*.h5
+# Results numpy arrays
 results/*.npy
+results/eval_data/
 
-# Logs
+# Runtime Logs
 logs/
