@@ -76,9 +76,9 @@ const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
 export const useFleetStore = create<FleetStoreState>((set, get) => ({
   theme: "light",
   vehicles: MOCK_VEHICLES,
-  selectedVehicleId: MOCK_VEHICLES[0].id,
+  selectedVehicleId: MOCK_VEHICLES[0]?.id || "DL1LAK7203",
   activeTab: "fleet",
-  isMock: true,
+  isMock: false, // LIVE API Connected to port 8000 by default!
   copilotOpen: false,
   copilotMessages: INITIAL_COPILOT_MESSAGES,
   isLiveUpdating: true,

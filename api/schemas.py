@@ -38,17 +38,17 @@ class SOCRequest(BaseSchema):
 
 
 class SOHRequest(BaseSchema):
-    """Input features for State of Health prediction (Module A — Extra Trees)."""
+    """Input features for State of Health prediction (Module A — Extra Trees / XGBoost)."""
     battery_voltage: float = Field(..., ge=20, le=150)
     battery_temp: float = Field(..., ge=-20, le=70)
     battery_current: float = Field(...)
-    abs_current: float = Field(..., ge=0)
-    odometer: float = Field(..., ge=0)
+    abs_current: float = Field(18.0, ge=0)
+    odometer: float = Field(12000.0, ge=0)
     odometer_diff: float = Field(0.0)
-    charge_cycle_count: float = Field(..., ge=0)
-    mile_avg: float = Field(..., ge=0)
-    miles_per_charge: float = Field(..., ge=0)
-    days_in_service: float = Field(..., ge=1)
+    charge_cycle_count: float = Field(200.0, ge=0)
+    mile_avg: float = Field(88.0, ge=0)
+    miles_per_charge: float = Field(95.0, ge=0)
+    days_in_service: float = Field(180.0, ge=1)
     degradation_factor: float = Field(0.0, ge=-1, le=1)
     temp_stress_index: float = Field(0.0, ge=0, le=1)
     voltage_deviation: float = Field(0.0)
@@ -57,33 +57,33 @@ class SOHRequest(BaseSchema):
 
 
 class RULRequest(BaseSchema):
-    """Input features for Remaining Useful Life prediction (Module A — Random Forest)."""
-    odometer: float = Field(..., ge=0)
-    soc_at_charge: float = Field(..., ge=0, le=100)
-    mile_avg: float = Field(..., ge=0)
-    miles_per_charge: float = Field(..., ge=0)
-    days_in_service: float = Field(..., ge=1)
+    """Input features for Remaining Useful Life prediction (Module A — Random Forest / GradientBoosting)."""
+    odometer: float = Field(12000.0, ge=0)
+    soc_at_charge: float = Field(85.0, ge=0, le=100)
+    mile_avg: float = Field(88.0, ge=0)
+    miles_per_charge: float = Field(95.0, ge=0)
+    days_in_service: float = Field(180.0, ge=1)
     degradation_factor: float = Field(0.0, ge=-1, le=1)
     soh_mean: float = Field(85.0, ge=0, le=120)
-    miles_per_charge_rolling_3: float = Field(..., ge=0)
-    miles_per_charge_rolling_5: float = Field(..., ge=0)
-    miles_per_charge_rolling_10: float = Field(..., ge=0)
+    miles_per_charge_rolling_3: float = Field(92.0, ge=0)
+    miles_per_charge_rolling_5: float = Field(90.0, ge=0)
+    miles_per_charge_rolling_10: float = Field(88.0, ge=0)
     oem_encoded: int = Field(0, ge=0)
     model_encoded: int = Field(0, ge=0)
 
 
 class MileageRequest(BaseSchema):
     """Input features for Mileage per Charge prediction (Module A — XGBoost)."""
-    run_kms: float = Field(..., ge=0)
-    avg_speed: float = Field(..., ge=0, le=200)
-    max_speed: float = Field(..., ge=0, le=200)
-    trip_duration_hrs: float = Field(..., ge=0)
-    stoppage_count: int = Field(0, ge=0)
-    energy_efficiency: float = Field(..., ge=0)
-    trip_intensity: float = Field(..., ge=0)
-    speed_ratio: float = Field(..., ge=0, le=1)
-    stoppage_density: float = Field(0.0, ge=0)
-    energy_utilized: float = Field(..., ge=0)
+    run_kms: float = Field(45.0, ge=0)
+    avg_speed: float = Field(32.0, ge=0, le=200)
+    max_speed: float = Field(55.0, ge=0, le=200)
+    trip_duration_hrs: float = Field(1.5, ge=0)
+    stoppage_count: int = Field(2, ge=0)
+    energy_efficiency: float = Field(0.88, ge=0)
+    trip_intensity: float = Field(1.2, ge=0)
+    speed_ratio: float = Field(0.58, ge=0, le=1)
+    stoppage_density: float = Field(0.05, ge=0)
+    energy_utilized: float = Field(8.5, ge=0)
     hour: int = Field(10, ge=0, le=23)
     day_of_week: int = Field(2, ge=0, le=6)
     month: int = Field(6, ge=1, le=12)

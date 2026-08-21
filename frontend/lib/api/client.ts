@@ -34,7 +34,7 @@ export function isMockMode(): boolean {
     const override = localStorage.getItem("USE_MOCK_OVERRIDE");
     if (override !== null) return override === "true";
   }
-  return process.env.NEXT_PUBLIC_USE_MOCK !== "false";
+  return process.env.NEXT_PUBLIC_USE_MOCK === "true";
 }
 
 export function setMockModeOverride(val: boolean) {
