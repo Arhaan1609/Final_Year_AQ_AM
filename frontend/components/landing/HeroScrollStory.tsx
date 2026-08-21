@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ScrollImageSequence } from "../ui/ScrollImageSequence";
 import {
@@ -17,15 +17,12 @@ import {
   Play,
   Pause,
   RotateCcw,
-  Info,
-  X,
 } from "lucide-react";
 
 export const HeroScrollStory: React.FC = () => {
   const [progress, setProgress] = useState<number>(0);
   const [hudVisible, setHudVisible] = useState<boolean>(true);
   const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(false);
-  const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
 
   // Stage flags based on scroll progress (0 - 100)
   const isStage1 = progress < 25; // Assembled Heavy Truck
@@ -36,7 +33,6 @@ export const HeroScrollStory: React.FC = () => {
   // Auto-Demo Scroll Loop
   useEffect(() => {
     let animFrame: number;
-    let targetScroll = window.scrollY;
 
     if (isAutoPlaying) {
       const step = () => {
@@ -104,7 +100,7 @@ export const HeroScrollStory: React.FC = () => {
             ) : (
               <>
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Auto-Demo (Examiner Mode)</span>
+                <span>Auto-Demo Mode</span>
               </>
             )}
           </button>
@@ -143,123 +139,6 @@ export const HeroScrollStory: React.FC = () => {
             <span className="text-cyan-400 font-bold">{progress}%</span>
           </div>
         </div>
-
-        {/* ─── INTERACTIVE 3D HOTSPOT PINS OVER THE TRUCK ─── */}
-        <div className="absolute inset-0 pointer-events-none z-30">
-          {/* Hotspot 1: Cab / Telematics Hub (Active on Stage 1 & 2) */}
-          {(isStage1 || isStage2) && (
-            <div className="absolute top-[38%] left-[36%] pointer-events-auto">
-              <button
-                onClick={() => setActiveHotspot(activeHotspot === "cab" ? null : "cab")}
-                className="relative group flex items-center justify-center"
-              >
-                <span className="absolute w-7 h-7 bg-cyan-400/30 rounded-full animate-ping" />
-                <span className="relative w-5 h-5 rounded-full bg-cyan-500 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.8)] group-hover:scale-125 transition-transform">
-                  +
-                </span>
-                <span className="absolute left-7 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-cyan-500/40 text-[10px] font-mono text-cyan-300 font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
-                  CAN-Bus BMS Gateway
-                </span>
-              </button>
-            </div>
-          )}
-
-          {/* Hotspot 2: Chassis Inverter (Active on Stage 3) */}
-          {isStage3 && (
-            <div className="absolute top-[52%] right-[42%] pointer-events-auto">
-              <button
-                onClick={() => setActiveHotspot(activeHotspot === "chassis" ? null : "chassis")}
-                className="relative group flex items-center justify-center"
-              >
-                <span className="absolute w-7 h-7 bg-emerald-400/30 rounded-full animate-ping" />
-                <span className="relative w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.8)] group-hover:scale-125 transition-transform">
-                  +
-                </span>
-                <span className="absolute left-7 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-emerald-500/40 text-[10px] font-mono text-emerald-300 font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
-                  Active Cooling Rail & Inverter
-                </span>
-              </button>
-            </div>
-          )}
-
-          {/* Hotspot 3: 4-Tier Exploded Battery Array (Active on Stage 4) */}
-          {isStage4 && (
-            <div className="absolute top-[40%] left-[34%] pointer-events-auto">
-              <button
-                onClick={() => setActiveHotspot(activeHotspot === "battery" ? null : "battery")}
-                className="relative group flex items-center justify-center"
-              >
-                <span className="absolute w-8 h-8 bg-purple-400/30 rounded-full animate-ping" />
-                <span className="relative w-6 h-6 rounded-full bg-purple-500 border-2 border-white flex items-center justify-center text-xs font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.9)] group-hover:scale-125 transition-transform">
-                  +
-                </span>
-                <span className="absolute left-8 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-purple-500/40 text-[10px] font-mono text-purple-300 font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
-                  72V 150Ah Modular LFP Stack
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* ─── EXPANDABLE HOTSPOT DETAIL MODAL ─── */}
-        {activeHotspot && (
-          <div className="absolute top-28 right-6 md:right-12 z-40 max-w-sm p-5 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-cyan-500/50 shadow-2xl text-left pointer-events-auto animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-bold uppercase">
-                <Info className="w-4 h-4" />
-                <span>Component Telemetry Specs</span>
-              </div>
-              <button
-                onClick={() => setActiveHotspot(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {activeHotspot === "cab" && (
-              <div className="space-y-2 text-xs font-mono text-slate-300">
-                <div className="font-bold text-sm text-white">Central Telematic Control Unit (TCU)</div>
-                <p className="text-[11px] text-slate-400 font-sans">
-                  Samples pack voltage, current, and module temperature over high-speed CAN 2.0B (500 kbps) for sub-second ML regression.
-                </p>
-                <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1 text-[11px]">
-                  <div className="flex justify-between"><span>Sampling Rate:</span><strong className="text-cyan-400">10 Hz</strong></div>
-                  <div className="flex justify-between"><span>Inference Latency:</span><strong className="text-emerald-400">8.4 ms</strong></div>
-                  <div className="flex justify-between"><span>Protocol:</span><strong className="text-purple-400">FastAPI REST / FastMCP</strong></div>
-                </div>
-              </div>
-            )}
-
-            {activeHotspot === "chassis" && (
-              <div className="space-y-2 text-xs font-mono text-slate-300">
-                <div className="font-bold text-sm text-white">Inverter & Thermal Cooling Rail</div>
-                <p className="text-[11px] text-slate-400 font-sans">
-                  Dual-loop liquid cooling circulation keeping MOSFET junction temperatures below 60°C under maximum 60A acceleration draw.
-                </p>
-                <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1 text-[11px]">
-                  <div className="flex justify-between"><span>Inverter Temp:</span><strong className="text-amber-400">41.5°C</strong></div>
-                  <div className="flex justify-between"><span>Motor Load Temp:</span><strong className="text-purple-400">54.0°C</strong></div>
-                  <div className="flex justify-between"><span>Fault Classifier:</span><strong className="text-emerald-400">RF 200T (100% Safe)</strong></div>
-                </div>
-              </div>
-            )}
-
-            {activeHotspot === "battery" && (
-              <div className="space-y-2 text-xs font-mono text-slate-300">
-                <div className="font-bold text-sm text-white">4-Tier 72V 150Ah LFP Pack</div>
-                <p className="text-[11px] text-slate-400 font-sans">
-                  Lithium Iron Phosphate pouch architecture with laser-welded copper busbars, active cell balancing, and deep non-linear knee prognostics.
-                </p>
-                <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1 text-[11px]">
-                  <div className="flex justify-between"><span>Nominal Voltage:</span><strong className="text-cyan-400">72.0 V (24S)</strong></div>
-                  <div className="flex justify-between"><span>Internal Resistance:</span><strong className="text-emerald-400">0.035 Ω</strong></div>
-                  <div className="flex justify-between"><span>Knee Margin:</span><strong className="text-purple-400">850 Cycles (XGB)</strong></div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* ─── HUD OVERLAYS (PERIMETER POSITIONING) ─── */}
         {hudVisible && (
