@@ -35,7 +35,6 @@ from utils import get_logger
 logger = get_logger("07_prediction_system", cfg.LOGS_DIR)
 
 # ── Module B — BatteryIQ Engine (CNN-LSTM + Multi-Zone RF)
-# modules/module_b/ is 2 levels up from module_a/ then into module_b/
 _MODULE_B_DIR = os.path.join(_BASE_DIR, "..", "module_b")
 _MODULE_B_DIR = os.path.abspath(_MODULE_B_DIR)
 sys.path.insert(0, _MODULE_B_DIR)
@@ -49,6 +48,22 @@ def _load_module_b_engine():
         return True
     except Exception as e:
         logger.warning(f"Module B engine not loaded: {e}")
+        return False
+
+# ── Module C — BA-BMS & Knee-Point Engine (XGBoost)
+_MODULE_C_DIR = os.path.join(_BASE_DIR, "..", "module_c")
+_MODULE_C_DIR = os.path.abspath(_MODULE_C_DIR)
+sys.path.insert(0, _MODULE_C_DIR)
+_module_c_engine = None
+
+def _load_module_c_engine():
+    global _module_c_engine
+    try:
+        from engine import BABMSEngine
+        _module_c_engine = BABMSEngine()
+        return _module_c_engine.is_loaded
+    except Exception as e:
+        logger.warning(f"Module C engine not loaded: {e}")
         return False
 
 # ── Color codes for terminal
@@ -285,9 +300,9 @@ def interpret_result(task: str, value: float) -> str:
 # ─────────────────────────────────────────────
 BANNER = f"""
 {C['cyan']}╔══════════════════════════════════════════════════════════════════════╗
-║      EV BATTERY INTELLIGENCE SYSTEM — UNIFIED PREDICTION ENGINE      ║
-║   Module A: SOC / SOH / RUL / Mileage  │  Module B: Thermal + Health ║
-║                Final Year Project — ML & DL-Based EV Analysis         ║
+║      EV BATTERY INTELLIGENCE SYSTEM — TRI-PILLAR PREDICTION ENGINE   ║
+║   Module A: Fleet Predictions  │  Module B: Thermal & SOH-Deep       ║
+║   Module C: Driver Behavior (AI/BSI) & Knee-Point Prognostics        ║
 ╚══════════════════════════════════════════════════════════════════════╝{C['reset']}
 """
 
@@ -303,20 +318,57 @@ TASK_MENU = f"""
     {C['green']}[6]{C['reset']} Thermal Safety Check           — Multi-zone fault detection
     {C['green']}[7]{C['reset']} SOH Deep Analysis              — CNN-LSTM sequence estimation
     {C['green']}[8]{C['reset']} Full Vehicle Diagnosis         — Composite health + BMS directive
-    {C['yellow']}[9]{C['reset']} Run All 8 Predictions (A + B)
+    {C['yellow']}[9]{C['reset']} Run All Module B Predictions
+
+  {C['yellow']}── MODULE C — Driver Behavior & Knee Prognostics ─────────────{C['reset']}
+    {C['green']}[10]{C['reset']} Driver Behavior & Stress (AI/BSI)— Aggressiveness & battery stress
+    {C['green']}[11]{C['reset']} Knee-Point Prognostics (RUL)   — Cycles before accelerated fade
+    {C['yellow']}[12]{C['reset']} Run All 11 Predictions (A + B + C)
 
     {C['red']}[0]{C['reset']} Exit
 """
 
 TASK_MAP = {
     "1": "SOC", "2": "SOH", "3": "RUL", "4": "Mileage",
-    "6": "Thermal", "7": "SOH_Deep", "8": "Diagnosis"
+    "6": "Thermal", "7": "SOH_Deep", "8": "Diagnosis",
+    "10": "Driver_Behavior", "11": "Knee_Prognostics"
 }
 TASK_KEYS  = {"SOC": "soc", "SOH": "soh", "RUL": "rul", "Mileage": "mileage"}
 TASK_UNITS = {"SOC": "%", "SOH": "%", "RUL": "cycles", "Mileage": "km"}
 
 MODULE_A_TASKS = ["SOC", "SOH", "RUL", "Mileage"]
 MODULE_B_TASKS = ["Thermal", "SOH_Deep", "Diagnosis"]
+MODULE_C_TASKS = ["Driver_Behavior", "Knee_Prognostics"]
+
+
+# ─────────────────────────────────────────────
+#  MODULE C INPUT COLLECTORS
+# ─────────────────────────────────────────────
+def collect_behavior_inputs() -> dict:
+    print(f"\n  {C['yellow']}Enter driving & operational parameters for BA-BMS Analysis:{C['reset']}")
+    return {
+        "harsh_accel_count": ask_float("Harsh Acceleration count", default=3, low=0),
+        "harsh_brake_count": ask_float("Harsh Braking count", default=2, low=0),
+        "harsh_corner_count": ask_float("Aggressive Cornering count", default=1, low=0),
+        "speed_variance": ask_float("Speed Variance (std dev in km/h)", default=8.5, low=0),
+        "avg_speed": ask_float("Average Trip Speed (km/h)", default=38.0, low=0, high=150),
+        "max_speed": ask_float("Peak Trip Speed (km/h)", default=68.0, low=0, high=200),
+        "battery_temp_max": ask_float("Peak Battery Temp reached (°C)", default=36.0, low=-20, high=120),
+        "max_discharge_current": ask_float("Peak Discharge Current (A)", default=35.0, low=0),
+    }
+
+
+def collect_knee_inputs() -> dict:
+    print(f"\n  {C['yellow']}Enter telemetry & lifecycle data for Knee-Point Prognostics:{C['reset']}")
+    return {
+        "charge_cycle_count": ask_float("Cumulative Charge Cycle Count", default=200, low=0),
+        "capacity": ask_float("Current Estimated Capacity (Ah)", default=94.0, low=0),
+        "voltage": ask_float("Pack Voltage (V)", default=73.8, low=20, high=150),
+        "battery_temp": ask_float("Battery Temperature (°C)", default=33.0, low=-20, high=120),
+        "current": ask_float("Battery Current (A, negative=discharge)", default=-20.0),
+        "soc": ask_float("Current SOC (%)", default=75.0, low=0, high=100),
+        "speed": ask_float("Vehicle Speed (km/h)", default=36.0, low=0, high=150),
+    }
 
 
 # ─────────────────────────────────────────────
@@ -455,6 +507,52 @@ def _run_module_b_task(task: str):
 
 
 # ─────────────────────────────────────────────
+#  MODULE C TASK RUNNER
+# ─────────────────────────────────────────────
+def _run_module_c_task(task: str):
+    if _module_c_engine is None or not _module_c_engine.is_loaded:
+        print(f"\n  {C['red']}✘ Module C BABMSEngine is not loaded. Check modules/module_c/.{C['reset']}")
+        return
+
+    print(f"\n  {'═'*65}")
+    print(f"  {C['bold']}{C['yellow']}MODULE C — {task.replace('_', ' ').upper()}{C['reset']}")
+    print(f"  {'═'*65}")
+
+    if task == "Driver_Behavior":
+        inputs = collect_behavior_inputs()
+        res = _module_c_engine.compute_behavior_indices(**inputs)
+        print(f"\n  {'─'*65}")
+        print(f"  {C['bold']} BA-BMS Driver Behavior & Stress Profile:{C['reset']}")
+        print(f"  {'─'*65}")
+        ai = res["aggressiveness_index"]
+        ai_color = C['green'] if ai <= 0.35 else (C['yellow'] if ai <= 0.65 else C['red'])
+        print(f"  Aggressiveness Index (AI): {ai_color}{ai}  [{res['driver_classification']}]{C['reset']}")
+        
+        bsi = res["battery_stress_index"]
+        bsi_color = C['green'] if bsi <= 0.40 else (C['yellow'] if bsi <= 0.70 else C['red'])
+        print(f"  Battery Stress Index (BSI): {bsi_color}{bsi}{C['reset']}")
+        print(f"  SOH Impact:                {C['yellow']}{res['behavioral_impact_description']}{C['reset']}")
+        print(f"  BMS Directive:             {C['cyan']}{res['bms_recommended_directive']}{C['reset']}")
+        print(f"  {'─'*65}")
+
+    elif task == "Knee_Prognostics":
+        inputs = collect_knee_inputs()
+        res = _module_c_engine.predict_knee_point(inputs)
+        print(f"\n  {'─'*65}")
+        print(f"  {C['bold']} Battery Degradation Knee-Point Prognostics:{C['reset']}")
+        print(f"  {'─'*65}")
+        rul_knee = res["rul_to_knee_cycles"]
+        knee_color = C['green'] if rul_knee > 200 else (C['yellow'] if rul_knee > 50 else C['red'])
+        print(f"  Current Cycle Count:       {res['current_cycle_count']}")
+        print(f"  RUL to Knee Point:         {knee_color}{rul_knee} charge cycles{C['reset']}")
+        print(f"  Estimated Knee Cycle:      {res['estimated_knee_cycle']}")
+        print(f"  Risk State:                {knee_color}{res['knee_risk_state']}{C['reset']}")
+        print(f"  Recommended Action:        {C['cyan']}{res['recommended_action']}{C['reset']}")
+        print(f"  Model Used:                {C['magenta']}{res['model_used']}{C['reset']}")
+        print(f"  {'─'*65}")
+
+
+# ─────────────────────────────────────────────
 #  MAIN LOOP
 # ─────────────────────────────────────────────
 def run_prediction_system():
@@ -480,8 +578,15 @@ def run_prediction_system():
     color_b = C['green'] if b_ok else C['red']
     print(f"  {color_b}  {icon_b}  BatteryIQ Engine (SOH-Deep + Thermal Fault Detection){C['reset']}")
 
-    if not models and not b_ok:
-        print(f"\n  {C['red']}No models available. Run retrain_clean.py and check module3/weights/.{C['reset']}\n")
+    # Load Module C engine
+    print(f"  {C['yellow']}[Module C] Loading BA-BMS & Knee-Point Prognostics engine...{C['reset']}")
+    c_ok = _load_module_c_engine()
+    icon_c = "✔" if c_ok else "✘"
+    color_c = C['green'] if c_ok else C['red']
+    print(f"  {color_c}  {icon_c}  BA-BMS Engine (Behavior AI/BSI + Knee Prognostics){C['reset']}")
+
+    if not models and not b_ok and not c_ok:
+        print(f"\n  {C['red']}No models available. Run retrain_clean.py and check module weights.{C['reset']}\n")
         return
 
     while True:
@@ -494,16 +599,23 @@ def run_prediction_system():
 
         tasks_to_run = []
         if choice == "5":
-            tasks_to_run = list(TASK_MAP[k] for k in ["1","2","3","4"])
+            tasks_to_run = list(MODULE_A_TASKS)
         elif choice == "9":
-            tasks_to_run = MODULE_A_TASKS + MODULE_B_TASKS
+            tasks_to_run = list(MODULE_B_TASKS)
+        elif choice == "12":
+            tasks_to_run = MODULE_A_TASKS + MODULE_B_TASKS + MODULE_C_TASKS
         elif choice in TASK_MAP:
             tasks_to_run = [TASK_MAP[choice]]
         else:
-            print(f"  {C['red']}Invalid choice. Enter 0-9.{C['reset']}")
+            print(f"  {C['red']}Invalid choice. Enter 0-12.{C['reset']}")
             continue
 
         for task in tasks_to_run:
+            # ── Module C tasks
+            if task in MODULE_C_TASKS:
+                _run_module_c_task(task)
+                continue
+
             # ── Module B tasks
             if task in MODULE_B_TASKS:
                 _run_module_b_task(task)

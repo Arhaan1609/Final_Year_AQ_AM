@@ -137,6 +137,50 @@ class BatchDiagnosisRequest(BaseSchema):
 
 
 # ──────────────────────────────────────────────
+#  MODULE C — REQUEST SCHEMAS (BA-BMS & Knee)
+# ──────────────────────────────────────────────
+
+class DriverBehaviorRequest(BaseSchema):
+    """Input parameters for Driver Aggressiveness Index (AI) and Battery Stress Index (BSI)."""
+    harsh_accel_count: float = Field(0.0, ge=0, description="Count of harsh acceleration events in trip/window")
+    harsh_brake_count: float = Field(0.0, ge=0, description="Count of harsh braking events")
+    harsh_corner_count: float = Field(0.0, ge=0, description="Count of aggressive cornering maneuvers")
+    speed_variance: float = Field(5.0, ge=0, description="Standard deviation of vehicle speed (km/h)")
+    avg_speed: float = Field(35.0, ge=0, le=150, description="Average trip speed (km/h)")
+    max_speed: float = Field(65.0, ge=0, le=200, description="Peak vehicle speed (km/h)")
+    overspeed_count: float = Field(0.0, ge=0, description="Occurrences of exceeding speed limits")
+    battery_temp_max: float = Field(35.0, ge=-20, le=120, description="Peak battery temperature reached (°C)")
+    max_discharge_current: float = Field(25.0, description="Maximum discharge current peak in Amperes")
+    voltage_variance: float = Field(1.2, ge=0, description="Cell voltage variance during acceleration")
+    soc_drain_rate: float = Field(0.65, ge=0, description="SOC drain percentage per kilometer (%/km)")
+
+
+class KneePredictionRequest(BaseSchema):
+    """Telemetry and battery cycle input for Knee-Point RUL Prognostics."""
+    charge_cycle_count: float = Field(..., ge=0, description="Cumulative battery full charge cycles")
+    capacity: Optional[float] = Field(95.0, ge=0, description="Current estimated capacity (Ah)")
+    voltage: Optional[float] = Field(74.0, ge=20, le=150, description="Battery pack voltage (V)")
+    battery_temp: Optional[float] = Field(32.0, ge=-20, le=120, description="Battery temperature (°C)")
+    current: Optional[float] = Field(-18.0, description="Battery current (A, negative=discharge)")
+    soc: Optional[float] = Field(80.0, ge=0, le=100, description="Current State of Charge (%)")
+    speed: Optional[float] = Field(35.0, ge=0, le=150, description="Vehicle speed (km/h)")
+    run_kms: Optional[float] = Field(50.0, ge=0, description="Trip distance covered (km)")
+    energy_kwh: Optional[float] = Field(8.5, ge=0, description="Energy consumed (kWh)")
+
+
+class MetaEnsembleRequest(BaseSchema):
+    """Multi-target input for simultaneous SOH and Knee RUL estimation."""
+    vehicle_id: str = Field("GJ05CV6564", description="Vehicle registration identifier")
+    charge_cycle_count: float = Field(..., ge=0)
+    battery_voltage: float = Field(..., ge=20, le=150)
+    battery_temp: float = Field(..., ge=-20, le=120)
+    battery_current: float = Field(...)
+    soc: float = Field(..., ge=0, le=100)
+    harsh_accel_count: float = Field(0.0, ge=0)
+    speed_variance: float = Field(5.0, ge=0)
+
+
+# ──────────────────────────────────────────────
 #  UNIFIED RESPONSE SCHEMAS
 # ──────────────────────────────────────────────
 
@@ -150,9 +194,43 @@ class PredictionResponse(BaseSchema):
     confidence_margin: Optional[float] = None
 
 
+class DriverBehaviorResponse(BaseSchema):
+    """Response for Driver Aggressiveness Index (AI) and Battery Stress Index (BSI)."""
+    aggressiveness_index: float
+    battery_stress_index: float
+    driver_classification: str
+    annual_soh_penalty_percent: float
+    behavioral_impact_description: str
+    bms_recommended_directive: str
+    sub_scores: Dict[str, float] = {}
+
+
+class KneePredictionResponse(BaseSchema):
+    """Response for Knee-Point Degradation Prognostics."""
+    current_cycle_count: float
+    rul_to_knee_cycles: float
+    estimated_knee_cycle: float
+    knee_risk_state: str
+    recommended_action: str
+    model_used: str
+
+
+class MetaEnsembleResponse(BaseSchema):
+    """Response for Multi-Target Meta-Ensemble estimation."""
+    vehicle_id: str
+    estimated_soh: float
+    rul_to_knee_cycles: float
+    driver_aggressiveness_index: float
+    battery_stress_index: float
+    health_status: str
+    ensemble_architecture: str
+
+
 class HealthStatusResponse(BaseSchema):
-    """Response for Module B health status endpoints."""
+    """Response for system health status endpoint."""
     status: str = "ok"
     module_a_models: Dict[str, bool] = {}
     module_b_engine: bool = False
+    module_c_engine: bool = False
     message: str = ""
+

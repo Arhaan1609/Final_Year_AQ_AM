@@ -1,12 +1,13 @@
 """
-run_all.py — Unified EV Battery Intelligence System Launcher.
+run_all.py — Unified EV Battery Intelligence System Launcher (Tri-Pillar System).
 
 Project Structure:
   Final_Year_Project_1/
   ├── modules/
   │   ├── module_a/   ← EV Fleet Prediction Pipeline (SOC/SOH/RUL/Mileage)
-  │   └── module_b/   ← BatteryIQ Engine (Thermal + SOH-Deep)
-  ├── api/            ← Unified FastAPI backend (8 endpoints)
+  │   ├── module_b/   ← BatteryIQ Engine (Thermal Safety + SOH-Deep)
+  │   └── module_c/   ← Behavior-Aware BMS (AI/BSI) & Knee-Point Prognostics
+  ├── api/            ← Unified FastAPI backend (11 endpoints)
   ├── data/
   │   ├── raw/        ← Raw fleet data
   │   └── processed/  ← Processed CSVs + feature sets
@@ -17,8 +18,8 @@ Project Structure:
 Usage:
   python run_all.py                    # Start unified API on port 8000
   python run_all.py --port 9000        # Custom port
-  python run_all.py --cli              # Launch interactive CLI (9 prediction options)
-  python run_all.py --check            # Show model status only, don't start server
+  python run_all.py --cli              # Launch interactive CLI (12 prediction options)
+  python run_all.py --check            # Show model status across all 3 modules
   python run_all.py --retrain          # Re-run Module A pipeline (steps 3-7) then start API
 """
 
@@ -36,6 +37,7 @@ if hasattr(sys.stderr, "reconfigure"):
 _PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 _MODULE_A_DIR = os.path.join(_PROJECT_ROOT, "modules", "module_a")
 _MODULE_B_DIR = os.path.join(_PROJECT_ROOT, "modules", "module_b")
+_MODULE_C_DIR = os.path.join(_PROJECT_ROOT, "modules", "module_c")
 
 sys.path.insert(0, _MODULE_A_DIR)
 
@@ -43,16 +45,17 @@ sys.path.insert(0, _MODULE_A_DIR)
 def _banner():
     print("""
 ╔══════════════════════════════════════════════════════════════════════════╗
-║          EV BATTERY INTELLIGENCE — UNIFIED SYSTEM LAUNCHER              ║
+║          EV BATTERY INTELLIGENCE — TRI-PILLAR SYSTEM LAUNCHER           ║
 ║                                                                          ║
 ║  modules/module_a: SOC | SOH | RUL | Mileage  (sklearn / XGBoost)      ║
 ║  modules/module_b: Thermal Safety | SOH-Deep  (PyTorch CNN-LSTM + RF)   ║
+║  modules/module_c: Driver Behavior (AI/BSI) | Knee-Point Prognostics    ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 """)
 
 
 def _check_models():
-    """Print status of all trained models and Module B weights."""
+    """Print status of all trained models and weights across all 3 modules."""
     import config as cfg
 
     print("  ── Module A Models  (models/) ──────────────────────────────────────")
@@ -75,17 +78,30 @@ def _check_models():
             all_ok = False
 
     print("\n  ── Module B Weights  (modules/module_b/weights/) ──────────────────")
-    weights = {
+    weights_b = {
         "SOH CNN-LSTM":  os.path.join(_MODULE_B_DIR, "weights", "soh_hybrid_cnn_lstm.pt"),
         "Thermal RF":    os.path.join(_MODULE_B_DIR, "weights", "thermal_rf_multizone.joblib"),
         "Scalers":       os.path.join(_MODULE_B_DIR, "weights", "scalers.joblib"),
     }
-    for name, path in weights.items():
+    for name, path in weights_b.items():
         if os.path.exists(path):
             size_mb = os.path.getsize(path) / (1024 * 1024)
             print(f"  ✔  {name:<20} ({size_mb:.1f} MB)")
         else:
             print(f"  ✘  {name:<20} MISSING: {path}")
+            all_ok = False
+
+    print("\n  ── Module C Models  (modules/module_c/) ───────────────────────────")
+    models_c = {
+        "Knee XGBoost Booster": os.path.join(_MODULE_C_DIR, "best_xgboost_model.json"),
+        "Feature Scaler":       os.path.join(_MODULE_C_DIR, "feature_scaler.pkl"),
+    }
+    for name, path in models_c.items():
+        if os.path.exists(path):
+            size_kb = os.path.getsize(path) / 1024
+            print(f"  ✔  {name:<22} ({size_kb:.0f} KB)")
+        else:
+            print(f"  ✘  {name:<22} MISSING: {path}")
             all_ok = False
 
     print("\n  ── Data Folders ────────────────────────────────────────────────────")
@@ -103,11 +119,12 @@ def _check_models():
 
     print()
     if all_ok:
-        print("  ✔  All systems ready.\n")
+        print("  ✔  All 3 modules and systems ready.\n")
     else:
         print("  ⚠  Some components missing:")
         print("     Module A models:  python modules/module_a/retrain_clean.py")
-        print("     Module B weights: should be in modules/module_b/weights/\n")
+        print("     Module B weights: should be in modules/module_b/weights/")
+        print("     Module C models:  should be in modules/module_c/\n")
     return all_ok
 
 
@@ -145,8 +162,8 @@ def _retrain():
 def main():
     _banner()
     parser = argparse.ArgumentParser(description="EV Battery Intelligence — Unified Launcher")
-    parser.add_argument("--cli",     action="store_true", help="Launch interactive CLI (9 prediction tasks)")
-    parser.add_argument("--check",   action="store_true", help="Check system status and exit")
+    parser.add_argument("--cli",     action="store_true", help="Launch interactive CLI (12 prediction options)")
+    parser.add_argument("--check",   action="store_true", help="Check system status across all 3 modules and exit")
     parser.add_argument("--retrain", action="store_true", help="Re-run Module A training pipeline first")
     parser.add_argument("--port",    type=int,  default=8000, help="API port (default: 8000)")
     parser.add_argument("--host",    type=str,  default="0.0.0.0", help="API host (default: 0.0.0.0)")

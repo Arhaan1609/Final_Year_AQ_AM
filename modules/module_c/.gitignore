@@ -1,0 +1,18 @@
+# Virtual environments
+venv/
+env/
+.env
+
+# Data
+data/
+*.csv
+__pycache__/
+*.pyc
+
+# Logs and outputs
+*_log.txt
+*_log_utf8.txt
+data_exploration*.txt
+test_run*.txt
+debug_results.json
+plots/
