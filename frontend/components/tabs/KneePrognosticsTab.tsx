@@ -7,11 +7,11 @@ import { Badge } from "../ui/Badge";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { predictKneePoint } from "../../lib/api/client";
 import { KneePredictionResponse } from "../../lib/api/types";
-import anime from "animejs";
-import { TrendingDown, AlertOctagon, ShieldCheck, Activity, CornerDownRight } from "lucide-react";
+import { animate, createDrawable } from "animejs";
+import { TrendingDown, AlertOctagon, CornerDownRight } from "lucide-react";
 
 export const KneePrognosticsTab: React.FC = () => {
-  const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
+  const { telemetry, getSelectedVehicle } = useFleetStore();
   const vehicle = getSelectedVehicle();
 
   const [cycleInput, setCycleInput] = useState<number>(telemetry.cycleCount);
@@ -42,36 +42,30 @@ export const KneePrognosticsTab: React.FC = () => {
     evaluateKnee();
   }, [evaluateKnee]);
 
-  // Signature Animation Moment #2: Knee curve draw-on with stroke-dashoffset on mount
+  // Signature Animation Moment #2: Knee curve draw-on with anime.js v4 createDrawable
   useEffect(() => {
     if (!curvePathRef.current) return;
 
-    const pathEl = curvePathRef.current;
-    const length = pathEl.getTotalLength ? pathEl.getTotalLength() : 800;
+    try {
+      const drawable = createDrawable(curvePathRef.current);
+      animate(drawable, {
+        draw: ["0 0", "0 1"],
+        duration: 1400,
+        ease: "inOut(3)",
+      });
 
-    pathEl.style.strokeDasharray = `${length}`;
-    pathEl.style.strokeDashoffset = `${length}`;
-
-    const timeline = anime.timeline({
-      easing: "easeOutQuad",
-    });
-
-    timeline
-      .add({
-        targets: pathEl,
-        strokeDashoffset: [length, 0],
-        duration: 1600,
-      })
-      .add(
-        {
-          targets: kneePointRef.current,
+      if (kneePointRef.current) {
+        animate(kneePointRef.current, {
           scale: [0, 1.4, 1],
           opacity: [0, 1],
           duration: 600,
-          easing: "easeOutElastic(1, .5)",
-        },
-        "-=400"
-      );
+          delay: 1000,
+          ease: "outElastic(1, .5)",
+        });
+      }
+    } catch (e) {
+      console.warn("Curve draw animation fallback:", e);
+    }
   }, []);
 
   const isPostKnee = kneeData?.is_post_knee || false;
@@ -80,41 +74,41 @@ export const KneePrognosticsTab: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className={`glass-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border ${
+      <div className={`app-card p-4 flex flex-wrap items-center justify-between gap-4 border ${
         isPostKnee
-          ? "border-rose-500/30 bg-rose-950/20"
+          ? "border-rose-300 dark:border-rose-800/60 bg-rose-50 dark:bg-rose-950/20"
           : remainingKneeCycles < 200
-          ? "border-amber-500/30 bg-amber-950/20"
-          : "border-cyan-500/20 bg-cyan-950/10"
+          ? "border-amber-300 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/20"
+          : "border-cyan-200 dark:border-cyan-800/60 bg-cyan-50 dark:bg-cyan-950/20"
       }`}>
         <div className="flex items-center gap-3">
           <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${
             isPostKnee
-              ? "bg-rose-500/20 border-rose-500/40 text-rose-400"
+              ? "bg-rose-100 dark:bg-rose-900/40 border-rose-300 text-rose-600 dark:text-rose-400"
               : remainingKneeCycles < 200
-              ? "bg-amber-500/20 border-amber-500/40 text-amber-400"
-              : "bg-cyan-500/20 border-cyan-500/30 text-cyan-400"
+              ? "bg-amber-100 dark:bg-amber-900/40 border-amber-300 text-amber-600 dark:text-amber-400"
+              : "bg-cyan-100 dark:bg-cyan-900/40 border-cyan-300 text-cyan-600 dark:text-cyan-400"
           }`}>
             {isPostKnee ? <AlertOctagon className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-100">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
                 Module C: Degradation Knee-Point Prognostics
               </h2>
               <Badge variant={isPostKnee ? "crimson" : remainingKneeCycles < 200 ? "amber" : "cyan"} size="sm" dot>
                 {kneeData?.knee_risk_state || "EVALUATING"}
               </Badge>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              28-Feature Pre-trained XGBoost Booster & Piecewise Linear Joint MSE Optimizer
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              28-Feature XGBoost Booster & Piecewise Linear Joint MSE Optimizer
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="text-slate-400">Aging Slope:</span>
-          <span className="text-slate-200 font-bold">{kneeData?.aging_rate_slope} %/cycle</span>
+          <span className="text-slate-500 dark:text-slate-400">Aging Slope:</span>
+          <span className="text-slate-900 dark:text-slate-200 font-bold">{kneeData?.aging_rate_slope} %/cycle</span>
         </div>
       </div>
 
@@ -122,92 +116,92 @@ export const KneePrognosticsTab: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* RUL to Knee Countdown */}
         <GlassCard glow={isPostKnee ? "crimson" : remainingKneeCycles < 200 ? "amber" : "cyan"} className="text-center">
-          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>RUL to Degradation Knee</span>
-            <Activity className="w-4 h-4 text-cyan-400" />
+            <TrendingDown className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
           </div>
           <div className="my-4">
             <div className="text-5xl font-extrabold font-mono tracking-tight">
               <AnimatedNumber
                 value={remainingKneeCycles}
                 decimals={0}
-                className={isPostKnee ? "text-rose-400" : remainingKneeCycles < 200 ? "text-amber-300" : "text-cyan-300"}
+                className={isPostKnee ? "text-rose-600 dark:text-rose-400" : remainingKneeCycles < 200 ? "text-amber-600 dark:text-amber-400" : "text-cyan-600 dark:text-cyan-400"}
                 suffix=" c"
               />
             </div>
-            <div className="text-xs text-slate-400 mt-1 font-mono">Cycles remaining until rapid aging onset</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">Cycles remaining until rapid aging onset</div>
           </div>
-          <div className="pt-3 border-t border-slate-800 text-xs text-slate-300">
-            Status: <strong className={isPostKnee ? "text-rose-400" : "text-emerald-400"}>{kneeData?.knee_risk_state}</strong>
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
+            Status: <strong className={isPostKnee ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"}>{kneeData?.knee_risk_state}</strong>
           </div>
         </GlassCard>
 
         {/* Current Cycle Offset */}
         <GlassCard glow="purple" className="text-center">
-          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>Current Charge Cycle</span>
-            <TrendingDown className="w-4 h-4 text-purple-400" />
+            <TrendingDown className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
           <div className="my-4">
-            <div className="text-5xl font-extrabold font-mono tracking-tight text-purple-300">
+            <div className="text-5xl font-extrabold font-mono tracking-tight text-purple-600 dark:text-purple-400">
               <AnimatedNumber value={cycleInput} decimals={0} suffix=" EFC" />
             </div>
-            <div className="text-xs text-slate-400 mt-1 font-mono">Estimated Knee Point at ~950 Cycles</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">Estimated Knee Point at ~950 Cycles</div>
           </div>
-          <div className="pt-3 border-t border-slate-800 text-xs text-slate-300">
-            Capacity: <strong className="text-slate-200">{capacityInput.toFixed(1)}% SOH</strong>
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
+            Capacity: <strong className="text-slate-900 dark:text-slate-100">{capacityInput.toFixed(1)}% SOH</strong>
           </div>
         </GlassCard>
 
         {/* Aging Rate Acceleration */}
         <GlassCard glow="amber" className="text-center">
-          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>Degradation Trajectory</span>
-            <CornerDownRight className="w-4 h-4 text-amber-400" />
+            <CornerDownRight className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
           <div className="my-4">
-            <div className="text-4xl font-extrabold font-mono tracking-tight text-amber-300">
-              {isPostKnee ? "3.6x Faster" : "Linear Baseline"}
+            <div className="text-4xl font-extrabold font-mono tracking-tight text-amber-600 dark:text-amber-400">
+              {isPostKnee ? "3.6x Accelerated" : "Linear Baseline"}
             </div>
-            <div className="text-xs text-slate-400 mt-1 font-mono">
-              {isPostKnee ? "Severe SEI growth & Lithium plating" : "Nominal calendar & cycle wear"}
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
+              {isPostKnee ? "SEI layer breakdown & Li plating" : "Predictable capacity fade"}
             </div>
           </div>
-          <div className="pt-3 border-t border-slate-800 text-xs text-slate-300">
-            Phase: <strong className="text-cyan-400">{isPostKnee ? "Post-Knee Region" : "Pre-Knee Safe Regime"}</strong>
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
+            Phase: <strong className="text-cyan-600 dark:text-cyan-400">{isPostKnee ? "Post-Knee Zone" : "Pre-Knee Safe Regime"}</strong>
           </div>
         </GlassCard>
       </div>
 
       {/* Signature Animated Knee Curve SVG Graph */}
       <GlassCard className="space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
-            <TrendingDown className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100">
-              Battery Degradation Trajectory & Knee-Point Localization ($SOH$ vs. $Cycles$)
+            <TrendingDown className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+              Degradation Curve & Knee-Point Localization (SOH vs. Cycles)
             </h3>
           </div>
-          <Badge variant="cyan" size="sm">Piecewise Linear Fit</Badge>
+          <Badge variant="cyan" size="sm">anime.js v4 createDrawable</Badge>
         </div>
 
         {/* SVG Curve Container */}
-        <div className="w-full h-72 relative bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 flex items-center justify-center">
+        <div className="w-full h-72 relative bg-slate-50 dark:bg-slate-950/80 rounded-xl p-4 border border-slate-200 dark:border-slate-800 flex items-center justify-center">
           <svg viewBox="0 0 700 240" className="w-full h-full overflow-visible">
             <defs>
               <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#06B6D4" />
-                <stop offset="65%" stopColor="#10B981" />
-                <stop offset="78%" stopColor="#F59E0B" />
-                <stop offset="100%" stopColor="#EF4444" />
+                <stop offset="0%" stopColor="#0891B2" />
+                <stop offset="65%" stopColor="#059669" />
+                <stop offset="78%" stopColor="#D97706" />
+                <stop offset="100%" stopColor="#DC2626" />
               </linearGradient>
             </defs>
 
             {/* Grid Lines */}
-            <line x1="60" y1="20" x2="680" y2="20" stroke="#1E293B" strokeDasharray="4 4" />
-            <line x1="60" y1="75" x2="680" y2="75" stroke="#1E293B" strokeDasharray="4 4" />
-            <line x1="60" y1="130" x2="680" y2="130" stroke="#1E293B" strokeDasharray="4 4" />
-            <line x1="60" y1="185" x2="680" y2="185" stroke="#1E293B" strokeDasharray="4 4" />
+            <line x1="60" y1="20" x2="680" y2="20" stroke="#CBD5E1" strokeDasharray="4 4" className="dark:stroke-slate-800" />
+            <line x1="60" y1="75" x2="680" y2="75" stroke="#CBD5E1" strokeDasharray="4 4" className="dark:stroke-slate-800" />
+            <line x1="60" y1="130" x2="680" y2="130" stroke="#CBD5E1" strokeDasharray="4 4" className="dark:stroke-slate-800" />
+            <line x1="60" y1="185" x2="680" y2="185" stroke="#CBD5E1" strokeDasharray="4 4" className="dark:stroke-slate-800" />
 
             {/* Axis Labels */}
             <text x="15" y="25" fill="#64748B" fontSize="11" fontFamily="monospace">100%</text>
@@ -218,11 +212,12 @@ export const KneePrognosticsTab: React.FC = () => {
             <text x="60" y="215" fill="#64748B" fontSize="11" fontFamily="monospace">0 c</text>
             <text x="240" y="215" fill="#64748B" fontSize="11" fontFamily="monospace">400 c</text>
             <text x="420" y="215" fill="#64748B" fontSize="11" fontFamily="monospace">800 c</text>
-            <text x="520" y="215" fill="#10B981" fontSize="11" fontFamily="monospace" fontWeight="bold">Knee (~950c)</text>
+            <text x="520" y="215" fill="#059669" fontSize="11" fontFamily="monospace" fontWeight="bold">Knee (~950c)</text>
             <text x="640" y="215" fill="#64748B" fontSize="11" fontFamily="monospace">1400 c</text>
 
-            {/* Degradation Curve (Draw-On Animation) */}
+            {/* Degradation Curve (Draw-On with anime.js v4) */}
             <path
+              id="knee-curve-path"
               ref={curvePathRef}
               d="M 60 25 Q 300 50 480 85 T 530 115 Q 580 160 670 200"
               fill="none"
@@ -237,20 +232,19 @@ export const KneePrognosticsTab: React.FC = () => {
               cx="530"
               cy="115"
               r="7"
-              fill="#EF4444"
+              fill="#DC2626"
               stroke="#FFF"
               strokeWidth="2.5"
-              className="cursor-pointer"
             />
 
             {/* Knee Point Callout Box */}
             <g transform="translate(450, 45)">
-              <rect width="160" height="38" rx="8" fill="#111622" stroke="#EF4444" strokeWidth="1.5" />
-              <text x="80" y="17" fill="#EF4444" fontSize="11" fontWeight="bold" textAnchor="middle">
+              <rect width="160" height="38" rx="8" className="fill-white dark:fill-slate-900 stroke-rose-500" strokeWidth="1.5" />
+              <text x="80" y="17" className="fill-rose-600 dark:fill-rose-400" fontSize="11" fontWeight="bold" textAnchor="middle">
                 Degradation Knee Point
               </text>
-              <text x="80" y="30" fill="#94A3B8" fontSize="10" textAnchor="middle">
-                Slope changes: -0.016 → -0.058
+              <text x="80" y="30" fill="#64748B" fontSize="10" textAnchor="middle">
+                Slope: -0.016 → -0.058
               </text>
             </g>
           </svg>
@@ -260,8 +254,8 @@ export const KneePrognosticsTab: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-300">Simulate Elapsed Cycles:</span>
-              <span className="text-cyan-400 font-bold">{cycleInput} EFC</span>
+              <span className="text-slate-700 dark:text-slate-300">Simulate Elapsed Cycles:</span>
+              <span className="text-cyan-600 dark:text-cyan-400 font-bold">{cycleInput} EFC</span>
             </div>
             <input
               type="range"
@@ -270,12 +264,12 @@ export const KneePrognosticsTab: React.FC = () => {
               step="25"
               value={cycleInput}
               onChange={(e) => setCycleInput(parseInt(e.target.value))}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-600"
             />
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300">
-            <strong className="text-cyan-400">BMS Directive:</strong> {kneeData?.bms_directive}
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300">
+            <strong className="text-cyan-700 dark:text-cyan-400">BMS Directive:</strong> {kneeData?.bms_directive}
           </div>
         </div>
       </GlassCard>

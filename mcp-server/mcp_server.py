@@ -17,7 +17,14 @@ BATTERY_API_BASE (default http://localhost:8000).
 
 import os
 import httpx
-from mcp.server.fastmcp import FastMCP
+
+try:
+    from mcp.server.fastmcp import FastMCP
+except ImportError:
+    try:
+        from mcp.server import MCPServer as FastMCP
+    except ImportError:
+        from mcp.server.mcpserver import MCPServer as FastMCP
 
 BATTERY_API_BASE = os.environ.get("BATTERY_API_BASE", "http://localhost:8000")
 

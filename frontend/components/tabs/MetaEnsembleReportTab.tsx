@@ -4,10 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useFleetStore } from "../../lib/store/useFleetStore";
 import { GlassCard } from "../ui/GlassCard";
 import { Badge } from "../ui/Badge";
-import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { predictMetaEnsemble, diagnoseVehicle } from "../../lib/api/client";
 import { MetaEnsembleResponse, DiagnoseResponse } from "../../lib/api/types";
-import { FileText, Printer, CheckCircle2, ShieldCheck, Cpu, Flame, Gauge, TrendingDown } from "lucide-react";
+import { FileText, Printer, CheckCircle2, Cpu, Flame, Gauge } from "lucide-react";
 
 export const MetaEnsembleReportTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
@@ -57,17 +56,17 @@ export const MetaEnsembleReportTab: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner with Print Button */}
-      <div className="glass-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border border-emerald-500/20 bg-emerald-950/10">
+      <div className="app-card p-4 flex flex-wrap items-center justify-between gap-4 border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/20">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
             <FileText className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               Meta-Ensemble Tri-Pillar Diagnostic Report
               <Badge variant="emerald" size="sm">A + B + C Unified</Badge>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Cross-module telemetry synthesis for asset certification on {selectedVehicleId}
             </p>
           </div>
@@ -75,7 +74,7 @@ export const MetaEnsembleReportTab: React.FC = () => {
 
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-all hover:scale-105"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-slate-200 text-xs font-semibold transition-all hover:scale-105 shadow-sm"
         >
           <Printer className="w-4 h-4" />
           Export / Print Report (PDF)
@@ -83,22 +82,22 @@ export const MetaEnsembleReportTab: React.FC = () => {
       </div>
 
       {/* Report Header Card */}
-      <GlassCard className="space-y-6 border-slate-700/80">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-800 pb-6">
+      <GlassCard className="space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
           <div>
-            <div className="text-xs font-mono uppercase text-cyan-400 font-bold">Vehicle Asset Certificate</div>
-            <h1 className="text-2xl font-extrabold text-slate-100 mt-1">{vehicle.id}</h1>
-            <p className="text-sm text-slate-400 mt-0.5">{vehicle.model} • {vehicle.fleet}</p>
+            <div className="text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-bold">Vehicle Asset Certificate</div>
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mt-1">{vehicle.id}</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{vehicle.model} • {vehicle.fleet}</p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <div className="text-xs text-slate-400 font-mono">Unified Health Rating</div>
-              <div className="text-2xl font-extrabold text-emerald-400 font-mono mt-0.5">
+              <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">Unified Health Rating</div>
+              <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
                 {metaData?.unified_health_grade || "Grade A (Optimal)"}
               </div>
             </div>
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-extrabold font-mono text-2xl">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-extrabold font-mono text-2xl">
               {metaData?.unified_health_grade?.charAt(6) || "A"}
             </div>
           </div>
@@ -107,12 +106,12 @@ export const MetaEnsembleReportTab: React.FC = () => {
         {/* 3 Pillars Summary Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Pillar A */}
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">
               <Cpu className="w-4 h-4" />
               Pillar A: Fleet Telematics
             </div>
-            <div className="text-xs text-slate-300 space-y-1 pt-1">
+            <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>State of Charge: <strong>{vehicle.soc.toFixed(1)}%</strong></div>
               <div>State of Health: <strong>{vehicle.soh.toFixed(1)}%</strong></div>
               <div>Remaining Life: <strong>{vehicle.rul} cycles</strong></div>
@@ -121,12 +120,12 @@ export const MetaEnsembleReportTab: React.FC = () => {
           </div>
 
           {/* Pillar B */}
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
               <Flame className="w-4 h-4" />
               Pillar B: Thermal & Health
             </div>
-            <div className="text-xs text-slate-300 space-y-1 pt-1">
+            <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>Digital Twin Score: <strong>{diagData?.overall_health_score.toFixed(1) || 94.5} / 100</strong></div>
               <div>Thermal Safety: <strong>{diagData?.thermal_status.safety_status || "SAFE"}</strong></div>
               <div>Pack Temp: <strong>{vehicle.battery_temp.toFixed(1)} °C</strong></div>
@@ -135,12 +134,12 @@ export const MetaEnsembleReportTab: React.FC = () => {
           </div>
 
           {/* Pillar C */}
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">
               <Gauge className="w-4 h-4" />
               Pillar C: BA-BMS & Knee
             </div>
-            <div className="text-xs text-slate-300 space-y-1 pt-1">
+            <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>Driver Aggressiveness: <strong>{metaData?.driver_aggressiveness_index || 0.24}</strong></div>
               <div>Battery Stress Index: <strong>{metaData?.battery_stress_index || 0.31}</strong></div>
               <div>RUL to Knee Point: <strong>{metaData?.rul_to_knee_cycles || 735} cycles</strong></div>
@@ -150,22 +149,22 @@ export const MetaEnsembleReportTab: React.FC = () => {
         </div>
 
         {/* Executive Summary Statement */}
-        <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Executive Summary</div>
-          <p className="text-sm text-slate-200 leading-relaxed font-sans">
+        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Executive Summary</div>
+          <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-sans">
             {metaData?.executive_summary || "Synthesizing cross-module telemetry report..."}
           </p>
         </div>
 
         {/* Action Items List */}
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
             Maintenance Action Items & Directives
           </div>
           <div className="space-y-2">
             {diagData?.action_items.map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <div key={i} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                 <span>{item}</span>
               </div>
             ))}

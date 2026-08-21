@@ -1,30 +1,49 @@
-import type { Metadata } from "next";
+"use client";
+
+import React, { useEffect } from "react";
 import "./globals.css";
+import { useFleetStore } from "../lib/store/useFleetStore";
 import { Header } from "../components/layout/Header";
 import { Sidebar } from "../components/layout/Sidebar";
 import { CopilotDrawer } from "../components/copilot/CopilotDrawer";
-
-export const metadata: Metadata = {
-  title: "EV Battery Intelligence Platform | Tri-Pillar Diagnostic Suite",
-  description: "AI-Driven EV Battery State Estimation, Thermal Safety, and Knee-Point Degradation Prognostics",
-};
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { theme } = useFleetStore();
+  const pathname = usePathname();
+  const isDashboard = pathname.startsWith("/dashboard");
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  }, [theme]);
+
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#0A0D14] text-slate-100 min-h-screen flex flex-col antialiased radial-bg selection:bg-cyan-500/30 selection:text-cyan-200">
-        <Header />
-        <div className="flex-1 flex">
-          <Sidebar />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
-            {children}
-          </main>
-        </div>
-        <CopilotDrawer />
+    <html lang="en" className={theme === "dark" ? "dark" : ""}>
+      <body className="min-h-screen flex flex-col antialiased transition-colors selection:bg-cyan-500/20 selection:text-cyan-800 dark:selection:text-cyan-200">
+        {isDashboard ? (
+          <>
+            <Header />
+            <div className="flex-1 flex">
+              <Sidebar />
+              <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
+                {children}
+              </main>
+            </div>
+            <CopilotDrawer />
+          </>
+        ) : (
+          // Landing page renders without dashboard sidebar
+          <main className="flex-1 w-full">{children}</main>
+        )}
       </body>
     </html>
   );

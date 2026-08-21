@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import anime from "animejs";
+import { animate } from "animejs";
 
 interface AnimatedNumberProps {
   value: number;
@@ -32,12 +32,11 @@ export const AnimatedNumber: React.FC<AnimatedNumberProps> = ({
 
     const obj = { val: fromVal };
 
-    const anim = anime({
-      targets: obj,
+    const anim = animate(obj, {
       val: toVal,
       duration: duration,
-      easing: "easeOutExpo",
-      update: () => {
+      ease: "outExpo",
+      onUpdate: () => {
         if (spanRef.current) {
           spanRef.current.innerHTML = `${prefix}${obj.val.toFixed(decimals)}${suffix}`;
         }
@@ -45,7 +44,9 @@ export const AnimatedNumber: React.FC<AnimatedNumberProps> = ({
     });
 
     return () => {
-      anim.pause();
+      if (anim && typeof anim.pause === "function") {
+        anim.pause();
+      }
     };
   }, [value, decimals, prefix, suffix, duration]);
 

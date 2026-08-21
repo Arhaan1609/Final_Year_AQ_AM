@@ -11,6 +11,8 @@ export type DashboardTab =
   | "knee"
   | "meta-ensemble";
 
+export type ThemeMode = "light" | "dark";
+
 interface TelemetryInputs {
   voltage: number;
   current: number;
@@ -25,6 +27,7 @@ interface TelemetryInputs {
 }
 
 interface FleetStoreState {
+  theme: ThemeMode;
   vehicles: FleetVehicle[];
   selectedVehicleId: string;
   activeTab: DashboardTab;
@@ -35,6 +38,8 @@ interface FleetStoreState {
   isLiveUpdating: boolean;
 
   // Actions
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
   setSelectedVehicle: (id: string) => void;
   setActiveTab: (tab: DashboardTab) => void;
   setIsMock: (mock: boolean) => void;
@@ -56,6 +61,7 @@ const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
 ];
 
 export const useFleetStore = create<FleetStoreState>((set, get) => ({
+  theme: "light", // Default to clean light mode as required
   vehicles: MOCK_VEHICLES,
   selectedVehicleId: MOCK_VEHICLES[0].id,
   activeTab: "fleet",
@@ -76,6 +82,9 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
     harshBrake: 1,
     harshCorner: 1,
   },
+
+  setTheme: (theme: ThemeMode) => set({ theme }),
+  toggleTheme: () => set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
 
   setSelectedVehicle: (id: string) => {
     const v = get().vehicles.find((item) => item.id === id);

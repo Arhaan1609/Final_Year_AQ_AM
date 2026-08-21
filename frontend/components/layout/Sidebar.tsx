@@ -9,7 +9,6 @@ import {
   Gauge,
   TrendingDown,
   FileText,
-  ShieldAlert,
 } from "lucide-react";
 
 export const Sidebar: React.FC = () => {
@@ -55,10 +54,10 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 border-r border-slate-800/80 bg-[#0A0D14]/60 backdrop-blur-xl p-4 flex flex-col justify-between hidden md:flex min-h-[calc(100vh-4rem)]">
+    <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-[#0A0D14]/60 backdrop-blur-xl p-4 flex flex-col justify-between hidden md:flex min-h-[calc(100vh-4rem)] transition-colors">
       <div className="space-y-1.5">
-        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-3 py-2">
-          Diagnostic Navigation
+        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 px-3 py-2">
+          Diagnostic Suite
         </div>
 
         {navItems.map((item) => {
@@ -70,14 +69,14 @@ export const Sidebar: React.FC = () => {
               onClick={() => setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left transition-all select-none ${
                 isActive
-                  ? "bg-slate-800/90 text-cyan-300 border border-cyan-500/40 shadow-glow-cyan font-semibold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent"
+                  ? "bg-cyan-50 dark:bg-slate-800/90 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/40 shadow-sm font-semibold"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/60 border border-transparent"
               }`}
             >
-              <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-cyan-400" : "text-slate-400"}`} />
+              <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-cyan-600 dark:text-cyan-400" : "text-slate-400 dark:text-slate-400"}`} />
               <div className="overflow-hidden">
                 <div className="text-xs leading-tight truncate">{item.label}</div>
-                <div className="text-[10px] font-mono text-slate-400 truncate mt-0.5">{item.sub}</div>
+                <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 truncate mt-0.5">{item.sub}</div>
               </div>
             </button>
           );
@@ -85,13 +84,13 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800/80 text-[11px] text-slate-400 font-mono">
-        <div className="flex items-center gap-2 text-emerald-400 font-semibold mb-1">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          Backend Ready
+      <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold mb-1">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          Tri-Pillar Ready
         </div>
         <div>FastAPI Port: 8000</div>
-        <div>MCP Port: 8001</div>
+        <div>FastMCP Port: 8001</div>
       </div>
     </aside>
   );

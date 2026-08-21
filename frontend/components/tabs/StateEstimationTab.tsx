@@ -7,7 +7,7 @@ import { Badge } from "../ui/Badge";
 import { ElasticGauge } from "../ui/ElasticGauge";
 import { predictSOC, predictSOH, predictRUL, predictMileage } from "../../lib/api/client";
 import { ModelPredictionResponse } from "../../lib/api/types";
-import { Zap, Activity, TrendingDown, Navigation, Sliders, Cpu } from "lucide-react";
+import { Sliders, Cpu } from "lucide-react";
 
 export const StateEstimationTab: React.FC = () => {
   const { telemetry, updateTelemetry, selectedVehicleId } = useFleetStore();
@@ -69,24 +69,24 @@ export const StateEstimationTab: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header Card */}
-      <div className="glass-panel rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/20 bg-cyan-950/10">
+      <div className="app-card p-4 flex flex-wrap items-center justify-between gap-4 border border-cyan-200 dark:border-cyan-800/60 bg-cyan-50 dark:bg-cyan-950/20">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+          <div className="w-9 h-9 rounded-xl bg-cyan-100 dark:bg-cyan-900/40 border border-cyan-300 text-cyan-700 dark:text-cyan-400 flex items-center justify-center">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               Module A: Macro Fleet State Estimation
               <Badge variant="cyan" size="sm">56 ML/DL Models</Badge>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Live parameter inference using scikit-learn & XGBoost champion models on {selectedVehicleId}
             </p>
           </div>
         </div>
         {loading && (
-          <span className="text-xs font-mono text-cyan-400 flex items-center gap-1.5 animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-cyan-400" /> Computing Inference...
+          <span className="text-xs font-mono text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-cyan-500" /> Computing Inference...
           </span>
         )}
       </div>
@@ -97,7 +97,7 @@ export const StateEstimationTab: React.FC = () => {
         <GlassCard glow="cyan" className="flex flex-col items-center justify-between text-center">
           <div className="w-full flex items-center justify-between">
             <Badge variant="cyan" size="sm">SOC Estimation</Badge>
-            <span className="text-[11px] font-mono text-slate-400">KNN R²=0.9958</span>
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">KNN R²=0.9958</span>
           </div>
           <div className="my-2">
             <ElasticGauge
@@ -106,11 +106,11 @@ export const StateEstimationTab: React.FC = () => {
               max={100}
               label="State of Charge"
               unit="%"
-              color="#06B6D4"
+              color="#0891B2"
             />
           </div>
-          <div className="text-[11px] text-slate-400 border-t border-slate-800/80 w-full pt-2">
-            Model: <strong className="text-slate-200">K-Nearest Neighbors</strong>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 w-full pt-2">
+            Model: <strong className="text-slate-800 dark:text-slate-200">K-Nearest Neighbors</strong>
           </div>
         </GlassCard>
 
@@ -118,7 +118,7 @@ export const StateEstimationTab: React.FC = () => {
         <GlassCard glow="emerald" className="flex flex-col items-center justify-between text-center">
           <div className="w-full flex items-center justify-between">
             <Badge variant="emerald" size="sm">SOH Tabular</Badge>
-            <span className="text-[11px] font-mono text-slate-400">XGBoost R²=0.9672</span>
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">XGBoost R²=0.9672</span>
           </div>
           <div className="my-2">
             <ElasticGauge
@@ -127,11 +127,11 @@ export const StateEstimationTab: React.FC = () => {
               max={100}
               label="State of Health"
               unit="%"
-              color="#10B981"
+              color="#059669"
             />
           </div>
-          <div className="text-[11px] text-slate-400 border-t border-slate-800/80 w-full pt-2">
-            Model: <strong className="text-slate-200">XGBoost Regressor</strong>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 w-full pt-2">
+            Model: <strong className="text-slate-800 dark:text-slate-200">XGBoost Regressor</strong>
           </div>
         </GlassCard>
 
@@ -139,7 +139,7 @@ export const StateEstimationTab: React.FC = () => {
         <GlassCard glow="purple" className="flex flex-col items-center justify-between text-center">
           <div className="w-full flex items-center justify-between">
             <Badge variant="purple" size="sm">RUL Cycles</Badge>
-            <span className="text-[11px] font-mono text-slate-400">GB R²=0.9997</span>
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">GB R²=0.9997</span>
           </div>
           <div className="my-2">
             <ElasticGauge
@@ -148,11 +148,11 @@ export const StateEstimationTab: React.FC = () => {
               max={1800}
               label="Remaining Life"
               unit="cycles"
-              color="#8B5CF6"
+              color="#7C3AED"
             />
           </div>
-          <div className="text-[11px] text-slate-400 border-t border-slate-800/80 w-full pt-2">
-            Model: <strong className="text-slate-200">Gradient Boosting</strong>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 w-full pt-2">
+            Model: <strong className="text-slate-800 dark:text-slate-200">Gradient Boosting</strong>
           </div>
         </GlassCard>
 
@@ -160,7 +160,7 @@ export const StateEstimationTab: React.FC = () => {
         <GlassCard glow="amber" className="flex flex-col items-center justify-between text-center">
           <div className="w-full flex items-center justify-between">
             <Badge variant="amber" size="sm">Mileage Range</Badge>
-            <span className="text-[11px] font-mono text-slate-400">XGBoost R²=0.9445</span>
+            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">XGBoost R²=0.9445</span>
           </div>
           <div className="my-2">
             <ElasticGauge
@@ -169,23 +169,23 @@ export const StateEstimationTab: React.FC = () => {
               max={140}
               label="Range Per Charge"
               unit="km"
-              color="#F59E0B"
+              color="#D97706"
             />
           </div>
-          <div className="text-[11px] text-slate-400 border-t border-slate-800/80 w-full pt-2">
-            Model: <strong className="text-slate-200">XGBoost Regressor</strong>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 w-full pt-2">
+            Model: <strong className="text-slate-800 dark:text-slate-200">XGBoost Regressor</strong>
           </div>
         </GlassCard>
       </div>
 
       {/* Live Input Sliders Control Board */}
       <GlassCard className="space-y-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-slate-100">Live Telemetry Injection & Stress Testing Sliders</h3>
+            <Sliders className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Live Telemetry Control & Stress Sliders</h3>
           </div>
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
             Drag sliders to test models in real-time
           </span>
         </div>
@@ -194,8 +194,8 @@ export const StateEstimationTab: React.FC = () => {
           {/* Voltage */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-300">Pack Voltage (V)</span>
-              <span className="text-cyan-400 font-bold">{telemetry.voltage.toFixed(1)} V</span>
+              <span className="text-slate-700 dark:text-slate-300">Pack Voltage (V)</span>
+              <span className="text-cyan-600 dark:text-cyan-400 font-bold">{telemetry.voltage.toFixed(1)} V</span>
             </div>
             <input
               type="range"
@@ -204,9 +204,9 @@ export const StateEstimationTab: React.FC = () => {
               step="0.2"
               value={telemetry.voltage}
               onChange={(e) => updateTelemetry({ voltage: parseFloat(e.target.value) })}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-600"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
               <span>62V (Depleted)</span>
               <span>84V (Full)</span>
             </div>
@@ -215,8 +215,8 @@ export const StateEstimationTab: React.FC = () => {
           {/* Current */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-300">Current (A)</span>
-              <span className="text-amber-400 font-bold">{telemetry.current.toFixed(1)} A</span>
+              <span className="text-slate-700 dark:text-slate-300">Current (A)</span>
+              <span className="text-amber-600 dark:text-amber-400 font-bold">{telemetry.current.toFixed(1)} A</span>
             </div>
             <input
               type="range"
@@ -225,10 +225,10 @@ export const StateEstimationTab: React.FC = () => {
               step="0.5"
               value={telemetry.current}
               onChange={(e) => updateTelemetry({ current: parseFloat(e.target.value) })}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400"
+              className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-600"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>-60A (Heavy Draw)</span>
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>-60A (Discharge)</span>
               <span>+30A (Charging)</span>
             </div>
           </div>
@@ -236,8 +236,8 @@ export const StateEstimationTab: React.FC = () => {
           {/* Temperature */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-300">Pack Temp (°C)</span>
-              <span className="text-emerald-400 font-bold">{telemetry.temperature.toFixed(1)} °C</span>
+              <span className="text-slate-700 dark:text-slate-300">Pack Temp (°C)</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{telemetry.temperature.toFixed(1)} °C</span>
             </div>
             <input
               type="range"
@@ -246,9 +246,9 @@ export const StateEstimationTab: React.FC = () => {
               step="0.5"
               value={telemetry.temperature}
               onChange={(e) => updateTelemetry({ temperature: parseFloat(e.target.value) })}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+              className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-600"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
               <span>15°C (Cool)</span>
               <span>58°C (Thermal Stress)</span>
             </div>
@@ -257,8 +257,8 @@ export const StateEstimationTab: React.FC = () => {
           {/* Odometer */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-300">Odometer (km)</span>
-              <span className="text-purple-400 font-bold">{telemetry.odometer.toLocaleString()} km</span>
+              <span className="text-slate-700 dark:text-slate-300">Odometer (km)</span>
+              <span className="text-purple-600 dark:text-purple-400 font-bold">{telemetry.odometer.toLocaleString()} km</span>
             </div>
             <input
               type="range"
@@ -267,9 +267,9 @@ export const StateEstimationTab: React.FC = () => {
               step="500"
               value={telemetry.odometer}
               onChange={(e) => updateTelemetry({ odometer: parseInt(e.target.value) })}
-              className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-400"
+              className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-600"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
               <span>0 km</span>
               <span>45,000 km</span>
             </div>
