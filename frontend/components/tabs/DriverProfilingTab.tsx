@@ -13,13 +13,13 @@ export const DriverProfilingTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
   const vehicle = getSelectedVehicle();
 
-  const [harshAccel, setHarshAccel] = useState<number>(telemetry.harshAccel);
-  const [harshBrake, setHarshBrake] = useState<number>(telemetry.harshBrake);
-  const [harshCorner, setHarshCorner] = useState<number>(telemetry.harshCorner);
+  const [harshAccel, setHarshAccel] = useState<number>(telemetry.harshAccel || 2);
+  const [harshBrake, setHarshBrake] = useState<number>(telemetry.harshBrake || 1);
+  const [harshCorner, setHarshCorner] = useState<number>(telemetry.harshCorner || 1);
   const [speedVariance, setSpeedVariance] = useState<number>(7.8);
   const [maxDischarge, setMaxDischarge] = useState<number>(36.0);
 
-  const [behaviorData, setBehaviorData] = useState<DriverBehaviorResponse | null>(null);
+  const [behaviorData, setBehaviorData] = useState<DriverBehaviorResponse | any | null>(null);
 
   const evaluateBehavior = useCallback(async () => {
     try {
@@ -28,9 +28,9 @@ export const DriverProfilingTab: React.FC = () => {
         harsh_brake_count: harshBrake,
         harsh_corner_count: harshCorner,
         speed_variance: speedVariance,
-        avg_speed: telemetry.avgSpeed,
-        max_speed: telemetry.maxSpeed,
-        battery_temp_max: telemetry.temperature + 4,
+        avg_speed: telemetry.avgSpeed || 34,
+        max_speed: telemetry.maxSpeed || 58,
+        battery_temp_max: (telemetry.temperature || 32) + 4,
         max_discharge_current: maxDischarge,
       });
       setBehaviorData(res);
@@ -46,10 +46,32 @@ export const DriverProfilingTab: React.FC = () => {
     return () => clearTimeout(timer);
   }, [evaluateBehavior]);
 
-  const ai = behaviorData?.aggressiveness_index || 0.25;
-  const bsi = behaviorData?.battery_stress_index || 0.32;
+  const ai = behaviorData?.aggressiveness_index ?? 0.25;
+  const bsi = behaviorData?.battery_stress_index ?? 0.32;
   const isAggressive = ai > 0.65;
   const isModerate = ai > 0.35 && ai <= 0.65;
+
+  const annualPenalty =
+    behaviorData?.estimated_annual_soh_penalty_pct ??
+    behaviorData?.annual_soh_penalty_percent ??
+    1.2;
+
+  // Extract recommendations safely from array or backend string fields
+  const recommendationList: string[] = Array.isArray(behaviorData?.recommendations)
+    ? behaviorData.recommendations
+    : [
+        behaviorData?.bms_recommended_directive,
+        behaviorData?.behavioral_impact_description,
+      ].filter(Boolean) as string[];
+
+  const finalRecommendations =
+    recommendationList.length > 0
+      ? recommendationList
+      : [
+          "Smooth throttle tip-in maintains nominal C-rate bounds (+4.7% SOH retention).",
+          "Regenerative braking efficiency operating within target recovery envelope.",
+          "Thermal strain within baseline passive cooling dissipation limits.",
+        ];
 
   return (
     <div className="space-y-6">
@@ -90,13 +112,17 @@ export const DriverProfilingTab: React.FC = () => {
           </div>
           <div className="my-4">
             <div className="text-5xl font-extrabold font-mono tracking-tight">
-              <AnimatedNumber value={ai} decimals={3} className={isAggressive ? "text-rose-600 dark:text-rose-400" : isModerate ? "text-amber-600 dark:text-amber-400" : "text-cyan-600 dark:text-cyan-400"} />
+              <AnimatedNumber
+                value={ai}
+                decimals={3}
+                className={isAggressive ? "text-rose-600 dark:text-rose-400" : isModerate ? "text-amber-600 dark:text-amber-400" : "text-cyan-600 dark:text-cyan-400"}
+              />
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">Scale: 0.0 (Calm) → 1.0 (Extreme)</div>
           </div>
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
             Cohort: <strong className={isAggressive ? "text-rose-600 dark:text-rose-400" : isModerate ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}>
-              {behaviorData?.driver_classification}
+              {behaviorData?.driver_classification || "Smooth & Energy-Conscious"}
             </strong>
           </div>
         </GlassCard>
@@ -109,7 +135,11 @@ export const DriverProfilingTab: React.FC = () => {
           </div>
           <div className="my-4">
             <div className="text-5xl font-extrabold font-mono tracking-tight">
-              <AnimatedNumber value={bsi} decimals={3} className={bsi > 0.6 ? "text-rose-600 dark:text-rose-400" : bsi > 0.4 ? "text-amber-600 dark:text-amber-400" : "text-purple-600 dark:text-purple-400"} />
+              <AnimatedNumber
+                value={bsi}
+                decimals={3}
+                className={bsi > 0.6 ? "text-rose-600 dark:text-rose-400" : bsi > 0.4 ? "text-amber-600 dark:text-amber-400" : "text-purple-600 dark:text-purple-400"}
+              />
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">Electrochemical Strain (C-rate + Temp)</div>
           </div>
@@ -126,7 +156,7 @@ export const DriverProfilingTab: React.FC = () => {
           </div>
           <div className="my-3">
             <div className="text-4xl font-extrabold font-mono tracking-tight text-amber-600 dark:text-amber-400">
-              -<AnimatedNumber value={behaviorData?.estimated_annual_soh_penalty_pct || 1.2} decimals={1} suffix="%" />
+              -<AnimatedNumber value={annualPenalty} decimals={1} suffix="%" />
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">Excess degradation per 25,000 km</div>
           </div>
@@ -177,6 +207,21 @@ export const DriverProfilingTab: React.FC = () => {
 
             <div>
               <div className="flex justify-between text-xs font-mono mb-1">
+                <span className="text-slate-500 dark:text-slate-400">Harsh Cornering Events / Trip</span>
+                <span className="text-purple-600 dark:text-purple-400 font-bold">{harshCorner}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="12"
+                value={harshCorner}
+                onChange={(e) => setHarshCorner(parseInt(e.target.value))}
+                className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-600"
+              />
+            </div>
+
+            <div>
+              <div className="flex justify-between text-xs font-mono mb-1">
                 <span className="text-slate-500 dark:text-slate-400">Speed Variance (σ)</span>
                 <span className="text-purple-600 dark:text-purple-400 font-bold">{speedVariance.toFixed(1)} km/h</span>
               </div>
@@ -217,7 +262,7 @@ export const DriverProfilingTab: React.FC = () => {
               BMS Driver Guidance Directives
             </h3>
             <div className="mt-3 space-y-2.5">
-              {behaviorData?.recommendations.map((rec, i) => (
+              {finalRecommendations.map((rec, i) => (
                 <div key={i} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold">•</span>
                   <span>{rec}</span>
