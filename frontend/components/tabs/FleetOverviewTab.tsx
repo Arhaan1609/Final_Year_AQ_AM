@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { useFleetStore, VehicleStatusFilter } from "../../lib/store/useFleetStore";
+import { useFleetStore } from "../../lib/store/useFleetStore";
 import { GlassCard } from "../ui/GlassCard";
 import { Badge } from "../ui/Badge";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { BatteryPack3D } from "../digital-twin/BatteryPack3D";
-import { getSystemHealth } from "../../lib/api/client";
+import { getSystemHealth, predictSOC, predictSOH, predictRUL, predictMileage } from "../../lib/api/client";
 import { HealthResponse } from "../../lib/api/types";
 import {
   Activity,
@@ -22,6 +22,8 @@ import {
   Truck,
   ChevronLeft,
   ChevronRight,
+  Radio,
+  Sliders,
 } from "lucide-react";
 
 const PAGE_SIZE = 25;
@@ -41,12 +43,68 @@ export const FleetOverviewTab: React.FC = () => {
     setHubFilter,
     getFilteredVehicles,
     lookupOrAddVehicle,
+    isMock,
   } = useFleetStore();
 
   const vehicle = getSelectedVehicle();
   const [customVinInput, setCustomVinInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [viewMode, setViewMode] = useState<"vehicle" | "fleet">("vehicle");
+
+  // Dynamic live predictions state for the active vehicle
+  const [livePredictions, setLivePredictions] = useState<{
+    soc?: number;
+    soh?: number;
+    rul?: number;
+    mileage?: number;
+    isLoading: boolean;
+  }>({ isLoading: false });
+
+  // Whenever selected vehicle changes, query live model endpoints
+  useEffect(() => {
+    let isMounted = true;
+    setLivePredictions((prev) => ({ ...prev, isLoading: true }));
+
+    Promise.allSettled([
+      predictSOC({
+        battery_voltage: vehicle.voltage,
+        battery_temp: vehicle.battery_temp,
+        battery_current: vehicle.current,
+        abs_current: Math.abs(vehicle.current),
+        odometer: vehicle.charge_cycle_count * 58,
+      }),
+      predictSOH({
+        battery_voltage: vehicle.voltage,
+        battery_temp: vehicle.battery_temp,
+        battery_current: vehicle.current,
+        charge_cycle_count: vehicle.charge_cycle_count,
+        odometer: vehicle.charge_cycle_count * 58,
+      }),
+      predictRUL({
+        odometer: vehicle.charge_cycle_count * 58,
+        soc_at_charge: vehicle.soc,
+      }),
+      predictMileage({
+        run_kms: 45,
+        avg_speed: vehicle.speed || 34,
+        max_speed: (vehicle.speed || 34) + 20,
+      }),
+    ]).then(([socRes, sohRes, rulRes, mileageRes]) => {
+      if (!isMounted) return;
+      setLivePredictions({
+        soc: socRes.status === "fulfilled" ? socRes.value.prediction : vehicle.soc,
+        soh: sohRes.status === "fulfilled" ? sohRes.value.prediction : vehicle.soh,
+        rul: rulRes.status === "fulfilled" ? Math.round(rulRes.value.prediction) : vehicle.rul,
+        mileage: mileageRes.status === "fulfilled" ? Math.round(mileageRes.value.prediction * 10) / 10 : vehicle.mileage,
+        isLoading: false,
+      });
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [vehicle.id, vehicle.voltage, vehicle.current, vehicle.battery_temp, vehicle.charge_cycle_count]);
 
   useEffect(() => {
     getSystemHealth().then(setHealth).catch(console.error);
@@ -65,7 +123,7 @@ export const FleetOverviewTab: React.FC = () => {
     return filteredVehicles.slice(start, start + PAGE_SIZE);
   }, [filteredVehicles, currentPage]);
 
-  // Fleet-wide aggregated stats across all 778 vehicles
+  // Fleet-wide aggregate calculations
   const avgSoc = vehicles.reduce((a, b) => a + b.soc, 0) / vehicles.length;
   const avgSoh = vehicles.reduce((a, b) => a + b.soh, 0) / vehicles.length;
   const avgRul = vehicles.reduce((a, b) => a + b.rul, 0) / vehicles.length;
@@ -75,6 +133,12 @@ export const FleetOverviewTab: React.FC = () => {
   const countWarning = vehicles.filter((v) => v.status === "warning").length;
   const countCritical = vehicles.filter((v) => v.status === "critical").length;
   const countCharging = vehicles.filter((v) => v.status === "charging").length;
+
+  // Values to display based on viewMode
+  const displaySoc = viewMode === "vehicle" ? (livePredictions.soc ?? vehicle.soc) : avgSoc;
+  const displaySoh = viewMode === "vehicle" ? (livePredictions.soh ?? vehicle.soh) : avgSoh;
+  const displayRul = viewMode === "vehicle" ? (livePredictions.rul ?? vehicle.rul) : avgRul;
+  const displayMileage = viewMode === "vehicle" ? (livePredictions.mileage ?? vehicle.mileage) : avgMileage;
 
   const handleAddCustomVehicle = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +187,7 @@ export const FleetOverviewTab: React.FC = () => {
               </Badge>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Live telemetry ingested directly from 370,666 real driving cycle records
+              Real-time inference pipeline active for chassis: <strong className="text-cyan-700 dark:text-cyan-300 font-mono">{vehicle.id}</strong> ({vehicle.model})
             </p>
           </div>
         </div>
@@ -135,7 +199,7 @@ export const FleetOverviewTab: React.FC = () => {
             title="Download Full Enterprise Fleet Telemetry as CSV"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export Fleet ({vehicles.length} CSV)</span>
+            <span>Export CSV</span>
           </button>
 
           <button
@@ -148,54 +212,119 @@ export const FleetOverviewTab: React.FC = () => {
         </div>
       </div>
 
-      {/* 4 Fleet-Wide KPI Cards */}
+      {/* Mode Selector & Metric Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <Radio className="w-4 h-4 text-cyan-600 dark:text-cyan-400 animate-pulse" />
+            {viewMode === "vehicle" ? (
+              <span>Live ML Predictions for <strong className="font-mono text-cyan-600 dark:text-cyan-400">{vehicle.id}</strong></span>
+            ) : (
+              <span>Fleet-Wide Aggregate Averages ({vehicles.length} Vehicles)</span>
+            )}
+          </h3>
+          {viewMode === "vehicle" && livePredictions.isLoading && (
+            <span className="text-[11px] text-cyan-600 dark:text-cyan-400 animate-pulse font-mono font-medium">
+              • Computing live model inference...
+            </span>
+          )}
+        </div>
+
+        {/* View Switcher: Selected Vehicle vs Fleet Average */}
+        <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl text-xs">
+          <button
+            onClick={() => setViewMode("vehicle")}
+            className={`px-3 py-1 rounded-lg font-semibold transition-all ${
+              viewMode === "vehicle"
+                ? "bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-300 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
+            }`}
+          >
+            Active Vehicle ({vehicle.id})
+          </button>
+          <button
+            onClick={() => setViewMode("fleet")}
+            className={`px-3 py-1 rounded-lg font-semibold transition-all ${
+              viewMode === "fleet"
+                ? "bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-300 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
+            }`}
+          >
+            Fleet Average (778)
+          </button>
+        </div>
+      </div>
+
+      {/* 4 DYNAMIC KPI CARDS — Bounded directly to active vehicle or fleet average */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* SOC Card */}
         <GlassCard glow="cyan">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
-            <span>Fleet Avg State of Charge</span>
+            <span>{viewMode === "vehicle" ? `${vehicle.id} State of Charge` : "Fleet Avg SOC"}</span>
             <Zap className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <AnimatedNumber value={avgSoc} decimals={1} className="text-3xl text-cyan-700 dark:text-cyan-300" suffix="%" />
-            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Nominal</span>
+            <AnimatedNumber value={displaySoc} decimals={1} className="text-3xl text-cyan-700 dark:text-cyan-300" suffix="%" />
+            <span className={`text-xs font-semibold ${displaySoc < 30 ? "text-rose-600 dark:text-rose-400" : displaySoc < 50 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+              {displaySoc < 30 ? "Low Charge" : displaySoc < 50 ? "Moderate" : "Nominal"}
+            </span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Across {vehicles.length.toLocaleString()} commercial vehicles</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 flex items-center justify-between">
+            <span>{viewMode === "vehicle" ? `Voltage: ${vehicle.voltage.toFixed(1)}V • Current: ${vehicle.current.toFixed(1)}A` : `Across ${vehicles.length} chassis`}</span>
+            <Badge variant="cyan" size="sm">KNN</Badge>
+          </p>
         </GlassCard>
 
+        {/* SOH Card */}
         <GlassCard glow="emerald">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
-            <span>Fleet Avg State of Health</span>
+            <span>{viewMode === "vehicle" ? `${vehicle.id} State of Health` : "Fleet Avg SOH"}</span>
             <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <AnimatedNumber value={avgSoh} decimals={1} className="text-3xl text-emerald-700 dark:text-emerald-300" suffix="%" />
-            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Tier 1 Health</span>
+            <AnimatedNumber value={displaySoh} decimals={1} className="text-3xl text-emerald-700 dark:text-emerald-300" suffix="%" />
+            <span className={`text-xs font-semibold ${displaySoh < 82 ? "text-rose-600 dark:text-rose-400" : displaySoh < 90 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+              {displaySoh < 82 ? "Degraded" : displaySoh < 90 ? "Moderate" : "Tier 1 Health"}
+            </span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">XGBoost & PyTorch CNN-LSTM</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 flex items-center justify-between">
+            <span>{viewMode === "vehicle" ? `Cycles: ${vehicle.charge_cycle_count} EFC • Temp: ${vehicle.battery_temp.toFixed(1)}°C` : "XGBoost & PyTorch CNN-LSTM"}</span>
+            <Badge variant="emerald" size="sm">XGBoost</Badge>
+          </p>
         </GlassCard>
 
+        {/* RUL Card */}
         <GlassCard glow="purple">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
-            <span>Fleet Avg Remaining Useful Life</span>
+            <span>{viewMode === "vehicle" ? `${vehicle.id} Remaining Useful Life` : "Fleet Avg RUL"}</span>
             <TrendingDown className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <AnimatedNumber value={avgRul} decimals={0} className="text-3xl text-purple-700 dark:text-purple-300" suffix=" c" />
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Cycles</span>
+            <AnimatedNumber value={displayRul} decimals={0} className="text-3xl text-purple-700 dark:text-purple-300" suffix=" c" />
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              ~{(displayRul / 300).toFixed(1)} yrs
+            </span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Gradient Boosting Champion (R²=0.9997)</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 flex items-center justify-between">
+            <span>{viewMode === "vehicle" ? `Cumulative Odo: ${(vehicle.charge_cycle_count * 58).toLocaleString()} km` : "Gradient Boosting Champion"}</span>
+            <Badge variant="purple" size="sm">R²=0.9997</Badge>
+          </p>
         </GlassCard>
 
+        {/* Mileage / Range Card */}
         <GlassCard glow="amber">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-medium">
-            <span>Fleet Avg Range per Charge</span>
+            <span>{viewMode === "vehicle" ? `${vehicle.id} Range per Charge` : "Fleet Avg Range"}</span>
             <Navigation className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <AnimatedNumber value={avgMileage} decimals={1} className="text-3xl text-amber-700 dark:text-amber-300" suffix=" km" />
+            <AnimatedNumber value={displayMileage} decimals={1} className="text-3xl text-amber-700 dark:text-amber-300" suffix=" km" />
             <span className="text-xs text-amber-600 dark:text-amber-400 font-semibold">Est. Range</span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Multi-chassis driving cycle aggregate</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 flex items-center justify-between">
+            <span>{viewMode === "vehicle" ? `Speed: ${vehicle.speed?.toFixed(1) || 34.0} km/h • Efficiency: High` : "Dynamic driving cycle"}</span>
+            <Badge variant="amber" size="sm">GBoost</Badge>
+          </p>
         </GlassCard>
       </div>
 
@@ -249,6 +378,10 @@ export const FleetOverviewTab: React.FC = () => {
                 <span className="font-mono text-slate-800 dark:text-slate-200 font-semibold">{vehicle.charge_cycle_count} EFC</span>
               </div>
               <div className="flex items-center justify-between text-xs py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Battery Pack Temp:</span>
+                <span className="font-mono text-cyan-600 dark:text-cyan-400 font-semibold">{vehicle.battery_temp.toFixed(1)} °C</span>
+              </div>
+              <div className="flex items-center justify-between text-xs py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-500 dark:text-slate-400">Max Zone Temperature:</span>
                 <span className="font-mono text-amber-600 dark:text-amber-400 font-semibold">{vehicle.motor_temp.toFixed(1)} °C</span>
               </div>
@@ -263,7 +396,8 @@ export const FleetOverviewTab: React.FC = () => {
               onClick={() => useFleetStore.getState().setActiveTab("state-est")}
               className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1"
             >
-              Analyze Telemetry →
+              <Sliders className="w-3.5 h-3.5" />
+              Tune in State Estimation Hub →
             </button>
           </div>
         </GlassCard>
