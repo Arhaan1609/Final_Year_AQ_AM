@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { animate, createDrawable, onScroll } from "animejs";
 import { useFleetStore } from "../lib/store/useFleetStore";
+import TruckScrollStory from "../components/hero/TruckScrollStory";
 import BatteryHero from "../components/hero/BatteryHero";
 import { Badge } from "../components/ui/Badge";
 import {
@@ -92,10 +93,13 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* 1. HERO SECTION WITH SIGNATURE SCROLL-SCRUBBED BATTERY CELLS */}
+      {/* 1. SIGNATURE PINNED 400vh SCROLL-SCRUBBED NARRATIVE (Truck drives in, doors open, pack energizes) */}
+      <TruckScrollStory />
+
+      {/* 2. HERO HEADLINE & STAT STRIP COUNT-UPS */}
       <BatteryHero />
 
-      {/* 2. TRI-PILLAR ARCHITECTURE SECTION */}
+      {/* 3. TRI-PILLAR ARCHITECTURE SECTION */}
       <section className="py-24 px-6 max-w-7xl mx-auto border-t border-[var(--border-subtle)]">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="cyan" size="sm" className="mb-3">
@@ -181,7 +185,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. ANIMATED SVG CIRCUIT DIAGRAM SECTION */}
+      {/* 4. ANIMATED SVG CIRCUIT DIAGRAM SECTION */}
       <section className="py-20 px-6 max-w-7xl mx-auto border-t border-[var(--border-subtle)]">
         <div className="app-card p-8 sm:p-12 relative overflow-hidden bg-slate-900 text-white">
           <div className="max-w-xl relative z-10">
@@ -219,7 +223,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 4. FOOTER CTA SECTION */}
+      {/* 5. FOOTER CTA SECTION */}
       <footer className="py-20 px-6 max-w-7xl mx-auto border-t border-[var(--border-subtle)] text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight mb-4">
           Ready to Explore the Commercial Fleet?
