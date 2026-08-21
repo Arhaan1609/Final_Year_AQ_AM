@@ -43,8 +43,8 @@ def make_seq(df, feats, seq_len):
         if len(idxs) <= seq_len:
             continue
         for i in range(len(idxs) - seq_len):
-            Xs.append(X[idxs[i]:[i+seq_len])
-            ys.append(y[idxs[i+seq_len-1])
+            Xs.append(X[idxs[i]:idxs[i]+seq_len])
+            ys.append(y[idxs[i+seq_len-1]])
     return np.array(Xs, np.float32), np.array(ys, np.float32)
 
 
