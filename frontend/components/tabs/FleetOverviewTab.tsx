@@ -20,7 +20,11 @@ import {
   Download,
   Filter,
   Truck,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+
+const PAGE_SIZE = 25;
 
 export const FleetOverviewTab: React.FC = () => {
   const {
@@ -41,6 +45,7 @@ export const FleetOverviewTab: React.FC = () => {
 
   const vehicle = getSelectedVehicle();
   const [customVinInput, setCustomVinInput] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [health, setHealth] = useState<HealthResponse | null>(null);
 
   useEffect(() => {
@@ -49,7 +54,18 @@ export const FleetOverviewTab: React.FC = () => {
 
   const filteredVehicles = getFilteredVehicles();
 
-  // Fleet-wide aggregated stats
+  // Reset to page 1 on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, hubFilter]);
+
+  const totalPages = Math.ceil(filteredVehicles.length / PAGE_SIZE) || 1;
+  const paginatedVehicles = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredVehicles.slice(start, start + PAGE_SIZE);
+  }, [filteredVehicles, currentPage]);
+
+  // Fleet-wide aggregated stats across all 778 vehicles
   const avgSoc = vehicles.reduce((a, b) => a + b.soc, 0) / vehicles.length;
   const avgSoh = vehicles.reduce((a, b) => a + b.soh, 0) / vehicles.length;
   const avgRul = vehicles.reduce((a, b) => a + b.rul, 0) / vehicles.length;
@@ -80,7 +96,7 @@ export const FleetOverviewTab: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `Enterprise_EV_Fleet_Telemetry_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `Full_Enterprise_Fleet_778_Vehicles_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -97,17 +113,17 @@ export const FleetOverviewTab: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
-                Enterprise Commercial Telematics Live
+                Enterprise Telematics Dataset Active
               </span>
               <Badge variant="emerald" size="sm" dot>
-                {vehicles.length} Fleet Vehicles
+                {vehicles.length.toLocaleString()} Fleet Vehicles
               </Badge>
               <Badge variant="cyan" size="sm">
                 74 ML/DL Models
               </Badge>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Live streaming battery intelligence across Euler, Tata, Mahindra, and Piaggio fleets
+              Live telemetry ingested directly from 370,666 real driving cycle records
             </p>
           </div>
         </div>
@@ -116,10 +132,10 @@ export const FleetOverviewTab: React.FC = () => {
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 text-xs font-semibold shadow-sm transition-all"
-            title="Download Enterprise Fleet Telemetry as CSV"
+            title="Download Full Enterprise Fleet Telemetry as CSV"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export Fleet (CSV)</span>
+            <span>Export Fleet ({vehicles.length} CSV)</span>
           </button>
 
           <button
@@ -143,7 +159,7 @@ export const FleetOverviewTab: React.FC = () => {
             <AnimatedNumber value={avgSoc} decimals={1} className="text-3xl text-cyan-700 dark:text-cyan-300" suffix="%" />
             <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">Nominal</span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Across {vehicles.length} commercial vehicles</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Across {vehicles.length.toLocaleString()} commercial vehicles</p>
         </GlassCard>
 
         <GlassCard glow="emerald">
@@ -259,7 +275,7 @@ export const FleetOverviewTab: React.FC = () => {
           <div className="flex items-center gap-2">
             <Truck className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-              Universal Enterprise Fleet Directory ({vehicles.length} Vehicles Ingested)
+              Full Dataset Fleet Inventory ({vehicles.length.toLocaleString()} Real Vehicles)
             </h3>
           </div>
 
@@ -289,7 +305,7 @@ export const FleetOverviewTab: React.FC = () => {
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Filter by chassis ID, driver name, OEM, or hub city..."
+              placeholder="Search across all 778 vehicles (e.g. DL1LAK7203, GJ05..., driver, hub)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-cyan-500 font-sans"
@@ -358,7 +374,8 @@ export const FleetOverviewTab: React.FC = () => {
               onChange={(e) => setHubFilter(e.target.value)}
               className="bg-transparent text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer"
             >
-              <option value="all">All Enterprise Hubs</option>
+              <option value="all">All Regional Hubs</option>
+              <option value="Delhi">Delhi NCR Corridor</option>
               <option value="Ahmedabad">Ahmedabad Hubs</option>
               <option value="Surat">Surat Hubs</option>
               <option value="Vadodara">Vadodara Hubs</option>
@@ -366,17 +383,15 @@ export const FleetOverviewTab: React.FC = () => {
               <option value="Mumbai">Mumbai Hubs</option>
               <option value="Pune">Pune Hubs</option>
               <option value="Bengaluru">Bengaluru Hubs</option>
-              <option value="Delhi">Delhi NCR Corridor</option>
-              <option value="Hyderabad">Hyderabad Hubs</option>
               <option value="Chennai">Chennai Hubs</option>
             </select>
           </div>
         </div>
 
-        {/* Matching Vehicles Grid (Max height scrollable for 50+ vehicles) */}
-        <div className="max-h-[380px] overflow-y-auto pr-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            {filteredVehicles.map((v) => {
+        {/* Paginated Vehicles Grid */}
+        <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 min-h-[300px]">
+            {paginatedVehicles.map((v) => {
               const isSelected = v.id === selectedVehicleId;
               return (
                 <div
@@ -389,9 +404,11 @@ export const FleetOverviewTab: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono font-bold text-xs text-slate-900 dark:text-slate-100">{v.id}</span>
+                    <span className="font-mono font-bold text-xs text-slate-900 dark:text-slate-100 truncate max-w-[110px]" title={v.id}>
+                      {v.id}
+                    </span>
                     <span
-                      className={`w-2.5 h-2.5 rounded-full ${
+                      className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
                         v.status === "critical"
                           ? "bg-rose-500 animate-pulse"
                           : v.status === "warning"
@@ -416,10 +433,41 @@ export const FleetOverviewTab: React.FC = () => {
 
           {filteredVehicles.length === 0 && (
             <div className="p-8 text-center text-xs text-slate-500 dark:text-slate-400">
-              No vehicles match "{searchQuery}". Type any custom chassis ID above and click <strong>"Lookup Chassis"</strong> to dynamically ingest it!
+              No vehicles match "{searchQuery}". Type any custom chassis ID above and click <strong>"Lookup Chassis"</strong> to dynamically evaluate it!
             </div>
           )}
         </div>
+
+        {/* Pagination Bar */}
+        {filteredVehicles.length > PAGE_SIZE && (
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <div className="text-slate-500 dark:text-slate-400 font-mono">
+              Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredVehicles.length)} of {filteredVehicles.length.toLocaleString()} matching vehicles
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-700 dark:text-slate-300"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-700 dark:text-slate-300"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </GlassCard>
     </div>
   );
