@@ -14,9 +14,19 @@
   --accent-telemetry: #0891B2;
   --accent-warning: #D97706;
   --accent-critical: #DC2626;
+  --accent-purple: #7C3AED;
   --font-mono-nums: 'Inter', monospace;
 
-  /* Aliases for components */
+  /* Stitch Design System Tokens (Light) */
+  --primary-container: #E0F2FE;
+  --secondary-container: #EDE9FE;
+  --tertiary-container: #FEF3C7;
+  --error-container: #FEE2E2;
+  --surface-variant: #E2E8F0;
+  --surface-container-low: #F8FAFC;
+  --surface-container-high: #F1F5F9;
+  --surface-container-highest: #E2E8F0;
+
   --bg-primary: #F7F8FA;
   --bg-card-hover: #F1F3F7;
   --border-color: #E4E7EC;
@@ -24,7 +34,6 @@
   --accent-cyan: #0891B2;
   --accent-amber: #D97706;
   --accent-crimson: #DC2626;
-  --accent-purple: #7C3AED;
 }
 
 [data-theme="dark"], .dark {
@@ -33,6 +42,16 @@
   --border-subtle: #1E293B;
   --text-primary: #F1F5F9;
   --text-secondary: #94A3B8;
+
+  /* Stitch Design System Tokens (Dark) */
+  --primary-container: #00285D;
+  --secondary-container: #2C0051;
+  --tertiary-container: #461F00;
+  --error-container: #490005;
+  --surface-variant: #32353C;
+  --surface-container-low: #191B23;
+  --surface-container-high: #272A31;
+  --surface-container-highest: #32353C;
 
   --bg-primary: #0A0D14;
   --bg-card-hover: #171F30;
