@@ -14,6 +14,13 @@ export const ThermalSafetyTab: React.FC = () => {
   const [controllerTemp, setControllerTemp] = useState<number>(vehicle.controller_temp || 41.5);
   const [motorTemp, setMotorTemp] = useState<number>(vehicle.motor_temp || 54.0);
 
+  // Sync temperatures immediately when vehicle changes
+  useEffect(() => {
+    setBatteryTemp(vehicle.battery_temp || telemetry.temperature || 32.0);
+    setControllerTemp(vehicle.controller_temp || (vehicle.battery_temp ? vehicle.battery_temp + 8.5 : 40.5));
+    setMotorTemp(vehicle.motor_temp || (vehicle.battery_temp ? vehicle.battery_temp + 18.0 : 50.0));
+  }, [selectedVehicleId, vehicle]);
+
   const [thermalData, setThermalData] = useState<ThermalResponse | null>(null);
   const [sohDeepData, setSohDeepData] = useState<SOHDeepResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

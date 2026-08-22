@@ -14,9 +14,15 @@ export const KneePrognosticsTab: React.FC = () => {
   const { telemetry, getSelectedVehicle } = useFleetStore();
   const vehicle = getSelectedVehicle();
 
-  const [cycleInput, setCycleInput] = useState<number>(telemetry.cycleCount);
-  const [capacityInput, setCapacityInput] = useState<number>(vehicle.soh);
+  const [cycleInput, setCycleInput] = useState<number>(vehicle.charge_cycle_count || telemetry.cycleCount || 150);
+  const [capacityInput, setCapacityInput] = useState<number>(vehicle.soh || 95.0);
   const [kneeData, setKneeData] = useState<KneePredictionResponse | null>(null);
+
+  // Sync inputs immediately when vehicle changes
+  useEffect(() => {
+    setCycleInput(vehicle.charge_cycle_count || 150);
+    setCapacityInput(vehicle.soh || 95.0);
+  }, [vehicle]);
 
   const curvePathRef = useRef<SVGPathElement>(null);
   const kneePointRef = useRef<SVGCircleElement>(null);

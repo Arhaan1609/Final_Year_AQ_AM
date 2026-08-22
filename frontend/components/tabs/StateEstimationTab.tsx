@@ -70,8 +70,16 @@ export const StateEstimationTab: React.FC = () => {
       current: vehicle.current || -18.4,
       temperature: vehicle.battery_temp || 33.2,
       odometer: vehicle.charge_cycle_count * 58 || 12500,
+      cycleCount: vehicle.charge_cycle_count || 150,
+      avgSpeed: vehicle.speed || 30.0,
+      maxSpeed: (vehicle.speed || 30.0) + 25,
     });
   };
+
+  // Synchronize telemetry sliders immediately when vehicle selection changes
+  useEffect(() => {
+    resetTelemetry();
+  }, [selectedVehicleId]);
 
   const socVal = socRes?.prediction ?? vehicle.soc ?? 64.8;
   const sohVal = sohRes?.prediction ?? vehicle.soh ?? 91.2;

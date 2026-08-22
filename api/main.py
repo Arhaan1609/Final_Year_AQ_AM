@@ -30,6 +30,8 @@ sys.path.insert(0, _PROJECT_ROOT)
 from api.routers.module_a import router as router_a, load_all_module_a_models, get_model_status, get_model_names
 from api.routers.module_b import router as router_b, load_module_b_engine, get_engine_status as get_engine_b_status
 from api.routers.module_c import router as router_c, load_module_c_engine, get_engine_status as get_engine_c_status
+from api.routers.db_routes import router as router_db
+from api.db.database import init_db
 from api.schemas import HealthStatusResponse
 
 
@@ -42,6 +44,10 @@ async def lifespan(app: FastAPI):
     print("\n" + "=" * 65)
     print("  EV BATTERY INTELLIGENCE API -- STARTUP (TRI-PILLAR SYSTEM)")
     print("=" * 65)
+
+    # SQL Fleet Database Initialization
+    print("  [Database] Initializing SQL Fleet Database...")
+    init_db()
 
     # Module A — load sklearn/XGBoost fleet models
     print("  [Module A] Loading fleet prediction models...")
@@ -108,6 +114,7 @@ app.add_middleware(
 # ──────────────────────────────────────────────
 #  ROUTERS
 # ──────────────────────────────────────────────
+app.include_router(router_db)
 app.include_router(router_a)
 app.include_router(router_b)
 app.include_router(router_c)

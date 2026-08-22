@@ -19,6 +19,17 @@ export const DriverProfilingTab: React.FC = () => {
   const [speedVariance, setSpeedVariance] = useState<number>(7.8);
   const [maxDischarge, setMaxDischarge] = useState<number>(36.0);
 
+  // Sync driver inputs immediately when vehicle changes
+  useEffect(() => {
+    const isWarn = vehicle.status === "warning";
+    const isCrit = vehicle.status === "critical";
+    setHarshAccel(isCrit ? 8 : isWarn ? 5 : 1);
+    setHarshBrake(isCrit ? 6 : isWarn ? 3 : 1);
+    setHarshCorner(isCrit ? 3 : isWarn ? 2 : 1);
+    setSpeedVariance(isCrit ? 22.5 : isWarn ? 14.0 : 6.5);
+    setMaxDischarge(isCrit ? 65.0 : isWarn ? 45.0 : 25.0);
+  }, [selectedVehicleId, vehicle]);
+
   const [behaviorData, setBehaviorData] = useState<DriverBehaviorResponse | any | null>(null);
 
   const evaluateBehavior = useCallback(async () => {

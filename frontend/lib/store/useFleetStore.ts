@@ -12,6 +12,7 @@ export type DashboardTab =
   | "meta-ensemble";
 
 export type ThemeMode = "light" | "dark";
+export type ViewMode = "operations" | "engineering";
 export type VehicleStatusFilter = "all" | "active" | "warning" | "critical" | "charging";
 
 interface TelemetryInputs {
@@ -29,6 +30,7 @@ interface TelemetryInputs {
 
 interface FleetStoreState {
   theme: ThemeMode;
+  viewMode: ViewMode;
   vehicles: FleetVehicle[];
   selectedVehicleId: string;
   activeTab: DashboardTab;
@@ -46,6 +48,8 @@ interface FleetStoreState {
   // Actions
   setTheme: (theme: ThemeMode) => void;
   toggleTheme: () => void;
+  setViewMode: (mode: ViewMode) => void;
+  toggleViewMode: () => void;
   setSelectedVehicle: (id: string) => void;
   setActiveTab: (tab: DashboardTab) => void;
   setIsMock: (mock: boolean) => void;
@@ -68,17 +72,18 @@ const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
   {
     id: "welcome-1",
     sender: "assistant",
-    text: "👋 **Hello! I am your Enterprise Fleet Copilot.**\n\nI have direct access to your 74 trained models across all 3 modules. You can ask me to evaluate ANY vehicle in the enterprise fleet, lookup thermal hazards, predict knee points, or analyze driver strain.",
+    text: "👋 **Hello! I am your Enterprise Fleet Copilot.**\n\nI have direct access to your 74 trained models across all 3 modules and the SQL database. You can ask me to evaluate ANY vehicle in the enterprise fleet, lookup thermal hazards, predict knee points, or analyze driver strain.",
     timestamp: "Just now",
   },
 ];
 
 export const useFleetStore = create<FleetStoreState>((set, get) => ({
   theme: "light",
+  viewMode: "operations", // Default is user-friendly Operations Mode!
   vehicles: MOCK_VEHICLES,
-  selectedVehicleId: MOCK_VEHICLES[0]?.id || "DL1LAK7203",
+  selectedVehicleId: MOCK_VEHICLES[0]?.id || "DL1LAN0707",
   activeTab: "fleet",
-  isMock: false, // LIVE API Connected to port 8000 by default!
+  isMock: false, // LIVE API Connected to port 8000
   copilotOpen: false,
   copilotMessages: INITIAL_COPILOT_MESSAGES,
   isLiveUpdating: true,
@@ -88,20 +93,26 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
   hubFilter: "all",
 
   telemetry: {
-    voltage: 75.8,
-    current: -18.4,
-    temperature: 33.2,
-    odometer: 12500,
-    cycleCount: 215,
-    avgSpeed: 34.2,
-    maxSpeed: 62.0,
-    harshAccel: 2,
+    voltage: MOCK_VEHICLES[0]?.voltage || 73.6,
+    current: MOCK_VEHICLES[0]?.current || -14.0,
+    temperature: MOCK_VEHICLES[0]?.battery_temp || 29.0,
+    odometer: Math.floor((MOCK_VEHICLES[0]?.charge_cycle_count || 80) * 58),
+    cycleCount: MOCK_VEHICLES[0]?.charge_cycle_count || 80,
+    avgSpeed: MOCK_VEHICLES[0]?.speed || 30.0,
+    maxSpeed: (MOCK_VEHICLES[0]?.speed || 30.0) + 25,
+    harshAccel: 1,
     harshBrake: 1,
     harshCorner: 1,
   },
 
   setTheme: (theme: ThemeMode) => set({ theme }),
   toggleTheme: () => set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
+
+  setViewMode: (viewMode: ViewMode) => set({ viewMode }),
+  toggleViewMode: () =>
+    set((state) => ({
+      viewMode: state.viewMode === "operations" ? "engineering" : "operations",
+    })),
 
   setSelectedVehicle: (id: string) => {
     const cleanId = id.trim();
@@ -121,9 +132,9 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
           cycleCount: v.charge_cycle_count,
           avgSpeed: v.speed,
           maxSpeed: v.speed + 25,
-          harshAccel: v.status === "warning" ? 5 : v.status === "critical" ? 8 : 2,
-          harshBrake: v.status === "critical" ? 6 : 2,
-          harshCorner: 2,
+          harshAccel: v.status === "warning" ? 5 : v.status === "critical" ? 8 : 1,
+          harshBrake: v.status === "critical" ? 6 : 1,
+          harshCorner: 1,
         },
       });
     }
@@ -182,23 +193,29 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
 
   getFilteredVehicles: () => {
     const { vehicles, searchQuery, statusFilter, hubFilter } = get();
-    const query = searchQuery.trim().toLowerCase();
-
     return vehicles.filter((v) => {
-      const matchesSearch =
-        !query ||
-        v.id.toLowerCase().includes(query) ||
-        v.driver.toLowerCase().includes(query) ||
-        v.model.toLowerCase().includes(query) ||
-        v.fleet.toLowerCase().includes(query);
+      // 1. Search Query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matches =
+          v.id.toLowerCase().includes(q) ||
+          v.driver.toLowerCase().includes(q) ||
+          v.fleet.toLowerCase().includes(q) ||
+          v.model.toLowerCase().includes(q);
+        if (!matches) return false;
+      }
 
-      const matchesStatus =
-        statusFilter === "all" || v.status === statusFilter;
+      // 2. Status Filter
+      if (statusFilter !== "all" && v.status !== statusFilter) {
+        return false;
+      }
 
-      const matchesHub =
-        hubFilter === "all" || v.fleet.toLowerCase().includes(hubFilter.toLowerCase());
+      // 3. Hub Filter
+      if (hubFilter !== "all" && !v.fleet.toLowerCase().includes(hubFilter.toLowerCase())) {
+        return false;
+      }
 
-      return matchesSearch && matchesStatus && matchesHub;
+      return true;
     });
   },
 }));
