@@ -40,18 +40,12 @@ export const ThermalSafetyTab: React.FC = () => {
         }),
         predictSOHDeep({
           vehicle_id: selectedVehicleId,
-          sequence: [
-            [78.0, -15.0, 28.0, 85.0],
-            [77.5, -18.0, 28.5, 84.0],
-            [77.0, -20.0, 29.0, 83.0],
-            [76.5, -22.0, 29.5, 82.0],
-            [76.0, -20.0, 30.0, 81.0],
-            [75.5, -18.0, 30.2, 80.0],
-            [75.0, -19.0, 30.5, 79.0],
-            [74.5, -20.0, 30.8, 78.0],
-            [74.0, -21.0, 31.0, 77.0],
-            [73.5, -22.0, 31.2, 76.0],
-          ],
+          sequence: Array.from({ length: 10 }, (_, idx) => [
+            Number(((telemetry.voltage || 75.0) + (9 - idx) * 0.12).toFixed(2)),
+            Number(((telemetry.current || -18.0) - (idx % 3) * 1.2).toFixed(2)),
+            Number(((batteryTemp || 32.0) - (9 - idx) * 0.25).toFixed(2)),
+            Number(((vehicle.soc || 75.0) + (9 - idx) * 0.75).toFixed(2)),
+          ]),
         }),
       ]);
       setThermalData(thermal);

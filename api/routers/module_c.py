@@ -124,7 +124,22 @@ def predict_meta_ensemble(req: MetaEnsembleRequest):
     base_soh = max(0.0, min(100.0, 100.0 - (req.charge_cycle_count / 1500.0) * 20.0))
     beh_adjusted_soh = round(max(0.0, base_soh - beh["annual_soh_penalty_percent"]), 2)
 
-    status_str = "Optimal" if beh_adjusted_soh >= 85 and knee["rul_to_knee_cycles"] > 150 else "Monitor / High Wear"
+    if beh_adjusted_soh >= 90 and knee["rul_to_knee_cycles"] > 300:
+        grade = "Grade A (Optimal)"
+        status_str = "Optimal"
+        exec_sum = f"Pack {req.vehicle_id} demonstrates pristine electrochemical integrity at {req.charge_cycle_count} EFC. Pre-knee linear degradation active with {knee['rul_to_knee_cycles']} cycles margin."
+    elif beh_adjusted_soh >= 82 and knee["rul_to_knee_cycles"] > 100:
+        grade = "Grade B (Nominal Fleet Standard)"
+        status_str = "Nominal"
+        exec_sum = f"Pack {req.vehicle_id} operating under nominal duty cycle. SOH at {beh_adjusted_soh}% with manageable behavioral stress (BSI: {beh['battery_stress_index']:.2f})."
+    elif beh_adjusted_soh >= 75 or knee["rul_to_knee_cycles"] > 0:
+        grade = "Grade C (Knee Proximity / High Wear)"
+        status_str = "Warning"
+        exec_sum = f"Pack {req.vehicle_id} is entering knee transition zone ({knee['rul_to_knee_cycles']} cycles remaining to inflection). BMS rate-limiting recommended."
+    else:
+        grade = "Grade D (Post-Knee Accelerated Degradation)"
+        status_str = "Critical"
+        exec_sum = f"Pack {req.vehicle_id} has crossed the degradation knee inflection. Accelerated aging active; schedule cell module replacement."
 
     return {
         "vehicle_id": req.vehicle_id,
@@ -133,5 +148,7 @@ def predict_meta_ensemble(req: MetaEnsembleRequest):
         "driver_aggressiveness_index": beh["aggressiveness_index"],
         "battery_stress_index": beh["battery_stress_index"],
         "health_status": status_str,
+        "unified_health_grade": grade,
+        "executive_summary": exec_sum,
         "ensemble_architecture": "Meta-Ensemble (XGBoost + BA-BMS Dynamic Engine)",
     }

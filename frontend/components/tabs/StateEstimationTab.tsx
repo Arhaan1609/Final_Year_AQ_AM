@@ -469,12 +469,27 @@ export const StateEstimationTab: React.FC = () => {
               <line className="text-slate-200 dark:text-slate-800" stroke="currentColor" strokeDasharray="4 4" strokeWidth="1" x1="0" x2="1000" y1="50" y2="50" />
               <line className="text-slate-200 dark:text-slate-800" stroke="currentColor" strokeDasharray="4 4" strokeWidth="1" x1="0" x2="1000" y1="75" y2="75" />
 
-              {/* SoC Trend Line */}
-              <path d="M0,45 Q150,35 300,50 T600,40 T1000,30" fill="none" stroke="#0891B2" strokeWidth="2.5" />
-              {/* SoH Trend Line */}
-              <path d="M0,20 Q200,22 400,20 T800,24 T1000,22" fill="none" stroke="#059669" strokeWidth="2.5" />
-              {/* RUL Trend Line */}
-              <path d="M0,60 Q250,55 500,65 T750,58 T1000,62" fill="none" stroke="#7C3AED" strokeWidth="2.5" />
+              {/* Dynamic SoC Trend Line */}
+              <path
+                d={`M0,${100 - socVal * 0.8} Q250,${100 - (socVal - 5) * 0.8} 500,${100 - (socVal + 3) * 0.8} T750,${100 - (socVal - 2) * 0.8} T1000,${100 - socVal * 0.8}`}
+                fill="none"
+                stroke="#0891B2"
+                strokeWidth="2.5"
+              />
+              {/* Dynamic SoH Trend Line */}
+              <path
+                d={`M0,${100 - sohVal * 0.9} Q250,${100 - (sohVal - 0.5) * 0.9} 500,${100 - (sohVal + 0.2) * 0.9} T750,${100 - (sohVal - 0.3) * 0.9} T1000,${100 - sohVal * 0.9}`}
+                fill="none"
+                stroke="#059669"
+                strokeWidth="2.5"
+              />
+              {/* Dynamic RUL Trend Line */}
+              <path
+                d={`M0,${100 - (rulVal / 1500) * 80} Q250,${100 - ((rulVal - 30) / 1500) * 80} 500,${100 - ((rulVal + 20) / 1500) * 80} T750,${100 - ((rulVal - 15) / 1500) * 80} T1000,${100 - (rulVal / 1500) * 80}`}
+                fill="none"
+                stroke="#7C3AED"
+                strokeWidth="2.5"
+              />
             </svg>
           </div>
         </div>

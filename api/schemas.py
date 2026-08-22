@@ -223,6 +223,8 @@ class MetaEnsembleResponse(BaseSchema):
     driver_aggressiveness_index: float
     battery_stress_index: float
     health_status: str
+    unified_health_grade: str
+    executive_summary: str
     ensemble_architecture: str
 
 

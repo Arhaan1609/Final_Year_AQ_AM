@@ -132,7 +132,7 @@ export const MetaEnsembleReportTab: React.FC = () => {
               Pillar B: Thermal & Health
             </div>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
-              <div>Digital Twin Score: <strong>{diagData?.overall_health_score?.toFixed(1) || "94.5"} / 100</strong></div>
+              <div>Digital Twin Score: <strong>{diagData?.overall_health_score !== undefined ? diagData.overall_health_score.toFixed(1) : vehicle.soh.toFixed(1)} / 100</strong></div>
               <div>Thermal Safety: <strong>{diagData?.thermal_status?.safety_status || "SAFE"}</strong></div>
               <div>Pack Temp: <strong>{vehicle.battery_temp.toFixed(1)} °C</strong></div>
               <div>Motor Temp: <strong>{vehicle.motor_temp.toFixed(1)} °C</strong></div>
@@ -146,9 +146,9 @@ export const MetaEnsembleReportTab: React.FC = () => {
               Pillar C: BA-BMS & Knee
             </div>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
-              <div>Driver Aggressiveness: <strong>{metaData?.driver_aggressiveness_index ?? 0.24}</strong></div>
-              <div>Battery Stress Index: <strong>{metaData?.battery_stress_index ?? 0.31}</strong></div>
-              <div>RUL to Knee Point: <strong>{metaData?.rul_to_knee_cycles ?? 735} cycles</strong></div>
+              <div>Driver Aggressiveness: <strong>{metaData?.driver_aggressiveness_index !== undefined ? metaData.driver_aggressiveness_index.toFixed(2) : (vehicle.status === "critical" ? "0.48" : "0.16")}</strong></div>
+              <div>Battery Stress Index: <strong>{metaData?.battery_stress_index !== undefined ? metaData.battery_stress_index.toFixed(2) : (vehicle.status === "critical" ? "0.38" : "0.22")}</strong></div>
+              <div>RUL to Knee Point: <strong>{metaData?.rul_to_knee_cycles !== undefined ? `${Math.round(metaData.rul_to_knee_cycles)} cycles` : `${Math.max(0, Math.round(950 - vehicle.charge_cycle_count))} cycles`}</strong></div>
               <div>Assigned Driver: <strong>{vehicle.driver}</strong></div>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const MetaEnsembleReportTab: React.FC = () => {
         <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Executive Summary</div>
           <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-sans">
-            {metaData?.executive_summary || "Tri-pillar synthesis certifies this battery pack is operating under nominal thermodynamic, electrochemical, and driver behavior bounds."}
+            {metaData?.executive_summary || `Pack ${vehicle.id} demonstrates consistent telemetry within operational bounds (${vehicle.charge_cycle_count} EFC, ${vehicle.soh.toFixed(1)}% SOH).`}
           </p>
         </div>
 
