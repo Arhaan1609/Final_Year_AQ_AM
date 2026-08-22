@@ -97,10 +97,10 @@ export const CopilotDrawer: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    Fleet AI Copilot
-                    <Badge variant="cyan" size="sm">FastMCP Live</Badge>
+                    Fleet Telemetry Copilot
+                    <Badge variant="cyan" size="sm">Rule-Based + Live ML</Badge>
                   </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Natural Language Telemetry Agent</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Rule-based assistant (live model grounding)</p>
                 </div>
               </div>
 

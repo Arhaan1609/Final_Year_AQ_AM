@@ -42,6 +42,7 @@ interface FleetStoreState {
   selectedVehicleId: string;
   activeTab: DashboardTab;
   isMock: boolean;
+  isLiveBackendConnected: boolean;
   copilotOpen: boolean;
   copilotMessages: CopilotMessage[];
   telemetry: TelemetryInputs;
@@ -60,6 +61,7 @@ interface FleetStoreState {
   setSelectedVehicle: (id: string) => void;
   setActiveTab: (tab: DashboardTab) => void;
   setIsMock: (mock: boolean) => void;
+  setIsLiveBackendConnected: (connected: boolean) => void;
   setCopilotOpen: (open: boolean) => void;
   addCopilotMessage: (msg: Omit<CopilotMessage, "id" | "timestamp">) => void;
   clearCopilot: () => void;
@@ -91,6 +93,7 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
   selectedVehicleId: MOCK_VEHICLES[0]?.id || "DL1LAN0707",
   activeTab: "fleet",
   isMock: false, // LIVE API Connected to port 8000
+  isLiveBackendConnected: true,
   copilotOpen: false,
   copilotMessages: INITIAL_COPILOT_MESSAGES,
   isLiveUpdating: true,
@@ -167,6 +170,8 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
     setMockModeOverride(mock);
     set({ isMock: mock });
   },
+
+  setIsLiveBackendConnected: (connected: boolean) => set({ isLiveBackendConnected: connected }),
 
   setCopilotOpen: (open: boolean) => set({ copilotOpen: open }),
 

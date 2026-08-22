@@ -87,11 +87,18 @@ class BatteryIQEngine:
             try:
                 with open(path, "r", encoding="utf-8") as f:
                     loaded = yaml.safe_load(f) or {}
-                # Resolve relative weight paths in config to module3 root
-                for model_key in ["soh", "thermal"]:
-                    wp = loaded.get("models", {}).get(model_key, {}).get("weights_path", "")
-                    if wp and not os.path.isabs(wp):
-                        loaded["models"][model_key]["weights_path"] = os.path.join(_MODULE3_ROOT, wp)
+                # Resolve relative weight paths robustly using _resolve_weight_path
+                for model_key, fname, sub in [
+                    ("soh", "soh_hybrid_cnn_lstm.pt", "soh_deep"),
+                    ("thermal", "thermal_rf_multizone.joblib", "thermal")
+                ]:
+                    wp = loaded.get("models", {}).get(model_key, {}).get("weights_path", f"weights/{fname}")
+                    resolved = _resolve_weight_path(sub, fname, wp)
+                    if "models" not in loaded:
+                        loaded["models"] = {}
+                    if model_key not in loaded["models"]:
+                        loaded["models"][model_key] = {}
+                    loaded["models"][model_key]["weights_path"] = resolved
                 return loaded
             except Exception:
                 return default_config

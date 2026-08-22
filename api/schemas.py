@@ -38,7 +38,7 @@ class SOCRequest(BaseSchema):
 
 
 class SOHRequest(BaseSchema):
-    """Input features for State of Health prediction (Module A — Extra Trees / XGBoost)."""
+    """Input features for State of Health prediction (Module A — Calibrated Baseline SOH)."""
     battery_voltage: float = Field(..., ge=20, le=150)
     battery_temp: float = Field(..., ge=-20, le=70)
     battery_current: float = Field(...)
@@ -54,17 +54,24 @@ class SOHRequest(BaseSchema):
     voltage_deviation: float = Field(0.0)
     oem_encoded: int = Field(0, ge=0)
     model_encoded: int = Field(0, ge=0)
+    initial_soh: Optional[float] = Field(None, ge=40.0, le=100.0, description="Commissioning baseline SOH (%)")
+    soh: Optional[float] = Field(None, ge=40.0, le=100.0, description="Asset baseline SOH (%)")
+    chassis_no: Optional[str] = Field(None, description="Physical vehicle chassis identifier")
+    vehicle_id: Optional[str] = Field(None, description="Vehicle registration identifier")
 
 
 class RULRequest(BaseSchema):
     """Input features for Remaining Useful Life prediction (Module A — Random Forest / GradientBoosting)."""
     odometer: float = Field(12000.0, ge=0)
+    charge_cycle_count: Optional[float] = Field(None, ge=0, description="Cumulative charge cycles")
     soc_at_charge: float = Field(85.0, ge=0, le=100)
+    battery_temp: Optional[float] = Field(None, ge=-20, le=70)
+    soh: Optional[float] = Field(None, ge=40.0, le=100.0)
+    soh_mean: float = Field(85.0, ge=0, le=120)
     mile_avg: float = Field(88.0, ge=0)
     miles_per_charge: float = Field(95.0, ge=0)
     days_in_service: float = Field(180.0, ge=1)
     degradation_factor: float = Field(0.0, ge=-1, le=1)
-    soh_mean: float = Field(85.0, ge=0, le=120)
     miles_per_charge_rolling_3: float = Field(92.0, ge=0)
     miles_per_charge_rolling_5: float = Field(90.0, ge=0)
     miles_per_charge_rolling_10: float = Field(88.0, ge=0)
@@ -84,6 +91,10 @@ class MileageRequest(BaseSchema):
     speed_ratio: float = Field(0.58, ge=0, le=1)
     stoppage_density: float = Field(0.05, ge=0)
     energy_utilized: float = Field(8.5, ge=0)
+    soc: Optional[float] = Field(None, ge=0, le=100, description="Current SOC percentage")
+    soh: Optional[float] = Field(None, ge=40.0, le=100.0, description="Current SOH percentage")
+    battery_voltage: Optional[float] = Field(None, ge=20, le=150)
+    battery_temp: Optional[float] = Field(None, ge=-20, le=70)
     hour: int = Field(10, ge=0, le=23)
     day_of_week: int = Field(2, ge=0, le=6)
     month: int = Field(6, ge=1, le=12)

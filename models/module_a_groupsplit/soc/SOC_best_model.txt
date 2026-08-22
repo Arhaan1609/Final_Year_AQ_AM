@@ -1,0 +1,2 @@
+Best Model: Lasso
+R2: 0.9873

@@ -64,6 +64,10 @@ export const StateEstimationTab: React.FC = () => {
           temp_stress_index: telemetry.tempStressIndex,
           voltage_deviation: Number((telemetry.voltage - 72.0).toFixed(2)),
           miles_per_charge: Math.max(35, Math.min(130, 120 - effectiveCycles * 0.045)),
+          initial_soh: vehicle.soh,
+          soh: vehicle.soh,
+          chassis_no: vehicle.chassis,
+          vehicle_id: vehicle.id,
         }),
         predictRUL({
           odometer: telemetry.odometer,
@@ -107,21 +111,22 @@ export const StateEstimationTab: React.FC = () => {
   }, [fetchModuleAPredictions]);
 
   const resetTelemetry = () => {
+    const cyc = vehicle.charge_cycle_count ?? 0;
     updateTelemetry({
-      voltage: vehicle.voltage || 75.8,
-      current: vehicle.current || -18.4,
-      temperature: vehicle.battery_temp || 33.2,
-      odometer: vehicle.charge_cycle_count * 58 || 12500,
-      cycleCount: vehicle.charge_cycle_count || 150,
-      avgSpeed: vehicle.speed || 30.0,
-      maxSpeed: (vehicle.speed || 30.0) + 25,
-      daysInService: Math.round((vehicle.charge_cycle_count || 150) * 1.4),
+      voltage: vehicle.voltage ?? 75.8,
+      current: vehicle.current ?? -18.4,
+      temperature: vehicle.battery_temp ?? 33.2,
+      odometer: cyc * 58,
+      cycleCount: cyc,
+      avgSpeed: vehicle.speed ?? 30.0,
+      maxSpeed: (vehicle.speed ?? 30.0) + 25,
+      daysInService: Math.max(1, Math.round(cyc * 1.4)),
       driveMode: 1,
       isCharging: vehicle.status === "charging" ? 1 : 0,
       runKms: 45.0,
       stoppageCount: 3,
       energyUtilized: 7.2,
-      tempStressIndex: Math.max(0, Math.min(1, ((vehicle.battery_temp || 32) - 25) / 30)),
+      tempStressIndex: Math.max(0, Math.min(1, ((vehicle.battery_temp ?? 32) - 25) / 30)),
     });
   };
 
@@ -130,10 +135,10 @@ export const StateEstimationTab: React.FC = () => {
     resetTelemetry();
   }, [selectedVehicleId]);
 
-  const socVal = socRes?.prediction ?? vehicle.soc ?? 64.8;
-  const sohVal = sohRes?.prediction ?? vehicle.soh ?? 91.2;
-  const rulVal = rulRes?.prediction ? Math.round(rulRes.prediction) : vehicle.rul ?? 1240;
-  const mileageVal = mileageRes?.prediction ? Math.round(mileageRes.prediction * 10) / 10 : vehicle.mileage ?? 119.5;
+  const socVal = socRes?.prediction ?? vehicle.soc ?? 0;
+  const sohVal = sohRes?.prediction ?? vehicle.soh ?? 0;
+  const rulVal = rulRes?.prediction != null ? Math.round(rulRes.prediction) : (vehicle.rul ?? 0);
+  const mileageVal = mileageRes?.prediction != null ? Math.round(mileageRes.prediction * 10) / 10 : (vehicle.mileage ?? 0);
 
   // Arc calculation for SOC circular meter
   const circumference = 2 * Math.PI * 40; // 251.3
@@ -545,15 +550,19 @@ export const StateEstimationTab: React.FC = () => {
               <div>
                 <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1 flex items-center gap-2">
                   State of Health
-                  <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded text-[9px] font-mono">XGBOOST</span>
+                  <span className="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded text-[9px] font-mono">CALIBRATED BASELINE</span>
                 </div>
                 <div className="text-4xl font-extrabold text-slate-900 dark:text-slate-100 flex items-baseline gap-1 font-mono">
                   {sohVal.toFixed(1)}<span className="text-xl text-slate-400 font-normal">%</span>
                 </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Calibrated estimate — assumes commissioning baseline
+                </div>
               </div>
               <div className="flex flex-col items-end gap-1">
                 <MetricExplainer metricKey="soh" currentValue={`${sohVal.toFixed(1)}%`} label="How it works" />
-                <div className="text-[10px] text-slate-400 font-mono">R² = 0.9820</div>
+                <div className="text-[10px] text-slate-400 font-mono">LOGO-CV (ΔSOH)</div>
               </div>
             </div>
 
@@ -578,9 +587,11 @@ export const StateEstimationTab: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono px-2">
-              <span>Nominal Capacity: 150 Ah</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Grade A Asset</span>
+            <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-slate-400 font-mono px-2 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+              <span>Baseline SOH₀: <strong className="text-slate-700 dark:text-slate-200">{vehicle.soh.toFixed(1)}%</strong></span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                Δ: {(sohVal - vehicle.soh) >= 0 ? "+" : ""}{(sohVal - vehicle.soh).toFixed(2)}%
+              </span>
             </div>
           </div>
 

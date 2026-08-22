@@ -26,6 +26,7 @@ import {
 } from "./types";
 
 import * as MockData from "./mock";
+import { useFleetStore } from "../store/useFleetStore";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
@@ -48,6 +49,12 @@ async function delay(ms: number = 300): Promise<void> {
   return new Promise((res) => setTimeout(res, ms + Math.random() * 200));
 }
 
+function updateConnectionStatus(connected: boolean) {
+  if (typeof window !== "undefined") {
+    useFleetStore.getState().setIsLiveBackendConnected(connected);
+  }
+}
+
 // Generic POST helper with automatic fallback
 async function postAPI<TReq, TRes>(
   path: string,
@@ -55,6 +62,7 @@ async function postAPI<TReq, TRes>(
   mockFallback: (b: TReq) => TRes
 ): Promise<TRes> {
   if (isMockMode()) {
+    updateConnectionStatus(false);
     await delay();
     return mockFallback(body);
   }
@@ -74,9 +82,12 @@ async function postAPI<TReq, TRes>(
     if (!res.ok) {
       throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
     }
-    return (await res.json()) as TRes;
+    const data = (await res.json()) as TRes;
+    updateConnectionStatus(true);
+    return data;
   } catch (err) {
     console.warn(`[API Client] Live call to ${path} failed. Falling back to mock data:`, err);
+    updateConnectionStatus(false);
     await delay(150);
     return mockFallback(body);
   }
@@ -85,14 +96,18 @@ async function postAPI<TReq, TRes>(
 // 1. Health
 export async function getSystemHealth(): Promise<HealthResponse> {
   if (isMockMode()) {
+    updateConnectionStatus(false);
     await delay(150);
     return MockData.getMockHealth();
   }
   try {
     const res = await fetch(`${API_BASE_URL}/health`, { cache: "no-store" });
     if (!res.ok) throw new Error("Health check failed");
-    return await res.json();
+    const data = await res.json();
+    updateConnectionStatus(true);
+    return data;
   } catch {
+    updateConnectionStatus(false);
     return MockData.getMockHealth();
   }
 }

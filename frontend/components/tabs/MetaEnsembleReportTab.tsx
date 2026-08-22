@@ -101,11 +101,11 @@ export const MetaEnsembleReportTab: React.FC = () => {
             <div className="text-right">
               <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">Unified Health Rating</div>
               <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
-                {metaData?.unified_health_grade || "Grade A (Optimal)"}
+                {metaData?.unified_health_grade ?? (loading ? "Computing Grade..." : "Grade Pending")}
               </div>
             </div>
             <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-extrabold font-mono text-2xl">
-              {metaData?.unified_health_grade?.charAt(6) || "A"}
+              {metaData?.unified_health_grade?.charAt(6) ?? (loading ? "..." : "-")}
             </div>
           </div>
         </div>
@@ -140,7 +140,7 @@ export const MetaEnsembleReportTab: React.FC = () => {
             </div>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>Digital Twin Score: <strong>{diagData?.overall_health_score !== undefined ? diagData.overall_health_score.toFixed(1) : vehicle.soh.toFixed(1)} / 100</strong></div>
-              <div>Thermal Safety: <strong>{diagData?.thermal_status?.safety_status || "SAFE"}</strong></div>
+              <div>Thermal Safety: <strong>{diagData?.thermal_status?.safety_status ?? (loading ? "Evaluating..." : "--")}</strong></div>
               <div>Pack Temp: <strong>{vehicle.battery_temp.toFixed(1)} °C</strong></div>
               <div>Motor Temp: <strong>{vehicle.motor_temp.toFixed(1)} °C</strong></div>
             </div>

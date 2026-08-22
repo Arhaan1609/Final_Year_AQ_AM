@@ -169,12 +169,15 @@ export function getMockThermal(req: ThermalRequest): ThermalResponse {
 
 // 7. Module B — SOH Deep (PyTorch CNN-LSTM)
 export function getMockSOHDeep(req: SOHDeepRequest): SOHDeepResponse {
+  const soh = jitter(92.4, 1.2);
   return {
     vehicle_id: req.vehicle_id || "GJ05CV6564",
-    estimated_soh_percent: jitter(92.4, 1.2),
+    estimated_soh_percent: soh,
     capacity_state: "Optimal (Tier 1)",
-    confidence_score: 0.954,
-    requires_balancing: false,
+    confidence_interval: { ci_95_lower: soh - 1.04, ci_95_upper: soh + 1.04 },
+    degradation_slope_per_100_cycles: 0.51,
+    model_architecture: "Hybrid 1D-CNN + LSTM",
+    verified_benchmark_rmse: 5.29,
   };
 }
 

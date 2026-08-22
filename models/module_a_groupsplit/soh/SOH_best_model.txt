@@ -1,0 +1,2 @@
+Best Model: Ridge
+R2: 0.0667

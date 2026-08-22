@@ -6,6 +6,8 @@ import { useFleetStore } from "../lib/store/useFleetStore";
 import { Header } from "../components/layout/Header";
 import { Sidebar } from "../components/layout/Sidebar";
 import { CopilotDrawer } from "../components/copilot/CopilotDrawer";
+import { OfflineBanner } from "../components/ui/OfflineBanner";
+import { FallbackAuditDrawer } from "../components/ui/FallbackAuditDrawer";
 import { usePathname } from "next/navigation";
 
 export default function RootLayout({
@@ -16,8 +18,10 @@ export default function RootLayout({
   const { theme } = useFleetStore();
   const pathname = usePathname();
   const isDashboard = pathname.startsWith("/dashboard");
+  const [mounted, setMounted] = React.useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");
@@ -27,12 +31,13 @@ export default function RootLayout({
   }, [theme]);
 
   return (
-    <html lang="en" className={theme === "dark" ? "dark" : ""}>
+    <html lang="en" suppressHydrationWarning className={mounted && theme === "dark" ? "dark" : ""}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <title>EV Battery Intelligence Platform</title>
       </head>
-      <body className="min-h-screen flex flex-col antialiased transition-colors selection:bg-cyan-500/20 selection:text-cyan-800 dark:selection:text-cyan-200">
+      <body suppressHydrationWarning className="min-h-screen flex flex-col antialiased transition-colors selection:bg-cyan-500/20 selection:text-cyan-800 dark:selection:text-cyan-200">
+        <OfflineBanner />
         {isDashboard ? (
           <>
             <Header />
@@ -43,6 +48,7 @@ export default function RootLayout({
               </main>
             </div>
             <CopilotDrawer />
+            <FallbackAuditDrawer />
           </>
         ) : (
           // Landing page renders without dashboard sidebar

@@ -63,6 +63,10 @@ export interface SOHRequest {
   voltage_deviation?: number;
   oem_encoded?: number;
   model_encoded?: number;
+  initial_soh?: number;
+  soh?: number;
+  chassis_no?: string;
+  vehicle_id?: string;
 }
 
 export interface RULRequest {
@@ -134,8 +138,10 @@ export interface SOHDeepResponse {
   vehicle_id: string;
   estimated_soh_percent: number;
   capacity_state: string;
-  confidence_score: number;
-  requires_balancing: boolean;
+  confidence_interval: { ci_95_lower: number; ci_95_upper: number };
+  degradation_slope_per_100_cycles: number;
+  model_architecture?: string;
+  verified_benchmark_rmse?: number;
 }
 
 export interface DiagnoseRequest {

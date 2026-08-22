@@ -4,59 +4,91 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useFleetStore } from "../../lib/store/useFleetStore";
 import { predictThermal, predictSOHDeep } from "../../lib/api/client";
 import { ThermalResponse, SOHDeepResponse } from "../../lib/api/types";
-import { Flame, ShieldAlert, Thermometer, ShieldCheck, AlertCircle, RefreshCw, Cpu, Activity, Info } from "lucide-react";
+import { Flame, ShieldAlert, Thermometer, ShieldCheck, AlertCircle, RefreshCw, Cpu, Activity, Info, Database } from "lucide-react";
 import { MetricExplainer } from "../ui/MetricExplainer";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+
 
 export const ThermalSafetyTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
   const vehicle = getSelectedVehicle();
 
-  const [batteryTemp, setBatteryTemp] = useState<number>(vehicle.battery_temp || telemetry.temperature || 33.2);
-  const [controllerTemp, setControllerTemp] = useState<number>(vehicle.controller_temp || 41.5);
-  const [motorTemp, setMotorTemp] = useState<number>(vehicle.motor_temp || 54.0);
+  const [batteryTemp, setBatteryTemp] = useState<number>(vehicle.battery_temp ?? telemetry.temperature ?? 32.0);
+  const [controllerTemp, setControllerTemp] = useState<number>(vehicle.controller_temp ?? 40.0);
+  const [motorTemp, setMotorTemp] = useState<number>(vehicle.motor_temp ?? 50.0);
 
   // Sync temperatures immediately when vehicle changes
   useEffect(() => {
-    setBatteryTemp(vehicle.battery_temp || telemetry.temperature || 32.0);
-    setControllerTemp(vehicle.controller_temp || (vehicle.battery_temp ? vehicle.battery_temp + 8.5 : 40.5));
-    setMotorTemp(vehicle.motor_temp || (vehicle.battery_temp ? vehicle.battery_temp + 18.0 : 50.0));
-  }, [selectedVehicleId, vehicle]);
+    setBatteryTemp(vehicle.battery_temp ?? telemetry.temperature ?? 32.0);
+    setControllerTemp(vehicle.controller_temp ?? 40.0);
+    setMotorTemp(vehicle.motor_temp ?? 50.0);
+  }, [selectedVehicleId, vehicle, telemetry.temperature]);
 
   const [thermalData, setThermalData] = useState<ThermalResponse | null>(null);
   const [sohDeepData, setSohDeepData] = useState<SOHDeepResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  // CNN-LSTM state — only set when real sequence data is available
+  const [hasRealSequence, setHasRealSequence] = useState<boolean | null>(null); // null = not yet checked
+  const [seqCycleRange, setSeqCycleRange] = useState<{first: number; last: number} | null>(null);
 
   const evaluateThermal = useCallback(async () => {
     setLoading(true);
     try {
-      const [thermal, sohDeep] = await Promise.all([
-        predictThermal({
-          vbt: batteryTemp,
-          vct: controllerTemp,
-          vmt: motorTemp,
-          vbv: telemetry.voltage,
-          vbc: telemetry.current,
-          soc: vehicle.soc || 75,
-          speed: telemetry.avgSpeed || 34,
-        }),
-        predictSOHDeep({
-          vehicle_id: selectedVehicleId,
-          sequence: Array.from({ length: 10 }, (_, idx) => [
-            Number(((telemetry.voltage || 75.0) + (9 - idx) * 0.12).toFixed(2)),
-            Number(((telemetry.current || -18.0) - (idx % 3) * 1.2).toFixed(2)),
-            Number(((batteryTemp || 32.0) - (9 - idx) * 0.25).toFixed(2)),
-            Number(((vehicle.soc || 75.0) + (9 - idx) * 0.75).toFixed(2)),
-          ]),
-        }),
-      ]);
-      setThermalData(thermal);
-      setSohDeepData(sohDeep);
+      // ── Step 1: Check if this vehicle has real sequence data ────────────────
+      let realSequence: number[][] | null = null;
+      let cycleRange: {first: number; last: number} | null = null;
+      try {
+        const seqRes = await fetch(`${API_BASE}/api/v1/db/vehicles/${selectedVehicleId}/sequence`);
+        if (seqRes.ok) {
+          const seqData = await seqRes.json();
+          if (seqData.has_sequence && seqData.sequence?.length >= 5) {
+            realSequence = seqData.sequence;
+            cycleRange = seqData.cycle_range ?? null;
+          }
+        }
+        // 404 = no real data — realSequence stays null, we do NOT synthesize
+      } catch {
+        // Network error checking sequence availability — treat as unavailable
+      }
+      setHasRealSequence(realSequence !== null);
+      setSeqCycleRange(cycleRange);
+
+      // ── Step 2: Run thermal RF (always real data) ───────────────────────────
+      const thermalPromise = predictThermal({
+        vbt: batteryTemp,
+        vct: controllerTemp,
+        vmt: motorTemp,
+        vbv: telemetry.voltage,
+        vbc: telemetry.current,
+        soc: vehicle.soc || 75,
+        speed: telemetry.avgSpeed || 34,
+      });
+
+      // ── Step 3: Run CNN-LSTM ONLY if real sequence exists ───────────────────
+      if (realSequence !== null) {
+        const [thermal, sohDeep] = await Promise.all([
+          thermalPromise,
+          predictSOHDeep({
+            vehicle_id: selectedVehicleId,
+            sequence: realSequence, // real Euler HiLoad parquet data
+          }),
+        ]);
+        setThermalData(thermal);
+        setSohDeepData(sohDeep);
+      } else {
+        // No real sequence — run thermal only, leave sohDeepData null
+        const thermal = await thermalPromise;
+        setThermalData(thermal);
+        setSohDeepData(null);
+      }
     } catch (e) {
       console.error("Thermal safety error:", e);
     } finally {
       setLoading(false);
     }
   }, [batteryTemp, controllerTemp, motorTemp, telemetry, selectedVehicleId, vehicle.soc]);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -300,7 +332,7 @@ export const ThermalSafetyTab: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-mono">
-                  {((1 - (thermalData?.risk_probability || 0.05)) * 100).toFixed(1)}%
+                  {thermalData?.risk_probability != null ? `${((1 - thermalData.risk_probability) * 100).toFixed(1)}%` : loading ? "..." : "--"}
                 </div>
                 <div className="text-xs text-slate-500 font-mono">Thermal Safety Confidence</div>
               </div>
@@ -312,15 +344,21 @@ export const ThermalSafetyTab: React.FC = () => {
             <div className="space-y-2 text-xs font-mono border-t border-slate-200 dark:border-slate-800 pt-4">
               <div className="flex justify-between">
                 <span className="text-slate-500">Risk Probability:</span>
-                <strong className="text-slate-800 dark:text-slate-200">{((thermalData?.risk_probability || 0.02) * 100).toFixed(2)}%</strong>
+                <strong className="text-slate-800 dark:text-slate-200">
+                  {thermalData?.risk_probability != null ? `${(thermalData.risk_probability * 100).toFixed(2)}%` : loading ? "Evaluating..." : "--"}
+                </strong>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Severity Tier:</span>
-                <strong className="text-emerald-600 dark:text-emerald-400">{thermalData?.severity || "NOMINAL"}</strong>
+                <strong className={thermalData?.severity === "CRITICAL" ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"}>
+                  {thermalData?.severity ?? (loading ? "Evaluating..." : "--")}
+                </strong>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Active Alert:</span>
-                <strong className="text-slate-800 dark:text-slate-200">{thermalData?.active_alert ? "ACTIVE" : "NONE"}</strong>
+                <strong className="text-slate-800 dark:text-slate-200">
+                  {thermalData != null ? (thermalData.active_alert ? "ACTIVE" : "NONE") : loading ? "Evaluating..." : "--"}
+                </strong>
               </div>
             </div>
           </div>
@@ -331,8 +369,99 @@ export const ThermalSafetyTab: React.FC = () => {
               BMS Recommended Directives
             </h3>
             <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-sans p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-              {thermalData?.recommended_action || "Maintain standard active cooling circulation. Thermal gradient across all 3 zones remains within nominal design threshold (< 8.0°C variance)."}
+              {thermalData?.recommended_action ?? (loading ? "Evaluating thermal gradient across all 3 zones..." : "Awaiting telemetry stream to evaluate directives.")}
             </p>
+          </div>
+
+          {/* CNN-LSTM Deep SOH Card — conditionally real or unavailable */}
+          <div className="app-card p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Cpu className="w-4 h-4 text-violet-500" />
+              <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest font-mono">
+                CNN-LSTM Deep SOH
+              </h3>
+              <span className={`ml-auto px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                hasRealSequence === true
+                  ? "bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-700"
+                  : hasRealSequence === false
+                  ? "bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-300 dark:border-slate-600"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700"
+              }`}>
+                {hasRealSequence === true ? "REAL DATA" : hasRealSequence === false ? "UNAVAILABLE" : "CHECKING..."}
+              </span>
+            </div>
+
+            {loading && hasRealSequence === null && (
+              <div className="text-xs text-slate-400 font-mono text-center py-4">
+                Checking sequence availability...
+              </div>
+            )}
+
+            {/* Real data path: vehicle has Euler HiLoad parquet data */}
+            {hasRealSequence === true && sohDeepData != null && (
+              <div className="space-y-3">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-extrabold text-violet-600 dark:text-violet-400 font-mono leading-none">
+                    {sohDeepData.estimated_soh_percent.toFixed(2)}%
+                  </span>
+                  <span className="text-xs text-slate-500 font-mono">Estimated SOH</span>
+                </div>
+                <div className="text-[11px] font-mono space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-3">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Health Category:</span>
+                    <strong className="text-violet-700 dark:text-violet-300">{sohDeepData.capacity_state}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">95% CI:</span>
+                    <strong className="text-slate-800 dark:text-slate-200">
+                      {sohDeepData.confidence_interval.ci_95_lower.toFixed(1)}–{sohDeepData.confidence_interval.ci_95_upper.toFixed(1)}%
+                    </strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Degradation Slope:</span>
+                    <strong className={sohDeepData.degradation_slope_per_100_cycles > 1.5 ? "text-amber-600" : "text-emerald-600"}>
+                      {sohDeepData.degradation_slope_per_100_cycles.toFixed(2)}%/100 cyc
+                    </strong>
+                  </div>
+                  {seqCycleRange && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Sequence cycles:</span>
+                      <strong className="text-slate-600 dark:text-slate-400 font-mono">
+                        {seqCycleRange.first}–{seqCycleRange.last}
+                      </strong>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5 mt-3 p-2 rounded-lg bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800">
+                  <Database className="w-3 h-3 text-violet-500 flex-shrink-0" />
+                  <span className="text-[10px] text-violet-700 dark:text-violet-300 font-mono">
+                    Euler HiLoad parquet · 10 real chronological steps
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Unavailable path: no real chronological sequence data for this vehicle */}
+            {hasRealSequence === false && (
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">
+                      Sequence history unavailable for this vehicle
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                      Deep SOH trend estimation requires 10+ consecutive chronologically-logged
+                      charge cycles in the Euler HiLoad dataset. This vehicle has no such record.
+                      The CNN-LSTM is not invoked — no synthetic approximation is substituted.
+                    </p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-mono">
+                      Coverage: 10 laboratory vehicles (GJ05CV6560–GJ05CV6569) · 1 in live fleet
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>

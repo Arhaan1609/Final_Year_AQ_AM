@@ -22,32 +22,36 @@ PLOTS_DIR      = os.path.join(RESULTS_DIR, "plots")
 REPORTS_DIR    = os.path.join(RESULTS_DIR, "reports")
 LOGS_DIR       = os.path.join(BASE_DIR, "logs")
 
-# Task-specific model subfolders
+# Task-specific model subfolders (Swapped to Honest Group-Split and Calibrated Models)
 TASK_MODEL_DIRS = {
-    "SOC": os.path.join(MODELS_DIR, "module_a", "soc"),
-    "SOH": os.path.join(MODELS_DIR, "module_a", "soh"),
-    "RUL": os.path.join(MODELS_DIR, "module_a", "rul"),
-    "Mileage": os.path.join(MODELS_DIR, "module_a", "mileage"),
-    "soc": os.path.join(MODELS_DIR, "module_a", "soc"),
-    "soh": os.path.join(MODELS_DIR, "module_a", "soh"),
-    "rul": os.path.join(MODELS_DIR, "module_a", "rul"),
-    "mileage": os.path.join(MODELS_DIR, "module_a", "mileage"),
+    "SOC": os.path.join(MODELS_DIR, "module_a_groupsplit", "soc"),
+    "SOH": os.path.join(MODELS_DIR, "module_a_soh_calibrated"),
+    "RUL": os.path.join(MODELS_DIR, "module_a_groupsplit", "rul"),
+    "Mileage": os.path.join(MODELS_DIR, "module_a_groupsplit", "mileage"),
+    "soc": os.path.join(MODELS_DIR, "module_a_groupsplit", "soc"),
+    "soh": os.path.join(MODELS_DIR, "module_a_soh_calibrated"),
+    "rul": os.path.join(MODELS_DIR, "module_a_groupsplit", "rul"),
+    "mileage": os.path.join(MODELS_DIR, "module_a_groupsplit", "mileage"),
 }
 
 def get_task_model_dir(task: str) -> str:
-    d = TASK_MODEL_DIRS.get(task, os.path.join(MODELS_DIR, task.lower()))
+    d = TASK_MODEL_DIRS.get(task, os.path.join(MODELS_DIR, "module_a_groupsplit", task.lower()))
     os.makedirs(d, exist_ok=True)
     return d
 
 def get_model_file_path(task: str, filename: str) -> str:
-    """Return model file path checking models/module_a/<task>/, models/<task>/, then models/."""
-    mod_a_p = os.path.join(MODELS_DIR, "module_a", task.lower(), filename)
-    if os.path.exists(mod_a_p):
-        return mod_a_p
+    """Return model file path checking task-specific directory first."""
     task_dir = get_task_model_dir(task)
     p = os.path.join(task_dir, filename)
     if os.path.exists(p):
         return p
+    # Fallback checks
+    mod_a_p = os.path.join(MODELS_DIR, "module_a_groupsplit", task.lower(), filename)
+    if os.path.exists(mod_a_p):
+        return mod_a_p
+    cal_p = os.path.join(MODELS_DIR, "module_a_soh_calibrated", filename)
+    if os.path.exists(cal_p):
+        return cal_p
     root_p = os.path.join(MODELS_DIR, filename)
     if os.path.exists(root_p):
         return root_p

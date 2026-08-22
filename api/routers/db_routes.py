@@ -2,6 +2,7 @@
 api/routers/db_routes.py — SQL Database Routes for Fleet Telemetry & Management.
 """
 
+import os
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -12,6 +13,33 @@ from api.db.database import get_db, DB_ENGINE_TYPE
 from api.db.models import Vehicle, TelemetryLog, MaintenanceAlert
 
 router = APIRouter(prefix="/api/v1/db", tags=["SQL Fleet Database"])
+
+# ── Parquet-backed sequence store ──────────────────────────────────────────────
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_SEQUENCE_PARQUET = os.path.join(
+    _PROJECT_ROOT, "data", "processed",
+    "module_b_thermal_deep_soh", "soh_timeseries_euler_processed.parquet"
+)
+_SEQ_DF = None
+_SEQ_IDS: set = set()
+
+def _load_seq_df():
+    """Lazy-load the sequence parquet once."""
+    global _SEQ_DF, _SEQ_IDS
+    if _SEQ_DF is not None:
+        return _SEQ_DF
+    if not os.path.exists(_SEQUENCE_PARQUET):
+        return None
+    import pandas as pd
+    _SEQ_DF = pd.read_parquet(_SEQUENCE_PARQUET)
+    _SEQ_IDS = set(_SEQ_DF["vehicle_id"].unique())
+    return _SEQ_DF
+
+
+def get_vehicles_with_sequence() -> list:
+    """Return sorted list of vehicle IDs that have real sequence data."""
+    _load_seq_df()
+    return sorted(_SEQ_IDS)
 
 class VehicleOut(BaseModel):
     id: str
@@ -157,4 +185,52 @@ def get_vehicle_by_vin(vin: str, db: Session = Depends(get_db)):
         "charge_cycle_count": v.charge_cycle_count,
         "status": v.status,
         "lastPing": v.last_ping,
+    }
+
+
+@router.get("/vehicles/{vid}/sequence", summary="Get Real Chronological Sequence for CNN-LSTM")
+def get_vehicle_sequence(vid: str):
+    """
+    Returns the last 10 real chronological telemetry steps [voltage, current, battery_temp, soc]
+    for a vehicle that has data in the Euler HiLoad parquet dataset.
+
+    This endpoint is ONLY valid for vehicles present in the deep-sequence training parquet.
+    Coverage: 10 laboratory vehicles (GJ05CV6560–GJ05CV6569).
+    If the vehicle is not in the parquet, returns 404 — the frontend must show
+    'Sequence history unavailable' rather than synthesizing fake input.
+    """
+    df = _load_seq_df()
+    if df is None:
+        raise HTTPException(status_code=503, detail="Sequence parquet not available on server.")
+
+    vehicle_df = df[df["vehicle_id"] == vid]
+    if vehicle_df.empty:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No real chronological sequence data for vehicle '{vid}'. "
+                   f"CNN-LSTM requires 10+ consecutive real logged samples. "
+                   f"Vehicles with coverage: {sorted(_SEQ_IDS)}"
+        )
+
+    last_10 = vehicle_df.sort_values("cycle_index").tail(10)
+    steps = [
+        [
+            round(float(row["voltage"]), 3),
+            round(float(row["current"]), 3),
+            round(float(row["battery_temp"]), 3),
+            round(float(row["soc"]), 3),
+        ]
+        for _, row in last_10.iterrows()
+    ]
+
+    return {
+        "vehicle_id": vid,
+        "has_sequence": True,
+        "n_steps": len(steps),
+        "source": "euler_hiload_parquet",
+        "sequence": steps,
+        "cycle_range": {
+            "first": int(last_10["cycle_index"].iloc[0]),
+            "last": int(last_10["cycle_index"].iloc[-1]),
+        },
     }

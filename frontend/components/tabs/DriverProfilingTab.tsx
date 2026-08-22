@@ -32,8 +32,10 @@ export const DriverProfilingTab: React.FC = () => {
   }, [selectedVehicleId, vehicle]);
 
   const [behaviorData, setBehaviorData] = useState<DriverBehaviorResponse | any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const evaluateBehavior = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await predictDriverBehavior({
         harsh_accel_count: harshAccel,
@@ -48,6 +50,8 @@ export const DriverProfilingTab: React.FC = () => {
       setBehaviorData(res);
     } catch (e) {
       console.error("Driver behavior error:", e);
+    } finally {
+      setLoading(false);
     }
   }, [harshAccel, harshBrake, harshCorner, speedVariance, telemetry, maxDischarge]);
 
@@ -58,15 +62,15 @@ export const DriverProfilingTab: React.FC = () => {
     return () => clearTimeout(timer);
   }, [evaluateBehavior]);
 
-  const ai = behaviorData?.aggressiveness_index ?? 0.25;
-  const bsi = behaviorData?.battery_stress_index ?? 0.32;
+  const ai = behaviorData?.aggressiveness_index ?? 0.0;
+  const bsi = behaviorData?.battery_stress_index ?? 0.0;
   const isAggressive = ai > 0.65;
   const isModerate = ai > 0.35 && ai <= 0.65;
 
   const annualPenalty =
     behaviorData?.estimated_annual_soh_penalty_pct ??
     behaviorData?.annual_soh_penalty_percent ??
-    1.2;
+    0.0;
 
   // Extract recommendations safely from array or backend string fields
   const recommendationList: string[] = Array.isArray(behaviorData?.recommendations)
@@ -79,10 +83,14 @@ export const DriverProfilingTab: React.FC = () => {
   const finalRecommendations =
     recommendationList.length > 0
       ? recommendationList
+      : loading
+      ? [
+          "Evaluating throttle dynamics and discharge transients...",
+          "Computing regenerative braking energy recovery envelope...",
+          "Calculating electro-thermal stress dissipation limits...",
+        ]
       : [
-          "Smooth throttle tip-in maintains nominal C-rate bounds (+4.7% SOH retention).",
-          "Regenerative braking efficiency operating within target recovery envelope.",
-          "Thermal strain within baseline passive cooling dissipation limits.",
+          "Awaiting driver behavioral telemetry stream.",
         ];
 
   return (
@@ -138,7 +146,7 @@ export const DriverProfilingTab: React.FC = () => {
           </div>
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
             Cohort: <strong className={isAggressive ? "text-rose-600 dark:text-rose-400" : isModerate ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}>
-              {behaviorData?.driver_classification || "Smooth & Energy-Conscious"}
+              {behaviorData?.driver_classification ?? (loading ? "Profiling Driver Telemetry..." : "Awaiting Telemetry")}
             </strong>
           </div>
         </GlassCard>

@@ -25,15 +25,15 @@ export const KneePrognosticsTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
   const vehicle = getSelectedVehicle();
 
-  const [cycleInput, setCycleInput] = useState<number>(vehicle.charge_cycle_count || telemetry.cycleCount || 150);
-  const [capacityInput, setCapacityInput] = useState<number>(vehicle.soh || 95.0);
+  const [cycleInput, setCycleInput] = useState<number>(vehicle.charge_cycle_count ?? telemetry.cycleCount ?? 0);
+  const [capacityInput, setCapacityInput] = useState<number>(vehicle.soh ?? 95.0);
   const [kneeData, setKneeData] = useState<KneePredictionResponse | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{ cycle: number; soh: number; x: number; y: number } | null>(null);
 
   // Sync inputs immediately when vehicle changes
   useEffect(() => {
-    const cycles = vehicle.charge_cycle_count || 150;
-    const soh = vehicle.soh || 95.0;
+    const cycles = vehicle.charge_cycle_count ?? 0;
+    const soh = vehicle.soh ?? 95.0;
     setCycleInput(cycles);
     setCapacityInput(soh);
   }, [selectedVehicleId, vehicle]);
@@ -43,11 +43,11 @@ export const KneePrognosticsTab: React.FC = () => {
       const res = await predictKneePoint({
         charge_cycle_count: cycleInput,
         capacity: capacityInput,
-        voltage: vehicle.voltage || telemetry.voltage,
-        battery_temp: vehicle.battery_temp || telemetry.temperature,
-        current: vehicle.current || telemetry.current,
-        soc: vehicle.soc || 75,
-        speed: vehicle.speed || telemetry.avgSpeed,
+        voltage: vehicle.voltage ?? telemetry.voltage,
+        battery_temp: vehicle.battery_temp ?? telemetry.temperature,
+        current: vehicle.current ?? telemetry.current,
+        soc: vehicle.soc ?? 75,
+        speed: vehicle.speed ?? telemetry.avgSpeed,
       });
       setKneeData(res);
     } catch (e) {

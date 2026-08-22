@@ -67,6 +67,10 @@ export const FleetOverviewTab: React.FC = () => {
         battery_current: vehicle.current,
         charge_cycle_count: vehicle.charge_cycle_count,
         odometer: vehicle.charge_cycle_count * 58,
+        initial_soh: vehicle.soh,
+        soh: vehicle.soh,
+        chassis_no: vehicle.chassis,
+        vehicle_id: vehicle.id,
       }),
       predictRUL({
         odometer: vehicle.charge_cycle_count * 58,
@@ -178,7 +182,10 @@ export const FleetOverviewTab: React.FC = () => {
               <span className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">
                 {sohDisplay}%
               </span>
-              <span className="text-xs font-mono text-emerald-600 font-semibold">Tier 1</span>
+              <span className="text-[10px] font-mono text-emerald-600 font-medium">Calibrated SOH₀</span>
+            </div>
+            <div className="text-[10px] text-slate-400 mt-1">
+              Baseline-anchored estimate (see methodology)
             </div>
           </div>
           <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex justify-between text-[10px] font-mono text-slate-400">
