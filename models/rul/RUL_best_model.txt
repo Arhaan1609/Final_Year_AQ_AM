@@ -1,3 +1,0 @@
-Best Model: GradientBoosting
-Test Metrics: {'RMSE': np.float64(1.4703), 'MAE': np.float64(0.876), 'R2': 0.9997, 'MAPE': np.float64(0.07)}
-Train Time: 2.14s

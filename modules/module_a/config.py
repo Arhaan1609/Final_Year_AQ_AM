@@ -24,14 +24,14 @@ LOGS_DIR       = os.path.join(BASE_DIR, "logs")
 
 # Task-specific model subfolders
 TASK_MODEL_DIRS = {
-    "SOC": os.path.join(MODELS_DIR, "soc"),
-    "SOH": os.path.join(MODELS_DIR, "soh"),
-    "RUL": os.path.join(MODELS_DIR, "rul"),
-    "Mileage": os.path.join(MODELS_DIR, "mileage"),
-    "soc": os.path.join(MODELS_DIR, "soc"),
-    "soh": os.path.join(MODELS_DIR, "soh"),
-    "rul": os.path.join(MODELS_DIR, "rul"),
-    "mileage": os.path.join(MODELS_DIR, "mileage"),
+    "SOC": os.path.join(MODELS_DIR, "module_a", "soc"),
+    "SOH": os.path.join(MODELS_DIR, "module_a", "soh"),
+    "RUL": os.path.join(MODELS_DIR, "module_a", "rul"),
+    "Mileage": os.path.join(MODELS_DIR, "module_a", "mileage"),
+    "soc": os.path.join(MODELS_DIR, "module_a", "soc"),
+    "soh": os.path.join(MODELS_DIR, "module_a", "soh"),
+    "rul": os.path.join(MODELS_DIR, "module_a", "rul"),
+    "mileage": os.path.join(MODELS_DIR, "module_a", "mileage"),
 }
 
 def get_task_model_dir(task: str) -> str:

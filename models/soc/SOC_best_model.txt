@@ -1,3 +1,0 @@
-Best Model: KNN
-Test Metrics: {'RMSE': np.float64(1.4366), 'MAE': np.float64(0.5426), 'R2': 0.9958, 'MAPE': np.float64(0.95)}
-Train Time: 0.3s
