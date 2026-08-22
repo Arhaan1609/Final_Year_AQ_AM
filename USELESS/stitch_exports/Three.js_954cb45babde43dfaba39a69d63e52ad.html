@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_8 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_8" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_8');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  
+const container = document.getElementById('three-container') || document.body;
+const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(width, height);
+container.appendChild(renderer.domElement);
+
+// Battery Module Geometry (Simplified for mobile)
+const moduleGroup = new THREE.Group();
+
+const createCell = (x, y, z) => {
+  const geo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
+  const mat = new THREE.MeshPhongMaterial({ 
+    color: 0x3b82f6, 
+    emissive: 0x1e3a8a, 
+    shininess: 100 
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  return mesh;
+};
+
+// Create a 2x3 grid of cells
+for (let i = 0; i < 2; i++) {
+  for (let j = 0; j < 3; j++) {
+    moduleGroup.add(createCell(i * 1.0 - 0.5, j * 1.4 - 1.4, 0));
+  }
+}
+
+scene.add(moduleGroup);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0x3b82f6, 1, 100);
+pointLight.position.set(5, 5, 5);
+scene.add(pointLight);
+
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+  moduleGroup.rotation.y += 0.01;
+  moduleGroup.rotation.x += 0.005;
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+});
+
+animate();
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_8 -->
+</body>
+</html>

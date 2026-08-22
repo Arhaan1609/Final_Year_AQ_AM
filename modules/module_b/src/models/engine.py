@@ -31,7 +31,10 @@ _MODELS_ROOT  = os.path.join(_PROJECT_ROOT, "models")
 
 
 def _resolve_weight_path(subfolder: str, filename: str, fallback_relative: str) -> str:
-    """Check models/<subfolder>/ first, then fallback to module_b/weights/."""
+    """Check models/module_b/, models/<subfolder>/ first, then fallback to module_b/weights/."""
+    p_mod_b = os.path.join(_MODELS_ROOT, "module_b", filename)
+    if os.path.exists(p_mod_b):
+        return p_mod_b
     p_primary = os.path.join(_MODELS_ROOT, subfolder, filename)
     if os.path.exists(p_primary):
         return p_primary

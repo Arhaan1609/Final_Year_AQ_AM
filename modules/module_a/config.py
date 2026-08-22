@@ -40,7 +40,10 @@ def get_task_model_dir(task: str) -> str:
     return d
 
 def get_model_file_path(task: str, filename: str) -> str:
-    """Return model file path checking task subfolder first, then root models dir."""
+    """Return model file path checking models/module_a/<task>/, models/<task>/, then models/."""
+    mod_a_p = os.path.join(MODELS_DIR, "module_a", task.lower(), filename)
+    if os.path.exists(mod_a_p):
+        return mod_a_p
     task_dir = get_task_model_dir(task)
     p = os.path.join(task_dir, filename)
     if os.path.exists(p):

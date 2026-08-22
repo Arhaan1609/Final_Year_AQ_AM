@@ -21,7 +21,10 @@ _MODELS_ROOT   = os.path.join(_PROJECT_ROOT, "models")
 
 
 def _resolve_c_model_path(filename: str) -> str:
-    """Check models/knee_prognostics/ first, then fallback to module_c/."""
+    """Check models/module_c/, models/knee_prognostics/ first, then fallback to module_c/."""
+    p_mod_c = os.path.join(_MODELS_ROOT, "module_c", filename)
+    if os.path.exists(p_mod_c):
+        return p_mod_c
     p_primary = os.path.join(_MODELS_ROOT, "knee_prognostics", filename)
     if os.path.exists(p_primary):
         return p_primary

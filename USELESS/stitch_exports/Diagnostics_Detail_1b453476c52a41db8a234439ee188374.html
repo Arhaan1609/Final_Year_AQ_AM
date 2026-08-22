@@ -1,0 +1,163 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error": "#690005", "primary-fixed-dim": "#adc6ff", "outline-variant": "#424754", "background": "#10131a", "surface-bright": "#363941", "inverse-surface": "#e1e2ec", "error": "#ffb4ab", "on-secondary-fixed-variant": "#6900b3", "surface-container-low": "#191b23", "tertiary": "#ffb786", "surface-container-high": "#272a31", "secondary": "#ddb7ff", "on-secondary": "#490080", "error-container": "#93000a", "outline": "#8c909f", "tertiary-fixed-dim": "#ffb786", "surface-container-lowest": "#0b0e15", "on-primary": "#002e6a", "on-secondary-fixed": "#2c0051", "on-background": "#e1e2ec", "tertiary-fixed": "#ffdcc6", "on-surface": "#e1e2ec", "secondary-fixed": "#f0dbff", "primary": "#adc6ff", "on-tertiary": "#502400", "surface-dim": "#10131a", "on-primary-fixed-variant": "#004395", "inverse-primary": "#005ac2", "surface-tint": "#adc6ff", "primary-fixed": "#d8e2ff", "surface": "#10131a", "surface-container": "#1d2027", "on-surface-variant": "#c2c6d6", "on-tertiary-container": "#461f00", "primary-container": "#4d8eff", "surface-container-highest": "#32353c", "on-secondary-container": "#d6a9ff", "tertiary-container": "#df7412", "on-tertiary-fixed-variant": "#723600", "secondary-fixed-dim": "#ddb7ff", "inverse-on-surface": "#2e3038", "on-tertiary-fixed": "#311400", "on-primary-container": "#00285d", "secondary-container": "#6f00be", "surface-variant": "#32353c", "on-primary-fixed": "#001a42", "on-error-container": "#ffdad6" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-desktop": "32px", "unit": "4px", "touch-target-min": "48px", "gutter": "16px", "margin-mobile": "16px" }, "fontFamily": { "headline-lg": ["Outfit"], "label-sm": ["Inter"], "body-md": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Outfit"], "headline-xl": ["Outfit"], "telemetry-lg": ["Inter"] }, "fontSize": { "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "telemetry-lg": ["32px", { "lineHeight": "32px", "fontWeight": "700" }] } } } };</script><style>@layer base { body { @apply bg-surface text-on-surface antialiased; overscroll-behavior: none; } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } } .glass { background: rgba(16, 19, 26, 0.8); backdrop-filter: blur(12px); }</style></head><body><header class="fixed top-0 inset-x-0 z-50 glass pt-safe"><div class="h-16 px-margin-mobile flex items-center gap-4"><button class="w-10 h-10 flex items-center justify-center rounded-full active:bg-surface-container-high transition-colors text-on-surface" onclick="history.back()"><span class="material-symbols-outlined">arrow_back_ios_new</span></button><div class="flex flex-col"><span class="font-label-sm text-[10px] text-outline uppercase tracking-widest">Diagnostics View</span><h1 class="font-headline-md text-body-md font-bold text-on-surface">Diagnostics Detail</h1></div><div class="ml-auto w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative w-full min-h-screen pt-16 bg-surface"><div class="flex flex-col w-full">
+<!-- Chassis Overview & Digital Twin -->
+<section class="p-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-on-surface">DL1LAN0756</h2>
+<p class="font-body-md text-on-surface-variant">Fleet Alpha</p>
+</div>
+<div class="bg-error-container/20 px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-md">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+<span class="font-label-sm text-error uppercase">Critical Knee Onset</span>
+</div>
+</div>
+<!-- Digital Twin Hero -->
+<div class="relative w-full h-[320px] bg-surface-container-low rounded-2xl overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent z-10 pointer-events-none"></div>
+<!-- STITCH_THREEJS_START:ANIMATION_8 class="w-full h-full bg-transparent z-0" -->
+<div class="w-full h-full bg-transparent z-0" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_8" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_8');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  
+const container = document.getElementById('three-container') || document.body;
+const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(width, height);
+container.appendChild(renderer.domElement);
+
+// Battery Module Geometry (Simplified for mobile)
+const moduleGroup = new THREE.Group();
+
+const createCell = (x, y, z) => {
+  const geo = new THREE.BoxGeometry(0.8, 1.2, 0.4);
+  const mat = new THREE.MeshPhongMaterial({ 
+    color: 0x3b82f6, 
+    emissive: 0x1e3a8a, 
+    shininess: 100 
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  return mesh;
+};
+
+// Create a 2x3 grid of cells
+for (let i = 0; i < 2; i++) {
+  for (let j = 0; j < 3; j++) {
+    moduleGroup.add(createCell(i * 1.0 - 0.5, j * 1.4 - 1.4, 0));
+  }
+}
+
+scene.add(moduleGroup);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0x3b82f6, 1, 100);
+pointLight.position.set(5, 5, 5);
+scene.add(pointLight);
+
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+  moduleGroup.rotation.y += 0.01;
+  moduleGroup.rotation.x += 0.005;
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+});
+
+animate();
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_8 -->
+<div class="absolute bottom-4 left-4 right-4 z-20 flex gap-2">
+<div class="flex-1 bg-surface-container-high/80 backdrop-blur-md p-3 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary">battery_alert</span>
+<div>
+<div class="font-label-sm text-on-surface-variant">Module 4</div>
+<div class="font-body-md text-on-surface font-semibold">Overheating</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Degradation Analysis -->
+<section class="p-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-on-surface">Degradation Curve</h3>
+<button class="text-primary font-label-sm uppercase flex items-center gap-1">
+        Expand <span class="material-symbols-outlined text-[16px]">open_in_full</span>
+</button>
+</div>
+<div class="bg-surface-container rounded-2xl p-4 flex flex-col gap-4">
+<!-- Animated SVG Chart -->
+<!-- STITCH_SVG_START:ANIMATION_9 class="w-full h-48" --><div class="w-full h-48" id="animated-svg-ANIMATION_9" style="display:block;"><svg fill="none" viewbox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M20 40C100 45 200 60 300 120C340 145 380 180 380 180" fill="none" id="curve" stroke="#3b82f6" stroke-linecap="round" stroke-width="3">
+<animate attributename="stroke-dasharray" dur="2s" fill="freeze" from="0, 1000" to="1000, 0"></animate>
+</path>
+<circle cx="300" cy="120" fill="#EF4444" r="6">
+<animate attributename="opacity" dur="1s" repeatcount="indefinite" values="0;1;0"></animate>
+</circle>
+<text fill="white" font-family="Outfit" font-size="12" x="20" y="30">100% SOH</text>
+<text fill="white" font-family="Outfit" font-size="12" x="320" y="190">EOL</text>
+</svg></div><!-- STITCH_SVG_END:ANIMATION_9 -->
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 gap-4 mt-2">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider">RUL to Knee</span>
+<div class="flex items-end gap-1">
+<span class="font-telemetry-lg text-error">1</span>
+<span class="font-body-md text-on-surface-variant mb-1">cycle</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider">Current Cycle</span>
+<div class="flex items-end gap-1">
+<span class="font-telemetry-lg text-on-surface">265</span>
+<span class="font-body-md text-on-surface-variant mb-1">EFC</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high rounded-xl p-3 flex items-start gap-3 mt-2">
+<span class="material-symbols-outlined text-primary mt-0.5">trending_down</span>
+<div>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider block mb-0.5">Trajectory Baseline</span>
+<span class="font-body-md text-on-surface">Linear baseline deviation detected. Accelerated aging protocols activated.</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Reference Images Layout (Hidden but included as required) -->
+<section class="p-4 grid grid-cols-1 gap-4 opacity-50">
+<h3 class="font-headline-md text-on-surface">Reference Scans</h3>
+<img alt="Reference Image 1" class="w-full rounded-xl object-cover h-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9ttO0A-bnMxHTTt2Qk_tQ1D3OYzMb8v0TfdvsG0hiU0ZqZhTZYS9a2__AxR1zW78rdBIAhPrNwomvUBKoD7yn9F1VtWLD8i3cZvsMtBgG6Z902sSeOwQtXk9IbPw6oWjaDFLkP7BJgVl31Cog39ngXR6O8yoKwwVdFVFWEWXuVqW386XjO3V13JZPH4FdN4UV5LukJWZjeb_-jgyF_ZnUOtvwiPNB8AjJFbM3KPIt1ZkzPWiI-uMGr7lsJdt6gcbmIw"/>
+<img alt="Reference Image 6" class="w-full rounded-xl object-cover h-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3aCgtRD1TVmy8dSDNBn6r3PR4GGxLG4pZRju4Ig7A_1SLL_gC-Hobsz9e-Dh5FS4C0EqxkfaVqJX6ZvV6vxTPLTN9ZeNXYs3XoDClpxCrGb3go4EP-1ZHrrATVuZSpLUGZmvBx2a6BvdhHdw8XFCID7UaKamEN9Hluy-fjT4-hW4W0kApAHAr6TKouNZRpMRPZNVYrmm33bstI1g0NiOksO8Qfv6O6U4nFowZAKzHdiNq3UyKCqsK9PdgC9JbIm3a3Q"/>
+</section>
+<!-- Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-surface/90 backdrop-blur-md pb-safe">
+<button class="w-full h-12 bg-primary text-on-primary font-body-md font-semibold rounded-full flex items-center justify-center gap-2 active:bg-primary/80 transition-colors">
+<span class="material-symbols-outlined">science</span>
+         Run Simulation
+     </button>
+</div>
+<!-- Spacing for fixed bottom bar -->
+<div class="h-24"></div>
+</div></main></body></html>

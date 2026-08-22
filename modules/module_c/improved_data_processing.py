@@ -252,7 +252,7 @@ def merge_features_properly(cc, oem_daily, trip_daily):
 
 
 def main():
-    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed"))
     cc, oem, trips = load_data(data_dir)
     
     chassis_mapping = cc[['vehicle_no', 'chassis_no']].drop_duplicates()
@@ -283,7 +283,7 @@ def main():
     print(f"Merged dataset shape: {merged_data.shape}")
     
     # Save processed dataset
-    out_path = os.path.join(data_dir, "processed_features_v2.csv")
+    out_path = os.path.join(data_dir, "features_knee_prognostics.csv")
     merged_data.to_csv(out_path, index=False)
     print(f"Saved to {out_path}")
 
