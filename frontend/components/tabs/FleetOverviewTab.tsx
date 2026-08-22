@@ -125,8 +125,18 @@ export const FleetOverviewTab: React.FC = () => {
               <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
                 Commercial Telematics Active
               </h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                778 Chassis Registered
+              <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                vehicle.status === "critical" || (livePredictions.soh ?? vehicle.soh) < 75
+                  ? "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
+                  : vehicle.status === "warning" || (livePredictions.soh ?? vehicle.soh) < 85
+                  ? "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
+                  : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+              }`}>
+                {vehicle.status === "critical" || (livePredictions.soh ?? vehicle.soh) < 75
+                  ? "SERVICE HOLD"
+                  : vehicle.status === "warning" || (livePredictions.soh ?? vehicle.soh) < 85
+                  ? "ADVISORY"
+                  : "ACTIVE"}
               </span>
             </div>
             <p className="text-[11px] text-slate-500 font-mono mt-0.5">
@@ -210,7 +220,7 @@ export const FleetOverviewTab: React.FC = () => {
             </div>
           </div>
           <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex justify-between text-[10px] font-mono text-slate-400">
-            <span>Est: ~4.2 yrs</span>
+            <span>Est: ~{(rulDisplay / 250).toFixed(1)} yrs</span>
             <span className="text-emerald-600">R² = 0.9997</span>
           </div>
         </div>
@@ -243,11 +253,15 @@ export const FleetOverviewTab: React.FC = () => {
         <div className="lg:col-span-7 space-y-4">
           <BatteryPack3D
             batteryTemp={vehicle.battery_temp}
-            controllerTemp={vehicle.battery_temp + 5.2}
-            motorTemp={vehicle.battery_temp + 8.4}
-            soc={vehicle.soc}
+            controllerTemp={vehicle.controller_temp || vehicle.battery_temp + 5.2}
+            motorTemp={vehicle.motor_temp || vehicle.battery_temp + 8.4}
+            soc={livePredictions.soc ?? vehicle.soc}
+            soh={livePredictions.soh ?? vehicle.soh}
+            status={vehicle.status}
+            isCritical={vehicle.status === "critical" || (livePredictions.soh ?? vehicle.soh) < 75}
           />
         </div>
+
 
         {/* Right 5 Cols: CAN Oscilloscope & Vehicle Card */}
         <div className="lg:col-span-5 space-y-4">

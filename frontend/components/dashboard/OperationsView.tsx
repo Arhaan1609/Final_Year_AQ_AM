@@ -49,6 +49,7 @@ export const OperationsView: React.FC = () => {
   // Dynamic live prediction states
   const [soc, setSoc] = useState<number>(vehicle.soc || 75);
   const [soh, setSoh] = useState<number>(vehicle.soh || 95);
+  const [rul, setRul] = useState<number>(vehicle.rul || 1000);
   const [range, setRange] = useState<number>(vehicle.mileage || 110);
   const [thermalSafe, setThermalSafe] = useState<boolean>(true);
   const [driverScore, setDriverScore] = useState<string>("Smooth (Eco)");
@@ -79,6 +80,12 @@ export const OperationsView: React.FC = () => {
         chassis_no: vehicle.chassis,
         vehicle_id: vehicle.id,
       }),
+      predictRUL({
+        odometer: vehicle.charge_cycle_count * 58,
+        charge_cycle_count: vehicle.charge_cycle_count,
+        soc_at_charge: vehicle.soc,
+        battery_temp: vehicle.battery_temp,
+      }),
       predictMileage({
         run_kms: 45,
         avg_speed: vehicle.speed || 32,
@@ -107,7 +114,7 @@ export const OperationsView: React.FC = () => {
         battery_temp_max: vehicle.battery_temp || 32,
         max_discharge_current: Math.abs(vehicle.current) || 25,
       }),
-    ]).then(([socRes, sohRes, rangeRes, thermRes, driverRes]) => {
+    ]).then(([socRes, sohRes, rulRes, rangeRes, thermRes, driverRes]) => {
       if (!active) return;
       if (socRes.status === "fulfilled" && socRes.value?.prediction !== undefined) {
         setSoc(socRes.value.prediction);
@@ -121,6 +128,12 @@ export const OperationsView: React.FC = () => {
         setSoh(vehicle.soh);
       }
 
+      if (rulRes.status === "fulfilled" && rulRes.value?.prediction !== undefined) {
+        setRul(Math.round(rulRes.value.prediction));
+      } else {
+        setRul(vehicle.rul || 1000);
+      }
+
       if (rangeRes.status === "fulfilled" && rangeRes.value?.prediction !== undefined) {
         setRange(Math.round(rangeRes.value.prediction * 10) / 10);
       } else {
@@ -128,8 +141,11 @@ export const OperationsView: React.FC = () => {
       }
 
       if (thermRes.status === "fulfilled" && thermRes.value) {
-        setThermalSafe(thermRes.value.severity === "NORMAL" || thermRes.value.severity === "SAFE");
+        const val = thermRes.value as any;
+        const isSafe = !val.is_critical && (val.risk_probability === undefined || val.risk_probability < 0.25);
+        setThermalSafe(isSafe);
       }
+
 
       if (driverRes.status === "fulfilled" && driverRes.value) {
         const ai = (driverRes.value as any).aggressiveness_index ?? 0.28;
@@ -145,8 +161,6 @@ export const OperationsView: React.FC = () => {
     };
   }, [selectedVehicleId, vehicle]);
 
-
-
   // Counts for triage bar
   const totalCount = vehicles.length;
   const activeCount = vehicles.filter((v) => v.status === "active").length;
@@ -156,8 +170,9 @@ export const OperationsView: React.FC = () => {
   const isCritical = vehicle.status === "critical" || vehicle.battery_temp > 48 || soh < 80;
   const isWarning = vehicle.status === "warning" || vehicle.battery_temp > 40 || soc < 30;
 
-  // Estimated years of battery life left
-  const estimatedYearsLeft = ((soh - 70) / 7.5).toFixed(1);
+  // Estimated years of battery life left dynamically derived from ML RUL cycles (250 cycles/yr commercial fleet duty cycle)
+  const estimatedYearsLeft = Math.max(0.1, Number((rul / 250).toFixed(1))).toFixed(1);
+
 
   return (
     <div className="space-y-8 w-full">
@@ -324,7 +339,9 @@ export const OperationsView: React.FC = () => {
             </h4>
             <p className="text-xs sm:text-sm mt-1 opacity-90 leading-relaxed">
               {isCritical
-                ? `Battery shows accelerated capacity degradation or high operating temperature (${vehicle.battery_temp}°C). Ground this vehicle for terminal diagnostic inspection before next shift.`
+                ? vehicle.battery_temp > 45
+                  ? `Battery operating temperature is elevated (${vehicle.battery_temp.toFixed(1)}°C). Ground this vehicle for thermal cooling inspection before next dispatch.`
+                  : `Battery capacity shows accelerated degradation (SOH: ${soh.toFixed(1)}%, ${vehicle.charge_cycle_count} cycles). Ground this vehicle for terminal diagnostic inspection before next shift.`
                 : isWarning
                 ? `Battery level is at ${soc.toFixed(0)}%. Can complete routes up to ${range.toFixed(0)} km. Recommend quick 30-min top-up before afternoon runs.`
                 : `Battery level is at ${soc.toFixed(0)}% with ${range.toFixed(0)} km delivery range. Temperatures and cell health are in Grade-A condition.`}
@@ -373,8 +390,9 @@ export const OperationsView: React.FC = () => {
             <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
               {soh.toFixed(1)}%
             </div>
-            <div className="text-xs text-slate-600 dark:text-slate-300">
-              Estimated Life: <strong className="text-emerald-600 dark:text-emerald-400">~{estimatedYearsLeft} Years</strong>
+            <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-300">
+              <span>Estimated Life: <strong className="text-emerald-600 dark:text-emerald-400">~{estimatedYearsLeft} Years</strong></span>
+              <span className="font-mono text-[10px] text-slate-400">({rul} cyc)</span>
             </div>
             <div className="text-[11px] text-slate-400">
               Grade: {soh > 92 ? "Grade A (Excellent)" : soh > 82 ? "Grade B (Good)" : "Grade C (Degrading)"}
@@ -396,12 +414,13 @@ export const OperationsView: React.FC = () => {
               {vehicle.battery_temp.toFixed(1)}°C
             </div>
             <div className="text-xs text-slate-600 dark:text-slate-300">
-              Cooling Status: <strong className="text-emerald-600 dark:text-emerald-400">{thermalSafe ? "Normal" : "Active High"}</strong>
+              Cooling Status: <strong className={thermalSafe ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}>{thermalSafe ? "Normal" : "Active High"}</strong>
             </div>
             <div className="text-[11px] text-slate-400">
-              Thermal Runaway Risk: <strong className="text-emerald-500">0.00% (Safe)</strong>
+              Thermal Runaway Risk: <strong className={thermalSafe ? "text-emerald-500" : "text-amber-500"}>{thermalSafe ? "0.00% (Safe)" : "Elevated Advisory"}</strong>
             </div>
           </div>
+
 
           {/* Card 4: Driver Score */}
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
