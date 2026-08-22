@@ -1,0 +1,2389 @@
+[
+  {
+    "file": "frontend/components/copilot/CopilotDrawer.tsx",
+    "line": 218,
+    "snippet": "placeholder=\"Ask about thermal risks, knee cycles, driver AI...\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "placeholder"
+  },
+  {
+    "file": "frontend/components/copilot/CopilotDrawer.tsx",
+    "line": 221,
+    "snippet": "className=\"flex-1 bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "placeholder"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 50,
+    "snippet": "const [soc, setSoc] = useState<number>(vehicle.soc || 75);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "75"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 51,
+    "snippet": "const [soh, setSoh] = useState<number>(vehicle.soh || 95);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "95"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 52,
+    "snippet": "const [range, setRange] = useState<number>(vehicle.mileage || 110);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "110"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 79,
+    "snippet": "avg_speed: vehicle.speed || 32,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 80,
+    "snippet": "max_speed: (vehicle.speed || 32) + 20,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 96,
+    "snippet": "avg_speed: vehicle.speed || 32,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 97,
+    "snippet": "max_speed: (vehicle.speed || 32) + 25,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 98,
+    "snippet": "battery_temp_max: vehicle.battery_temp || 32,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 99,
+    "snippet": "max_discharge_current: Math.abs(vehicle.current) || 25,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "25"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 118,
+    "snippet": "setRange(vehicle.mileage || 110);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "110"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 126,
+    "snippet": "const ai = (driverRes.value as any).aggressiveness_index ?? 0.28;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0.28"
+  },
+  {
+    "file": "frontend/components/dashboard/OperationsView.tsx",
+    "line": 268,
+    "snippet": "placeholder=\"Search plate (e.g. DL1LAN0712)...\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "placeholder"
+  },
+  {
+    "file": "frontend/components/hero/BatteryHero.tsx",
+    "line": 24,
+    "snippet": "const to = Number(el.dataset.value) || 0;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "0"
+  },
+  {
+    "file": "frontend/components/hero/BatteryHero.tsx",
+    "line": 35,
+    "snippet": "console.warn(\"Hero text animation fallback:\", e);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "frontend/components/knee/KneeCurve.tsx",
+    "line": 24,
+    "snippet": "console.warn(\"Knee curve animation fallback:\", e);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "frontend/components/landing/HeroScrollStory.tsx",
+    "line": 82,
+    "snippet": "window.scrollTo({ top: scrollMap[chapter] ?? 0, behavior: \"smooth\" });",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0"
+  },
+  {
+    "file": "frontend/components/landing/HeroScrollStory.tsx",
+    "line": 298,
+    "snippet": "<span className=\"font-bold text-slate-100\">75.8 V (Nominal)</span>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 33,
+    "snippet": "const [activeScenario, setActiveScenario] = useState<string>(\"nominal\");",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 123,
+    "snippet": "setThermalStatus(thermRes.value.safety_status ?? \"SAFE (Benign)\");",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "\"SAFE (Benign)\""
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 124,
+    "snippet": "setThermalRisk(thermRes.value.risk_probability ?? 0.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0.0"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 146,
+    "snippet": "const loadScenario = (scenario: \"nominal\" | \"thermal\" | \"knee\") => {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 148,
+    "snippet": "if (scenario === \"nominal\") {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 189,
+    "snippet": "onClick={() => loadScenario(\"nominal\")}",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 191,
+    "snippet": "activeScenario === \"nominal\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 197,
+    "snippet": "<span>Scenario 1: Nominal (28\u00b0C)</span>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 265,
+    "snippet": "<span>76.8V (Nominal 24S)</span>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 468,
+    "snippet": "<strong className={(driverAI ?? 0.28) > 0.6 ? \"text-amber-500\" : \"text-cyan-500\"}>",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0.28"
+  },
+  {
+    "file": "frontend/components/landing/LiveModelSandbox.tsx",
+    "line": 469,
+    "snippet": "AI = {(driverAI ?? 0.28).toFixed(2)}",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0.28"
+  },
+  {
+    "file": "frontend/components/landing/ScrollIntelligenceStory.tsx",
+    "line": 248,
+    "snippet": "<span className=\"text-emerald-400 font-bold\">75.8 V (Nominal)</span>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/landing/ScrollIntelligenceStory.tsx",
+    "line": 312,
+    "snippet": "<span className=\"text-amber-400 font-bold\">Nominal</span>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/layout/Header.tsx",
+    "line": 15,
+    "snippet": "isMock,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/components/layout/Header.tsx",
+    "line": 16,
+    "snippet": "setIsMock,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 17,
+    "snippet": "const [harshAccel, setHarshAccel] = useState<number>(telemetry.harshAccel || 2);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "2"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 18,
+    "snippet": "const [harshBrake, setHarshBrake] = useState<number>(telemetry.harshBrake || 1);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 19,
+    "snippet": "const [harshCorner, setHarshCorner] = useState<number>(telemetry.harshCorner || 1);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 43,
+    "snippet": "avg_speed: telemetry.avgSpeed || 34,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "34"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 44,
+    "snippet": "max_speed: telemetry.maxSpeed || 58,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "58"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 45,
+    "snippet": "battery_temp_max: (telemetry.temperature || 32) + 4,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 61,
+    "snippet": "const ai = behaviorData?.aggressiveness_index ?? 0.25;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0.25"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 62,
+    "snippet": "const bsi = behaviorData?.battery_stress_index ?? 0.32;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "0.32"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 83,
+    "snippet": "\"Smooth throttle tip-in maintains nominal C-rate bounds (+4.7% SOH retention).\",",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 102,
+    "snippet": "{behaviorData?.driver_classification || \"PROFILING\"}",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"PROFILING\""
+  },
+  {
+    "file": "frontend/components/tabs/DriverProfilingTab.tsx",
+    "line": 141,
+    "snippet": "{behaviorData?.driver_classification || \"Smooth & Energy-Conscious\"}",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"Smooth & Energy-Conscious\""
+  },
+  {
+    "file": "frontend/components/tabs/FleetOverviewTab.tsx",
+    "line": 81,
+    "snippet": "avg_speed: vehicle.speed || 34,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "34"
+  },
+  {
+    "file": "frontend/components/tabs/FleetOverviewTab.tsx",
+    "line": 82,
+    "snippet": "max_speed: (vehicle.speed || 34) + 20,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "34"
+  },
+  {
+    "file": "frontend/components/tabs/FleetOverviewTab.tsx",
+    "line": 104,
+    "snippet": "const totalPages = Math.ceil(filteredVehicles.length / PAGE_SIZE) || 1;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/tabs/FleetOverviewTab.tsx",
+    "line": 163,
+    "snippet": "<span className=\"text-xs font-mono text-emerald-600 font-semibold\">Nominal</span>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/tabs/FleetOverviewTab.tsx",
+    "line": 305,
+    "snippet": "placeholder=\"Search VIN, chassis, hub...\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "placeholder"
+  },
+  {
+    "file": "frontend/components/tabs/KneePrognosticsTab.tsx",
+    "line": 28,
+    "snippet": "const [cycleInput, setCycleInput] = useState<number>(vehicle.charge_cycle_count || telemetry.cycleCount || 150);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "150"
+  },
+  {
+    "file": "frontend/components/tabs/KneePrognosticsTab.tsx",
+    "line": 29,
+    "snippet": "const [capacityInput, setCapacityInput] = useState<number>(vehicle.soh || 95.0);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "95.0"
+  },
+  {
+    "file": "frontend/components/tabs/KneePrognosticsTab.tsx",
+    "line": 35,
+    "snippet": "const cycles = vehicle.charge_cycle_count || 150;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "150"
+  },
+  {
+    "file": "frontend/components/tabs/KneePrognosticsTab.tsx",
+    "line": 36,
+    "snippet": "const soh = vehicle.soh || 95.0;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "95.0"
+  },
+  {
+    "file": "frontend/components/tabs/KneePrognosticsTab.tsx",
+    "line": 49,
+    "snippet": "soc: vehicle.soc || 75,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "75"
+  },
+  {
+    "file": "frontend/components/tabs/MetaEnsembleReportTab.tsx",
+    "line": 30,
+    "snippet": "harsh_accel_count: telemetry.harshAccel || 2,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "2"
+  },
+  {
+    "file": "frontend/components/tabs/MetaEnsembleReportTab.tsx",
+    "line": 104,
+    "snippet": "{metaData?.unified_health_grade || \"Grade A (Optimal)\"}",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"Grade A (Optimal)\""
+  },
+  {
+    "file": "frontend/components/tabs/MetaEnsembleReportTab.tsx",
+    "line": 108,
+    "snippet": "{metaData?.unified_health_grade?.charAt(6) || \"A\"}",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"A\""
+  },
+  {
+    "file": "frontend/components/tabs/MetaEnsembleReportTab.tsx",
+    "line": 143,
+    "snippet": "<div>Thermal Safety: <strong>{diagData?.thermal_status?.safety_status || \"SAFE\"}</strong></div>",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"SAFE\""
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 41,
+    "snippet": "const effectiveCycles = Math.round(telemetry.odometer / 58) || telemetry.cycleCount || 150;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "150"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 79,
+    "snippet": "soh_mean: sohRes?.prediction ?? 90,",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "90"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 82,
+    "snippet": "run_kms: telemetry.runKms || 45,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "45"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 83,
+    "snippet": "avg_speed: telemetry.avgSpeed || 32,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 84,
+    "snippet": "max_speed: telemetry.maxSpeed || 55,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "55"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 89,
+    "snippet": "stoppage_count: telemetry.stoppageCount || 3,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "3"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 90,
+    "snippet": "energy_utilized: telemetry.energyUtilized || 7.2,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "7.2"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 91,
+    "snippet": "trip_duration_hrs: Number(((telemetry.runKms || 45) / Math.max(15, telemetry.avgSpeed || 32)).toFixed(2)),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "45"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 91,
+    "snippet": "trip_duration_hrs: Number(((telemetry.runKms || 45) / Math.max(15, telemetry.avgSpeed || 32)).toFixed(2)),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 115,
+    "snippet": "voltage: vehicle.voltage || 75.8,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "75.8"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 117,
+    "snippet": "temperature: vehicle.battery_temp || 33.2,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "33.2"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 118,
+    "snippet": "odometer: vehicle.charge_cycle_count * 58 || 12500,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "12500"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 119,
+    "snippet": "cycleCount: vehicle.charge_cycle_count || 150,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "150"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 120,
+    "snippet": "avgSpeed: vehicle.speed || 30.0,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "30.0"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 121,
+    "snippet": "maxSpeed: (vehicle.speed || 30.0) + 25,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "30.0"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 122,
+    "snippet": "daysInService: Math.round((vehicle.charge_cycle_count || 150) * 1.4),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "150"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 128,
+    "snippet": "tempStressIndex: Math.max(0, Math.min(1, ((vehicle.battery_temp || 32) - 25) / 30)),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 137,
+    "snippet": "const socVal = socRes?.prediction ?? vehicle.soc ?? 64.8;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "64.8"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 138,
+    "snippet": "const sohVal = sohRes?.prediction ?? vehicle.soh ?? 91.2;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "91.2"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 139,
+    "snippet": "const rulVal = rulRes?.prediction ? Math.round(rulRes.prediction) : vehicle.rul ?? 1240;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "1240"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 140,
+    "snippet": "const mileageVal = mileageRes?.prediction ? Math.round(mileageRes.prediction * 10) / 10 : vehicle.mileage ?? 119.5;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "119.5"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 308,
+    "snippet": "onClick={() => updateTelemetry({ isCharging: 0, current: -Math.abs(telemetry.current || 18) })}",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "18"
+  },
+  {
+    "file": "frontend/components/tabs/StateEstimationTab.tsx",
+    "line": 319,
+    "snippet": "onClick={() => updateTelemetry({ isCharging: 1, current: Math.abs(telemetry.current || 18) })}",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "18"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 14,
+    "snippet": "const [batteryTemp, setBatteryTemp] = useState<number>(vehicle.battery_temp ?? telemetry.temperature ?? 32.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "32.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 15,
+    "snippet": "const [controllerTemp, setControllerTemp] = useState<number>(vehicle.controller_temp ?? 40.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "40.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 16,
+    "snippet": "const [motorTemp, setMotorTemp] = useState<number>(vehicle.motor_temp ?? 50.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "50.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 20,
+    "snippet": "setBatteryTemp(vehicle.battery_temp ?? telemetry.temperature ?? 32.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "32.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 21,
+    "snippet": "setControllerTemp(vehicle.controller_temp ?? 40.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "40.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 22,
+    "snippet": "setMotorTemp(vehicle.motor_temp ?? 50.0);",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "50.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 39,
+    "snippet": "soc: vehicle.soc || 75,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "75"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 40,
+    "snippet": "speed: telemetry.avgSpeed || 34,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "34"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 45,
+    "snippet": "Number(((telemetry.voltage || 75.0) + (9 - idx) * 0.12).toFixed(2)),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "75.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 47,
+    "snippet": "Number(((batteryTemp || 32.0) - (9 - idx) * 0.25).toFixed(2)),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 48,
+    "snippet": "Number(((vehicle.soc || 75.0) + (9 - idx) * 0.75).toFixed(2)),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "75.0"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 303,
+    "snippet": "{((1 - (thermalData?.risk_probability || 0.05)) * 100).toFixed(1)}%",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "0.05"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 315,
+    "snippet": "<strong className=\"text-slate-800 dark:text-slate-200\">{((thermalData?.risk_probability || 0.02) * 100).toFixed(2)}%</st",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "0.02"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 319,
+    "snippet": "<strong className=\"text-emerald-600 dark:text-emerald-400\">{thermalData?.severity || \"NOMINAL\"}</strong>",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"NOMINAL\""
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 319,
+    "snippet": "<strong className=\"text-emerald-600 dark:text-emerald-400\">{thermalData?.severity || \"NOMINAL\"}</strong>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "NOMINAL"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 334,
+    "snippet": "{thermalData?.recommended_action || \"Maintain standard active cooling circulation. Thermal gradient across all 3 zones r",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"Maintain standard active cooling circul"
+  },
+  {
+    "file": "frontend/components/tabs/ThermalSafetyTab.tsx",
+    "line": 334,
+    "snippet": "{thermalData?.recommended_action || \"Maintain standard active cooling circulation. Thermal gradient across all 3 zones r",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/ui/MaskedHeading.tsx",
+    "line": 182,
+    "snippet": "const nx = ((e.clientX - r.left) / (r.width || 1)) * 2 - 1;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/ui/MaskedHeading.tsx",
+    "line": 183,
+    "snippet": "const ny = ((e.clientY - r.top) / (r.height || 1)) * 2 - 1;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/ui/MaskedHeading.tsx",
+    "line": 216,
+    "snippet": "const riseDistance = () => (parseFloat(window.getComputedStyle(root).fontSize) || 48) * 1.15;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "48"
+  },
+  {
+    "file": "frontend/components/ui/OfflineBanner.tsx",
+    "line": 73,
+    "snippet": "FastAPI backend (<code className=\"font-mono text-amber-100\">localhost:8000</code>) is offline. Displaying simulated fall",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "frontend/components/ui/ProofOfConceptModal.tsx",
+    "line": 82,
+    "snippet": "{ symbol: \"Q_n\", meaning: \"Nominal 150Ah capacity at 25\u00b0C baseline\" },",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/ui/ProofOfConceptModal.tsx",
+    "line": 89,
+    "snippet": "chassisTested: \"778 Euler HiLoad (12.4 kWh LFP Pack, 76.8V Nominal)\",",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/components/ui/ProofOfConceptModal.tsx",
+    "line": 137,
+    "snippet": "formula: \"SOH(k) = \\\\frac{C_{actual}(k)}{C_{nominal}} = 1 - \\\\sum_{i=1}^{k} \\\\left[ \\\\alpha_1 \\\\cdot e^{\\\\frac{-E_a}{R T",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/ui/ProofOfConceptModal.tsx",
+    "line": 293,
+    "snippet": "{ symbol: \"I_max / I_nom\", meaning: \"Peak discharge current ratio relative to nominal cell rating\" },",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/components/ui/ScrollImageSequence.tsx",
+    "line": 83,
+    "snippet": "const dpr = Math.min(window.devicePixelRatio || 1, 2);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/ui/ScrollImageSequence.tsx",
+    "line": 84,
+    "snippet": "cw = canvas.width = Math.round((rect.width || window.innerWidth || 1920) * dpr);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1920"
+  },
+  {
+    "file": "frontend/components/ui/ScrollImageSequence.tsx",
+    "line": 85,
+    "snippet": "ch = canvas.height = Math.round((rect.height || window.innerHeight || 1080) * dpr);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1080"
+  },
+  {
+    "file": "frontend/components/ui/ScrollImageSequence.tsx",
+    "line": 156,
+    "snippet": "const dpr = Math.min(typeof window !== \"undefined\" ? window.devicePixelRatio || 1 : 1, 2);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1"
+  },
+  {
+    "file": "frontend/components/ui/ScrollImageSequence.tsx",
+    "line": 158,
+    "snippet": "const targetWidth = Math.round((rect.width || window.innerWidth || 1920) * dpr);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1920"
+  },
+  {
+    "file": "frontend/components/ui/ScrollImageSequence.tsx",
+    "line": 159,
+    "snippet": "const targetHeight = Math.round((rect.height || window.innerHeight || 1080) * dpr);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "1080"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 28,
+    "snippet": "import * as MockData from \"./mock\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 28,
+    "snippet": "import * as MockData from \"./mock\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 31,
+    "snippet": "const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || \"http://localhost:8000\";",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"http://localhost:8000\""
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 33,
+    "snippet": "export function isMockMode(): boolean {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 35,
+    "snippet": "const override = localStorage.getItem(\"USE_MOCK_OVERRIDE\");",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 38,
+    "snippet": "return process.env.NEXT_PUBLIC_USE_MOCK === \"true\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 41,
+    "snippet": "export function setMockModeOverride(val: boolean) {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 43,
+    "snippet": "localStorage.setItem(\"USE_MOCK_OVERRIDE\", String(val));",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 62,
+    "snippet": "mockFallback: (b: TReq) => TRes",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 62,
+    "snippet": "mockFallback: (b: TReq) => TRes",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Fallback"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 64,
+    "snippet": "if (isMockMode()) {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 67,
+    "snippet": "return mockFallback(body);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 67,
+    "snippet": "return mockFallback(body);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Fallback"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 89,
+    "snippet": "console.warn(`[API Client] Live call to ${path} failed. Falling back to mock data:`, err);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 92,
+    "snippet": "return mockFallback(body);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 92,
+    "snippet": "return mockFallback(body);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Fallback"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 98,
+    "snippet": "if (isMockMode()) {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 101,
+    "snippet": "return MockData.getMockHealth();",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 101,
+    "snippet": "return MockData.getMockHealth();",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 111,
+    "snippet": "return MockData.getMockHealth();",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 111,
+    "snippet": "return MockData.getMockHealth();",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 117,
+    "snippet": "return postAPI<SOCRequest, ModelPredictionResponse>(\"/predict/soc\", req, MockData.getMockSOC);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 117,
+    "snippet": "return postAPI<SOCRequest, ModelPredictionResponse>(\"/predict/soc\", req, MockData.getMockSOC);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 122,
+    "snippet": "return postAPI<SOHRequest, ModelPredictionResponse>(\"/predict/soh\", req, MockData.getMockSOH);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 122,
+    "snippet": "return postAPI<SOHRequest, ModelPredictionResponse>(\"/predict/soh\", req, MockData.getMockSOH);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 127,
+    "snippet": "return postAPI<RULRequest, ModelPredictionResponse>(\"/predict/rul\", req, MockData.getMockRUL);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 127,
+    "snippet": "return postAPI<RULRequest, ModelPredictionResponse>(\"/predict/rul\", req, MockData.getMockRUL);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 132,
+    "snippet": "return postAPI<MileageRequest, ModelPredictionResponse>(\"/predict/mileage\", req, MockData.getMockMileage);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 132,
+    "snippet": "return postAPI<MileageRequest, ModelPredictionResponse>(\"/predict/mileage\", req, MockData.getMockMileage);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 137,
+    "snippet": "return postAPI<ThermalRequest, ThermalResponse>(\"/predict/thermal\", req, MockData.getMockThermal);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 137,
+    "snippet": "return postAPI<ThermalRequest, ThermalResponse>(\"/predict/thermal\", req, MockData.getMockThermal);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 142,
+    "snippet": "return postAPI<SOHDeepRequest, SOHDeepResponse>(\"/predict/soh-deep\", req, MockData.getMockSOHDeep);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 142,
+    "snippet": "return postAPI<SOHDeepRequest, SOHDeepResponse>(\"/predict/soh-deep\", req, MockData.getMockSOHDeep);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 147,
+    "snippet": "return postAPI<DiagnoseRequest, DiagnoseResponse>(\"/predict/diagnose/vehicle\", req, MockData.getMockDiagnose);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 147,
+    "snippet": "return postAPI<DiagnoseRequest, DiagnoseResponse>(\"/predict/diagnose/vehicle\", req, MockData.getMockDiagnose);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 152,
+    "snippet": "return postAPI<DriverBehaviorRequest, DriverBehaviorResponse>(\"/predict/driver-behavior\", req, MockData.getMockDriverBeh",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 152,
+    "snippet": "return postAPI<DriverBehaviorRequest, DriverBehaviorResponse>(\"/predict/driver-behavior\", req, MockData.getMockDriverBeh",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 157,
+    "snippet": "return postAPI<KneePredictionRequest, KneePredictionResponse>(\"/predict/knee-point\", req, MockData.getMockKneePoint);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 157,
+    "snippet": "return postAPI<KneePredictionRequest, KneePredictionResponse>(\"/predict/knee-point\", req, MockData.getMockKneePoint);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 162,
+    "snippet": "return postAPI<MetaEnsembleRequest, MetaEnsembleResponse>(\"/predict/meta-ensemble\", req, MockData.getMockMetaEnsemble);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/client.ts",
+    "line": 162,
+    "snippet": "return postAPI<MetaEnsembleRequest, MetaEnsembleResponse>(\"/predict/meta-ensemble\", req, MockData.getMockMetaEnsemble);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 7,
+    "snippet": "import { isMockMode, predictThermal, predictKneePoint, predictDriverBehavior, diagnoseVehicle } from \"./client\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 8,
+    "snippet": "import { MOCK_VEHICLES } from \"./mock\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 8,
+    "snippet": "import { MOCK_VEHICLES } from \"./mock\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 10,
+    "snippet": "const COPILOT_URL = process.env.NEXT_PUBLIC_COPILOT_URL || \"http://localhost:8001/chat\";",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"http://localhost:8001/chat\""
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 19,
+    "snippet": "if (!isMockMode() && process.env.NEXT_PUBLIC_COPILOT_URL) {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 38,
+    "snippet": "const foundVehicle = MOCK_VEHICLES.find((v) =>",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 40,
+    "snippet": ") || MOCK_VEHICLES[0]; // default to first",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 73,
+    "snippet": "reply: `\u2705 **Thermal Status Nominal for ${foundVehicle.id}:**\\n\\nAll three thermal zones (Battery: ${foundVehicle.battery",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "frontend/lib/api/copilot.ts",
+    "line": 135,
+    "snippet": "const annualPenalty = behaviorRes.estimated_annual_soh_penalty_pct ?? behaviorRes.annual_soh_penalty_percent ?? 1.8;",
+    "pattern": "Nullish coalescing default (?? literal)",
+    "default_value": "1.8"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 30,
+    "snippet": "export const MOCK_VEHICLES: FleetVehicle[] = (rawFleetData as FleetVehicle[]) || [];",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 35,
+    "snippet": "const existing = MOCK_VEHICLES.find(",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 62,
+    "snippet": "MOCK_VEHICLES.unshift(customVehicle);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 73,
+    "snippet": "export function getMockHealth(): HealthResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 86,
+    "snippet": "export function getMockSOC(req: SOCRequest): ModelPredictionResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 99,
+    "snippet": "export function getMockSOH(req: SOHRequest): ModelPredictionResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 100,
+    "snippet": "const odo = req.odometer || 0;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "0"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 102,
+    "snippet": "const tempPenalty = Math.max(0, ((req.battery_temp || 32) - 32) * 0.32);",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "32"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 114,
+    "snippet": "export function getMockRUL(req: RULRequest): ModelPredictionResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 115,
+    "snippet": "const odo = req.odometer || 0;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "0"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 127,
+    "snippet": "export function getMockMileage(req: MileageRequest): ModelPredictionResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 140,
+    "snippet": "export function getMockThermal(req: ThermalRequest): ThermalResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 171,
+    "snippet": "export function getMockSOHDeep(req: SOHDeepRequest): SOHDeepResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 173,
+    "snippet": "vehicle_id: req.vehicle_id || \"GJ05CV6564\",",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"GJ05CV6564\""
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 182,
+    "snippet": "export function getMockDiagnose(req: DiagnoseRequest): DiagnoseResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 183,
+    "snippet": "const thermal = getMockThermal({",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 215,
+    "snippet": "\"Battery pack operating at nominal thermal equilibrium.\",",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 222,
+    "snippet": "export function getMockDriverBehavior(req: DriverBehaviorRequest): DriverBehaviorResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 250,
+    "snippet": "`Peak current discharge of ${req.max_discharge_current}A induces ${bsi > 0.5 ? 'elevated' : 'nominal'} cell stress.`,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 256,
+    "snippet": "export function getMockKneePoint(req: KneePredictionRequest): KneePredictionResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 257,
+    "snippet": "const cycle = req.charge_cycle_count || 200;",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "200"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 278,
+    "snippet": "export function getMockMetaEnsemble(req: MetaEnsembleRequest): MetaEnsembleResponse {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 279,
+    "snippet": "const knee = getMockKneePoint({",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/api/mock.ts",
+    "line": 289,
+    "snippet": "const behavior = getMockDriverBehavior({",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 3,
+    "snippet": "import { MOCK_VEHICLES, getOrCreateCustomVehicle } from \"../api/mock\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 3,
+    "snippet": "import { MOCK_VEHICLES, getOrCreateCustomVehicle } from \"../api/mock\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 4,
+    "snippet": "import { isMockMode, setMockModeOverride } from \"../api/client\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 4,
+    "snippet": "import { isMockMode, setMockModeOverride } from \"../api/client\";",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 44,
+    "snippet": "isMock: boolean;",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 63,
+    "snippet": "setIsMock: (mock: boolean) => void;",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 63,
+    "snippet": "setIsMock: (mock: boolean) => void;",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 92,
+    "snippet": "vehicles: MOCK_VEHICLES,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 93,
+    "snippet": "selectedVehicleId: MOCK_VEHICLES[0]?.id || \"DL1LAN0707\",",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "\"DL1LAN0707\""
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 93,
+    "snippet": "selectedVehicleId: MOCK_VEHICLES[0]?.id || \"DL1LAN0707\",",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 95,
+    "snippet": "isMock: false, // LIVE API Connected to port 8000",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 106,
+    "snippet": "voltage: MOCK_VEHICLES[0]?.voltage || 73.6,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "73.6"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 106,
+    "snippet": "voltage: MOCK_VEHICLES[0]?.voltage || 73.6,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 107,
+    "snippet": "current: MOCK_VEHICLES[0]?.current || -14.0,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 108,
+    "snippet": "temperature: MOCK_VEHICLES[0]?.battery_temp || 29.0,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "29.0"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 108,
+    "snippet": "temperature: MOCK_VEHICLES[0]?.battery_temp || 29.0,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 109,
+    "snippet": "odometer: Math.floor((MOCK_VEHICLES[0]?.charge_cycle_count || 80) * 58),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "80"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 109,
+    "snippet": "odometer: Math.floor((MOCK_VEHICLES[0]?.charge_cycle_count || 80) * 58),",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 110,
+    "snippet": "cycleCount: MOCK_VEHICLES[0]?.charge_cycle_count || 80,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "80"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 110,
+    "snippet": "cycleCount: MOCK_VEHICLES[0]?.charge_cycle_count || 80,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 111,
+    "snippet": "avgSpeed: MOCK_VEHICLES[0]?.speed || 30.0,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "30.0"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 111,
+    "snippet": "avgSpeed: MOCK_VEHICLES[0]?.speed || 30.0,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 112,
+    "snippet": "maxSpeed: (MOCK_VEHICLES[0]?.speed || 30.0) + 25,",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "30.0"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 112,
+    "snippet": "maxSpeed: (MOCK_VEHICLES[0]?.speed || 30.0) + 25,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 116,
+    "snippet": "daysInService: Math.round((MOCK_VEHICLES[0]?.charge_cycle_count || 80) * 1.4),",
+    "pattern": "Logical OR default (|| literal)",
+    "default_value": "80"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 116,
+    "snippet": "daysInService: Math.round((MOCK_VEHICLES[0]?.charge_cycle_count || 80) * 1.4),",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "MOCK"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 169,
+    "snippet": "setIsMock: (mock: boolean) => {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 169,
+    "snippet": "setIsMock: (mock: boolean) => {",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 170,
+    "snippet": "setMockModeOverride(mock);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 170,
+    "snippet": "setMockModeOverride(mock);",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 171,
+    "snippet": "set({ isMock: mock });",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Mock"
+  },
+  {
+    "file": "frontend/lib/store/useFleetStore.ts",
+    "line": 171,
+    "snippet": "set({ isMock: mock });",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "mock"
+  },
+  {
+    "file": "api/schemas.py",
+    "line": 28,
+    "snippet": "voltage_deviation: float = Field(0.0, description=\"Deviation from 72V nominal\")",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 29,
+    "snippet": "\"\"\"Attempts MySQL connection, fallback to SQLite on auth or connection error.\"\"\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 75,
+    "snippet": "model=r.get(\"model\", \"Euler HiLoad EV\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"Euler HiLoad EV\""
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 76,
+    "snippet": "fleet=r.get(\"fleet\", \"NCR Hub\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"NCR Hub\""
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 77,
+    "snippet": "driver=r.get(\"driver\", \"Fleet Operator\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"Fleet Operator\""
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 78,
+    "snippet": "soc=float(r.get(\"soc\", 75.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "75.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 79,
+    "snippet": "soh=float(r.get(\"soh\", 95.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "95.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 80,
+    "snippet": "rul=int(r.get(\"rul\", 1200)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "1200"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 81,
+    "snippet": "mileage=float(r.get(\"mileage\", 110.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "110.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 82,
+    "snippet": "battery_temp=float(r.get(\"battery_temp\", 32.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "32.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 83,
+    "snippet": "controller_temp=float(r.get(\"controller_temp\", 40.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "40.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 84,
+    "snippet": "motor_temp=float(r.get(\"motor_temp\", 50.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "50.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 85,
+    "snippet": "voltage=float(r.get(\"voltage\", 75.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "75.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 86,
+    "snippet": "current=float(r.get(\"current\", -15.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "-15.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 87,
+    "snippet": "speed=float(r.get(\"speed\", 30.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "30.0"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 88,
+    "snippet": "charge_cycle_count=int(r.get(\"charge_cycle_count\", 150)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "150"
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 89,
+    "snippet": "status=r.get(\"status\", \"active\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"active\""
+  },
+  {
+    "file": "api/db/database.py",
+    "line": 90,
+    "snippet": "last_ping=r.get(\"lastPing\", \"Just now\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"Just now\""
+  },
+  {
+    "file": "api/db/__init__.py",
+    "line": 3,
+    "snippet": "Supports MySQL with automatic SQLite fallback and auto-seeding.",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 41,
+    "snippet": "if \"chassis\" in v: _KNOWN_BASELINES[str(v[\"chassis\"])] = float(v.get(\"soh\", 95.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "95.0"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 42,
+    "snippet": "if \"id\" in v: _KNOWN_BASELINES[str(v[\"id\"])] = float(v.get(\"soh\", 95.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "95.0"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 189,
+    "snippet": "soc = _safe_float(feature_dict.get(\"soc_at_charge\", feature_dict.get(\"soc\")), 75.0)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "feature_dict.get(\"soc\""
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 200,
+    "snippet": "init_soh = 95.0 # Nominal fleet mean baseline",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 214,
+    "snippet": "synthesized[\"voltage_deviation\"] = float(feature_dict.get(\"voltage_deviation\", round(v - 72.0, 2)))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "round(v - 72.0, 2"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 215,
+    "snippet": "synthesized[\"temp_stress_index\"] = float(feature_dict.get(\"temp_stress_index\", round(max(0.0, min(1.0, (t - 25.0) / 30.0",
+    "pattern": "dict.get(key, default)",
+    "default_value": "round(max(0.0, min(1.0, (t - 25.0"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 216,
+    "snippet": "synthesized[\"degradation_factor\"] = float(feature_dict.get(\"degradation_factor\", round(min(1.0, cycles / 1400.0), 4)))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "round(min(1.0, cycles / 1400.0"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 217,
+    "snippet": "synthesized[\"days_in_service\"] = float(feature_dict.get(\"days_in_service\", max(1.0, round(cycles * 1.25))))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "max(1.0, round(cycles * 1.25"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 218,
+    "snippet": "synthesized[\"soh_mean\"] = float(feature_dict.get(\"soh_mean\", init_soh))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "init_soh"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 219,
+    "snippet": "synthesized[\"mile_avg\"] = float(feature_dict.get(\"mile_avg\", 45.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "45.0"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 220,
+    "snippet": "mpc = float(feature_dict.get(\"miles_per_charge\", max(35.0, min(130.0, 120.0 - (cycles * 0.045)))))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "max(35.0, min(130.0, 120.0 - (cycles * 0"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 222,
+    "snippet": "synthesized[\"miles_per_charge_rolling_3\"] = float(feature_dict.get(\"miles_per_charge_rolling_3\", mpc))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "mpc"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 223,
+    "snippet": "synthesized[\"miles_per_charge_rolling_5\"] = float(feature_dict.get(\"miles_per_charge_rolling_5\", mpc))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "mpc"
+  },
+  {
+    "file": "api/routers/module_a.py",
+    "line": 224,
+    "snippet": "synthesized[\"miles_per_charge_rolling_10\"] = float(feature_dict.get(\"miles_per_charge_rolling_10\", mpc))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "mpc"
+  },
+  {
+    "file": "api/routers/module_c.py",
+    "line": 132,
+    "snippet": "grade = \"Grade B (Nominal Fleet Standard)\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "api/routers/module_c.py",
+    "line": 133,
+    "snippet": "status_str = \"Nominal\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "api/routers/module_c.py",
+    "line": 134,
+    "snippet": "exec_sum = f\"Pack {req.vehicle_id} operating under nominal duty cycle. SOH at {beh_adjusted_soh}% with manageable behavi",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "modules/module_a/01_data_ingestion.py",
+    "line": 200,
+    "snippet": "f\"Vehicles: {df.get('vehicle_no', df.get('chassis_no', pd.Series())).nunique()}\")",
+    "pattern": "dict.get(key, default)",
+    "default_value": "df.get('chassis_no', pd.Series("
+  },
+  {
+    "file": "modules/module_a/02_preprocessing.py",
+    "line": 155,
+    "snippet": "df[\"soc_drain\"] = safe_numeric(df.get(\"soc_drain\", np.nan))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 41,
+    "snippet": "df.get(\"run_kms\", pd.Series(0)) > 0,",
+    "pattern": "dict.get(key, default)",
+    "default_value": "pd.Series(0"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 42,
+    "snippet": "df.get(\"soc_drain\", pd.Series(np.nan)) / df[\"run_kms\"].replace(0, np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "pd.Series(np.nan"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 48,
+    "snippet": "df.get(\"run_kms\", pd.Series(0)) > 0,",
+    "pattern": "dict.get(key, default)",
+    "default_value": "pd.Series(0"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 49,
+    "snippet": "df.get(\"energy_utilized\", pd.Series(np.nan)) / df[\"run_kms\"].replace(0, np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "pd.Series(np.nan"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 55,
+    "snippet": "df.get(\"soc_drain\", pd.Series(0)) > 0,",
+    "pattern": "dict.get(key, default)",
+    "default_value": "pd.Series(0"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 56,
+    "snippet": "df.get(\"run_kms\", pd.Series(np.nan)) / df[\"soc_drain\"].replace(0, np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "pd.Series(np.nan"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 153,
+    "snippet": "NOMINAL_CYCLES = cfg.TRAIN_CONFIG[\"nominal_battery_cycles\"]",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "NOMINAL"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 153,
+    "snippet": "NOMINAL_CYCLES = cfg.TRAIN_CONFIG[\"nominal_battery_cycles\"]",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 161,
+    "snippet": "df[\"rul_proxy\"] = (NOMINAL_CYCLES - df[\"charge_cycle_count\"]).clip(lower=0)",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "NOMINAL"
+  },
+  {
+    "file": "modules/module_a/03_feature_engineering.py",
+    "line": 211,
+    "snippet": "\"voltage_deviation\",     # deviation from nominal 72V",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "modules/module_a/04_model_training.py",
+    "line": 102,
+    "snippet": "\"cycle_usage_ratio\",   # = charge_cycle_count/NOMINAL, equally leaky",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "NOMINAL"
+  },
+  {
+    "file": "modules/module_a/04_model_training.py",
+    "line": 469,
+    "snippet": "best_name = max(all_results, key=lambda k: all_results[k][\"test_metrics\"].get(\"R2\", -999))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "-999"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 79,
+    "snippet": "train_r2 = train_metrics.get(\"R2\", 0)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "0"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 80,
+    "snippet": "test_r2  = test_metrics.get(\"R2\", 0)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "0"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 189,
+    "snippet": "\"RMSE\":         tm.get(\"RMSE\", np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 190,
+    "snippet": "\"MAE\":          tm.get(\"MAE\",  np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 191,
+    "snippet": "\"R2\":           tm.get(\"R2\",   np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 192,
+    "snippet": "\"MAPE%\":        tm.get(\"MAPE\", np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 193,
+    "snippet": "\"Train_RMSE\":   trm.get(\"RMSE\", np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 194,
+    "snippet": "\"Train_R2\":     trm.get(\"R2\",   np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 196,
+    "snippet": "\"TrainTime_s\":  result.get(\"train_time_s\", np.nan),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.nan"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 325,
+    "snippet": "sorted_ml = sorted(ml_models.items(), key=lambda x: x[1][\"test_metrics\"].get(\"R2\", -999), reverse=True)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "-999"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 332,
+    "snippet": "y_t = mres.get(\"y_true\", np.array([]))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.array([]"
+  },
+  {
+    "file": "modules/module_a/05_evaluation.py",
+    "line": 363,
+    "snippet": "sorted_ml = sorted(ml_models.items(), key=lambda x: x[1][\"test_metrics\"].get(\"R2\", -999), reverse=True)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "-999"
+  },
+  {
+    "file": "modules/module_a/06_visualization.py",
+    "line": 600,
+    "snippet": "y_true = result.get(\"y_true\", y_test)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "y_test"
+  },
+  {
+    "file": "modules/module_a/config.py",
+    "line": 214,
+    "snippet": "\"nominal_battery_cycles\": 1500,   # typical EV battery cycle life",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "modules/module_a/config.py",
+    "line": 215,
+    "snippet": "\"nominal_battery_years\": 8,",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "nominal"
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 133,
+    "snippet": "tr2, te2 = trm.get(\"R2\",0), tm.get(\"R2\",0)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "0"
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 133,
+    "snippet": "tr2, te2 = trm.get(\"R2\",0), tm.get(\"R2\",0)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "0"
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 147,
+    "snippet": "\"RMSE\":      round(tm.get(\"RMSE\",  float(\"nan\")), 4),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 148,
+    "snippet": "\"MAE\":       round(tm.get(\"MAE\",   float(\"nan\")), 4),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 149,
+    "snippet": "\"R2\":        round(tm.get(\"R2\",    float(\"nan\")), 4),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 150,
+    "snippet": "\"MAPE%\":     round(tm.get(\"MAPE\",  float(\"nan\")), 2),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 151,
+    "snippet": "\"Train_R2\":  round(trm.get(\"R2\",   float(\"nan\")), 4),   # fix: was missing \u2192 FitStatus always \"Underfitting\"",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 152,
+    "snippet": "\"Train_RMSE\":round(trm.get(\"RMSE\", float(\"nan\")), 4),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 154,
+    "snippet": "\"TrainTime_s\": mres.get(\"train_time_s\", float(\"nan\")),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "float(\"nan\""
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 197,
+    "snippet": "sorted_ml = sorted(ml_models.items(), key=lambda x: x[1][\"test_metrics\"].get(\"R2\",-999), reverse=True)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "-999"
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 220,
+    "snippet": "yt = mres.get(\"y_true\", np.array([]))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.array([]"
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 221,
+    "snippet": "yp = mres.get(\"y_pred\", np.array([]))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "np.array([]"
+  },
+  {
+    "file": "modules/module_a/retrain_clean.py",
+    "line": 244,
+    "snippet": "key=lambda x: x[1][\"test_metrics\"].get(\"R2\",-999), reverse=True)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "-999"
+  },
+  {
+    "file": "modules/module_a/utils.py",
+    "line": 293,
+    "snippet": "metrics.get(\"RMSE\", \"-\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"-\""
+  },
+  {
+    "file": "modules/module_a/utils.py",
+    "line": 294,
+    "snippet": "metrics.get(\"MAE\", \"-\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"-\""
+  },
+  {
+    "file": "modules/module_a/utils.py",
+    "line": 295,
+    "snippet": "metrics.get(\"R2\", \"-\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"-\""
+  },
+  {
+    "file": "modules/module_a/utils.py",
+    "line": 296,
+    "snippet": "metrics.get(\"MAPE\", \"-\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"-\""
+  },
+  {
+    "file": "modules/module_a/utils.py",
+    "line": 297,
+    "snippet": "metrics.get(\"train_time_s\", \"-\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"-\""
+  },
+  {
+    "file": "modules/module_b/prepare_artifacts.py",
+    "line": 238,
+    "snippet": "\"scenario\": \"Normal City Cruising (Nominal Balance)\",",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 51,
+    "snippet": "vehicle_id=item.get(\"vehicle_id\", f\"VEH-{idx+1}\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "f\"VEH-{idx+1}\""
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 52,
+    "snippet": "oem_model=item.get(\"oem_model\", \"Euler HiLoad\"),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "\"Euler HiLoad\""
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 53,
+    "snippet": "soc=float(item.get(\"soc\", 80.0)),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "80.0"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 54,
+    "snippet": "voltage=float(item.get(\"voltage\", item.get(\"vbv\", 72.0))),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "item.get(\"vbv\", 72.0"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 55,
+    "snippet": "current=float(item.get(\"current\", item.get(\"vbc\", -20.0))),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "item.get(\"vbc\", -20.0"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 56,
+    "snippet": "battery_temp=float(item.get(\"battery_temp\", item.get(\"vbt\", 30.0))),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "item.get(\"vbt\", 30.0"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 57,
+    "snippet": "controller_temp=float(item.get(\"controller_temp\", item.get(\"vct\", 42.0))),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "item.get(\"vct\", 42.0"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 58,
+    "snippet": "motor_temp=float(item.get(\"motor_temp\", item.get(\"vmt\", 55.0))),",
+    "pattern": "dict.get(key, default)",
+    "default_value": "item.get(\"vmt\", 55.0"
+  },
+  {
+    "file": "modules/module_b/src/cli/main.py",
+    "line": 59,
+    "snippet": "speed=float(item.get(\"speed\", 30.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "30.0"
+  },
+  {
+    "file": "modules/module_b/src/core/schemas.py",
+    "line": 78,
+    "snippet": "primary_thermal_threat: str = Field(..., description=\"Identified threat type or Nominal Operation\")",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 33,
+    "snippet": "def _resolve_weight_path(subfolder: str, filename: str, fallback_relative: str) -> str:",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 34,
+    "snippet": "\"\"\"Check models/module_b/, models/<subfolder>/ first, then fallback to module_b/weights/.\"\"\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 41,
+    "snippet": "p_fallback = os.path.join(_MODULE3_ROOT, fallback_relative)",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 41,
+    "snippet": "p_fallback = os.path.join(_MODULE3_ROOT, fallback_relative)",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 42,
+    "snippet": "if os.path.exists(p_fallback):",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 43,
+    "snippet": "return p_fallback",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 57,
+    "snippet": "window_length=self.config.get(\"models\", {}).get(\"soh\", {}).get(\"input_window_length\", 10)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "10"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 64,
+    "snippet": "soh_weights = self.config.get(\"models\", {}).get(\"soh\", {}).get(\"weights_path\", default_soh)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "default_soh"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 65,
+    "snippet": "thermal_weights = self.config.get(\"models\", {}).get(\"thermal\", {}).get(\"weights_path\", default_thermal)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "default_thermal"
+  },
+  {
+    "file": "modules/module_b/src/models/engine.py",
+    "line": 95,
+    "snippet": "wp = loaded.get(\"models\", {}).get(model_key, {}).get(\"weights_path\", f\"weights/{fname}\")",
+    "pattern": "dict.get(key, default)",
+    "default_value": "f\"weights/{fname}\""
+  },
+  {
+    "file": "modules/module_b/src/models/soh_champion.py",
+    "line": 123,
+    "snippet": "category = \"Good (Nominal Fleet Operation)\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "modules/module_b/src/models/thermal_champion.py",
+    "line": 101,
+    "snippet": "threat = \"Nominal Thermal Equilibrium\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "modules/module_b/src/models/thermal_champion.py",
+    "line": 102,
+    "snippet": "hotspot = \"All Zones Nominal\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 24,
+    "snippet": "\"\"\"Check models/module_c/, models/knee_prognostics/ first, then fallback to module_c/.\"\"\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 31,
+    "snippet": "p_fallback = os.path.join(_MODULE_C_ROOT, filename)",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 32,
+    "snippet": "if os.path.exists(p_fallback):",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 33,
+    "snippet": "return p_fallback",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "fallback"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 132,
+    "snippet": "soh_impact_desc = \"Nominal fleet driving: expected baseline degradation.\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 189,
+    "snippet": "raw_cycles = float(feature_dict.get('charge_cycle_count', feature_dict.get('cycle_count', 150.0)))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "feature_dict.get('cycle_count', 150.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 190,
+    "snippet": "raw_cap = float(feature_dict.get('capacity', feature_dict.get('capacity_ah', 95.0)))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "feature_dict.get('capacity_ah', 95.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 194,
+    "snippet": "raw_volt = float(feature_dict.get('voltage', feature_dict.get('battery_voltage', 74.0)))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "feature_dict.get('battery_voltage', 74.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 195,
+    "snippet": "raw_temp = float(feature_dict.get('battery_temp', 32.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "32.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 196,
+    "snippet": "raw_curr = float(feature_dict.get('current', feature_dict.get('battery_current', -18.0)))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "feature_dict.get('battery_current', -18."
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 197,
+    "snippet": "raw_soc  = float(feature_dict.get('soc', 80.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "80.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 198,
+    "snippet": "raw_speed = float(feature_dict.get('speed', 35.0))",
+    "pattern": "dict.get(key, default)",
+    "default_value": "35.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 223,
+    "snippet": "elif col == 'run_kms': val = feature_dict.get('run_kms', 50.0)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "50.0"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 224,
+    "snippet": "elif col == 'energy_utilized': val = feature_dict.get('energy_kwh', 8.5)",
+    "pattern": "dict.get(key, default)",
+    "default_value": "8.5"
+  },
+  {
+    "file": "modules/module_c/engine.py",
+    "line": 264,
+    "snippet": "risk_state = \"Pre-Knee Nominal (Linear Degradation Stage)\"",
+    "pattern": "Keyword match (fallback/mock/dummy/stub/nominal/assumed)",
+    "default_value": "Nominal"
+  }
+]

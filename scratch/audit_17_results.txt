@@ -1,0 +1,31 @@
+==============================================================================================================
+17-VEHICLE SPOT-CHECK: CALIBRATED BASELINE MODEL VS OLD ROW-SPLIT MODEL
+==============================================================================================================
+Vehicle ID   | Chassis No         | Cycles | SOH_0 (Base) | Pred d_SOH | New SOH  | Old SOH  | Model Used        
+--------------------------------------------------------------------------------------------------------------
+DL1LAN0707   | MAT486022RZD10219  |      0 |      99.20%  |    -9.05% |   90.15% |   92.57% | Calibrated XGBoost
+GJ05CV6564   | CN-GJ05CV6564      |    200 |      96.90%  |    -9.06% |   87.84% |   94.81% | Calibrated XGBoost
+DL1LAL8594   | MD9EMHDL22H217002  |    950 |      79.54%  |    -9.06% |   70.48% |   95.80% | Calibrated XGBoost
+DL1LAL8590   | MD9EMHDL22H217018  |    880 |      81.47%  |    -9.06% |   72.41% |   95.57% | Calibrated XGBoost
+DL1LAL8588   | MD9EMHDL22J217074  |    920 |      79.54%  |    -9.06% |   70.48% |   95.91% | Calibrated XGBoost
+DL1LAL8580   | MAT486022RZD08112  |    820 |      83.20%  |    -9.06% |   74.14% |   95.53% | Calibrated XGBoost
+DL1LAL8575   | MD9EMHDL22J217083  |    650 |      87.20%  |    -9.06% |   78.14% |   95.54% | Calibrated XGBoost
+DL1LAK7280   | MD9EMHDL23B217240  |    520 |      89.87%  |    -9.06% |   80.81% |   95.54% | Calibrated XGBoost
+DL1LAK7265   | MD9EMHDL22H217011  |    460 |      91.08%  |    -9.06% |   82.02% |   95.54% | Calibrated XGBoost
+DL1LAK7250   | MD9EMHDL23D217211  |    440 |      91.20%  |    -9.06% |   82.14% |   95.54% | Calibrated XGBoost
+DL1LAK7245   | MD9EMHDL23E217001  |    380 |      92.87%  |    -9.06% |   83.81% |   95.54% | Calibrated XGBoost
+DL1LAK7235   | MAT486022RZD09412  |    320 |      93.30%  |    -9.06% |   84.24% |   95.54% | Calibrated XGBoost
+DL1LAK7222   | MD9EMHDL23C217305  |    210 |      95.75%  |    -9.06% |   86.69% |   95.54% | Calibrated XGBoost
+DL1LAK7216   | MD9EMHDL23D217087  |    180 |      96.37%  |    -9.06% |   87.31% |   95.54% | Calibrated XGBoost
+DL1LAK7207   | MD9EMHDL23D217075  |    150 |      96.77%  |    -9.06% |   87.71% |   95.54% | Calibrated XGBoost
+DL1LAK7203   | MD9EMHDL23D217303  |     90 |      97.84%  |    -9.06% |   88.78% |   95.54% | Calibrated XGBoost
+DL1LAN0101   | MD9EMHDL23D217132  |     15 |      99.45%  |    -9.06% |   90.39% |   95.54% | Calibrated XGBoost
+
+==============================================================================================================
+SPREAD & VARIANCE ANALYSIS
+==============================================================================================================
+Commissioning Baseline SOH_0 : Min = 79.54%, Max = 99.45%, Range = 19.91%, Std = 6.81%
+Predicted Delta (d_SOH)      : Min = -9.06%, Max = -9.05%, Range = 0.01%, Std = 0.00%
+NEW Reconstructed SOH        : Min = 70.48%, Max = 90.39%, Range = 19.91%, Std = 6.81%
+OLD Row-Split Model SOH      : Min = 92.57%, Max = 95.91%, Range = 3.34%, Std = 0.75%
+==============================================================================================================
