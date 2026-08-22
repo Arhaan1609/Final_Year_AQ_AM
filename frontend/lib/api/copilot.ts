@@ -125,8 +125,17 @@ export async function askCopilot(
       result: behaviorRes,
     });
 
+    const recs = (behaviorRes.recommendations && behaviorRes.recommendations.length > 0)
+      ? behaviorRes.recommendations
+      : [
+          behaviorRes.bms_recommended_directive,
+          behaviorRes.behavioral_impact_description,
+        ].filter(Boolean) as string[];
+
+    const annualPenalty = behaviorRes.estimated_annual_soh_penalty_pct ?? behaviorRes.annual_soh_penalty_percent ?? 1.8;
+
     return {
-      reply: `🏎️ **Driver Behavioral Profiling for ${foundVehicle.driver} (${foundVehicle.id}):**\n\n- **Aggressiveness Index ($AI$):** **${behaviorRes.aggressiveness_index} / 1.0**\n- **Battery Stress Index ($BSI$):** **${behaviorRes.battery_stress_index} / 1.0**\n- **Classification:** **${behaviorRes.driver_classification}**\n- **Projected SOH Penalty:** **-${behaviorRes.estimated_annual_soh_penalty_pct}% / year**\n\n${behaviorRes.recommendations.map((r) => `• ${r}`).join("\n")}`,
+      reply: `🏎️ **Driver Behavioral Profiling for ${foundVehicle.driver} (${foundVehicle.id}):**\n\n- **Aggressiveness Index ($AI$):** **${behaviorRes.aggressiveness_index} / 1.0**\n- **Battery Stress Index ($BSI$):** **${behaviorRes.battery_stress_index} / 1.0**\n- **Classification:** **${behaviorRes.driver_classification}**\n- **Projected SOH Penalty:** **-${annualPenalty}% / year**\n\n${recs.map((r) => `• ${r}`).join("\n")}`,
       toolCalls,
     };
   }

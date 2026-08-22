@@ -227,13 +227,13 @@ class BABMSEngine:
             else: val = 0.0
             raw_row.append(float(val))
 
-        X_raw = np.array([raw_row], dtype=np.float32)
+        X_df = pd.DataFrame([raw_row], columns=KNEE_FEATURE_NAMES)
 
-        # Apply StandardScaler
-        X_scaled = self.scaler.transform(X_raw)
+        # Apply StandardScaler with exact feature names
+        X_scaled = self.scaler.transform(X_df)
 
         # XGBoost inference in log space
-        dmatrix = xgb.DMatrix(X_scaled)
+        dmatrix = xgb.DMatrix(X_scaled, feature_names=KNEE_FEATURE_NAMES)
         log_pred = float(self.booster.predict(dmatrix)[0])
 
         # Physics-informed knee localization:
@@ -265,6 +265,7 @@ class BABMSEngine:
             "current_cycle_count": raw_cycles,
             "rul_to_knee_cycles": rul_knee,
             "estimated_knee_cycle": estimated_knee_cycle,
+            "is_post_knee": is_post_knee,
             "knee_risk_state": risk_state,
             "recommended_action": action,
             "model_used": "XGBoost Knee Booster (28 features)",

@@ -58,7 +58,7 @@ export const Header: React.FC = () => {
         >
           {vehicles.map((v) => (
             <option key={v.id} value={v.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">
-              {v.id} — {v.model.split(" ")[0]} ({v.status.toUpperCase()}) • {v.driver.split(" ")[0]}
+              {v.id} — {v.model.split(" ")[0]} ({v.status.toUpperCase()}) • {v.fleet.split(" ")[0]}
             </option>
           ))}
         </select>

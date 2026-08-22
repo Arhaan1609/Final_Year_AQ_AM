@@ -40,9 +40,10 @@ export function getOrCreateCustomVehicle(chassisQuery: string): FleetVehicle {
   // On-demand provision a new digital twin for any custom chassis!
   const customVehicle: FleetVehicle = {
     id: cleanId,
+    chassis: cleanId,
     model: "Enterprise Commercial EV (Euler / Tata Custom Pack)",
     fleet: "National Dynamic Fleet Registry",
-    driver: "Enterprise Operator",
+    driver: `Unit ${cleanId}`,
     soc: 78.5,
     soh: 92.4,
     rul: 1050,
@@ -96,25 +97,28 @@ export function getMockSOC(req: SOCRequest): ModelPredictionResponse {
 
 // 3. Module A — SOH Tabular
 export function getMockSOH(req: SOHRequest): ModelPredictionResponse {
-  const cycle = req.charge_cycle_count || 200;
-  const fade = (cycle / 1500) * 20; // 20% loss over 1500 cycles
-  const est = Math.max(70, Math.min(100, 100 - fade));
+  const odo = req.odometer || 0;
+  const cycle = req.charge_cycle_count || (odo > 0 ? odo / 58 : 200);
+  const tempPenalty = Math.max(0, ((req.battery_temp || 32) - 32) * 0.32);
+  const fade = (cycle * 0.026) + tempPenalty;
+  const est = Math.max(45, Math.min(100, 100 - fade));
   return {
     task: "SOH",
     model_used: "XGBoost Regressor",
-    prediction: jitter(est, 0.8),
+    prediction: Number(est.toFixed(2)),
     unit: "%",
   };
 }
 
 // 4. Module A — RUL
 export function getMockRUL(req: RULRequest): ModelPredictionResponse {
-  const odo = req.odometer || 15000;
-  const remaining = Math.max(50, 1500 - Math.floor(odo / 30));
+  const odo = req.odometer || 0;
+  const cycle = odo > 0 ? odo / 58 : 150;
+  const remaining = Math.max(0, Math.min(1400, Math.round(1400 - (cycle * 1.15))));
   return {
     task: "RUL",
     model_used: "Gradient Boosting",
-    prediction: jitter(remaining, 2),
+    prediction: remaining,
     unit: "cycles",
   };
 }

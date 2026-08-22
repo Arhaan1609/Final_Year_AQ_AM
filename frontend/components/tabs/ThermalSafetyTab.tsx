@@ -4,7 +4,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useFleetStore } from "../../lib/store/useFleetStore";
 import { predictThermal, predictSOHDeep } from "../../lib/api/client";
 import { ThermalResponse, SOHDeepResponse } from "../../lib/api/types";
-import { Flame, ShieldAlert, Thermometer, ShieldCheck, AlertCircle, RefreshCw, Cpu, Activity } from "lucide-react";
+import { Flame, ShieldAlert, Thermometer, ShieldCheck, AlertCircle, RefreshCw, Cpu, Activity, Info } from "lucide-react";
+import { MetricExplainer } from "../ui/MetricExplainer";
 
 export const ThermalSafetyTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
@@ -102,18 +103,21 @@ export const ThermalSafetyTab: React.FC = () => {
           <div className="app-card p-6 shadow-sm relative overflow-hidden group">
             <div className="flex justify-between items-start mb-4 relative z-10">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Zone 1: Battery Pack</h2>
-                <p className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-0.5">Primary Array (LFP Cells)</p>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Zone 1: Battery Pack Core (VBT)</h2>
+                <p className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-0.5">Primary LFP Array (12.4 kWh)</p>
               </div>
-              <div className={`px-3.5 py-1 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm font-mono ${
-                isCritical
-                  ? "bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800"
-                  : isWarning
-                  ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800"
-                  : "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800"
-              }`}>
-                <span className={`w-2 h-2 rounded-full ${isCritical ? "bg-red-500 animate-pulse" : isWarning ? "bg-amber-500" : "bg-emerald-500"}`} />
-                <span>{thermalData?.safety_status || (isCritical ? "ELEVATED HAZARD" : "SAFE")}</span>
+              <div className="flex items-center gap-2">
+                <MetricExplainer metricKey="thermal" currentValue={`${batteryTemp.toFixed(1)}°C`} label="How it works" />
+                <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm font-mono ${
+                  isCritical
+                    ? "bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800"
+                    : isWarning
+                    ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800"
+                    : "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800"
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${isCritical ? "bg-red-500 animate-pulse" : isWarning ? "bg-amber-500" : "bg-emerald-500"}`} />
+                  <span>{thermalData?.safety_status || (isCritical ? "ELEVATED HAZARD" : "SAFE")}</span>
+                </div>
               </div>
             </div>
 

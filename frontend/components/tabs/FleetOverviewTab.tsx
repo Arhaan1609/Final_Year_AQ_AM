@@ -16,7 +16,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Info,
 } from "lucide-react";
+import { MetricExplainer } from "../ui/MetricExplainer";
 
 const PAGE_SIZE = 25;
 
@@ -148,9 +150,7 @@ export const FleetOverviewTab: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
                 State of Charge (SOC)
               </span>
-              <span className="text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                KNN
-              </span>
+              <MetricExplainer metricKey="soc" currentValue={`${socDisplay}%`} label="How it works" />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-mono tracking-tight">
@@ -172,9 +172,7 @@ export const FleetOverviewTab: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
                 State of Health (SOH)
               </span>
-              <span className="text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                XGBoost
-              </span>
+              <MetricExplainer metricKey="soh" currentValue={`${sohDisplay}%`} label="How it works" />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">
@@ -196,9 +194,7 @@ export const FleetOverviewTab: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
                 Remaining Useful Life
               </span>
-              <span className="text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                GBoost
-              </span>
+              <MetricExplainer metricKey="rul" currentValue={`${rulDisplay} cycles`} label="How it works" />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-mono tracking-tight">
@@ -219,9 +215,7 @@ export const FleetOverviewTab: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
                 Range per Charge
               </span>
-              <span className="text-[10px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
-                XGBoost
-              </span>
+              <MetricExplainer metricKey="soc" currentValue={`${mileageDisplay} km`} label="How it works" />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-mono tracking-tight">
@@ -267,11 +261,11 @@ export const FleetOverviewTab: React.FC = () => {
                 <strong className="text-slate-900 dark:text-slate-100">{vehicle.model}</strong>
               </div>
               <div className="flex justify-between">
-                <span>Driver:</span>
-                <strong className="text-slate-900 dark:text-slate-100">{vehicle.driver}</strong>
+                <span>Chassis / VIN:</span>
+                <strong className="text-slate-900 dark:text-slate-100">{vehicle.chassis || vehicle.id}</strong>
               </div>
               <div className="flex justify-between">
-                <span>Hub / Depot:</span>
+                <span>Fleet / Hub:</span>
                 <strong className="text-slate-900 dark:text-slate-100">{vehicle.fleet}</strong>
               </div>
               <div className="flex justify-between">
@@ -301,7 +295,7 @@ export const FleetOverviewTab: React.FC = () => {
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search VIN, driver, hub..."
+                placeholder="Search VIN, chassis, hub..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1 rounded-lg text-xs font-mono bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-400"
@@ -332,8 +326,8 @@ export const FleetOverviewTab: React.FC = () => {
           <table className="w-full text-left text-xs font-mono">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px]">
-                <th className="py-2.5 px-3">VIN / Chassis</th>
-                <th className="py-2.5 px-3">Driver</th>
+                <th className="py-2.5 px-3">Vehicle ID</th>
+                <th className="py-2.5 px-3">Chassis / Model</th>
                 <th className="py-2.5 px-3">Status</th>
                 <th className="py-2.5 px-3">SOC</th>
                 <th className="py-2.5 px-3">SOH</th>
@@ -358,7 +352,9 @@ export const FleetOverviewTab: React.FC = () => {
                     <td className="py-2.5 px-3 font-bold text-slate-900 dark:text-slate-100">
                       {v.id}
                     </td>
-                    <td className="py-2.5 px-3">{v.driver}</td>
+                    <td className="py-2.5 px-3 text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[140px]">
+                      {v.chassis || v.model}
+                    </td>
                     <td className="py-2.5 px-3">
                       <span
                         className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold ${

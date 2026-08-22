@@ -7,7 +7,8 @@ import { Badge } from "../ui/Badge";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { predictDriverBehavior } from "../../lib/api/client";
 import { DriverBehaviorResponse } from "../../lib/api/types";
-import { Gauge, Zap, TrendingDown, UserCheck } from "lucide-react";
+import { Gauge, Zap, TrendingDown, UserCheck, Info } from "lucide-react";
+import { MetricExplainer } from "../ui/MetricExplainer";
 
 export const DriverProfilingTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
@@ -118,8 +119,12 @@ export const DriverProfilingTab: React.FC = () => {
         {/* Aggressiveness Index Card */}
         <GlassCard glow={isAggressive ? "crimson" : isModerate ? "amber" : "cyan"} className="text-center">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            <span>Driver Aggressiveness Index (AI)</span>
-            <Gauge className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+            <span>Driver Aggressiveness (AI)</span>
+            <MetricExplainer
+              metricKey="driver_ai"
+              currentValue={`AI = ${ai.toFixed(3)}`}
+              label="How it works"
+            />
           </div>
           <div className="my-4">
             <div className="text-5xl font-extrabold font-mono tracking-tight">
@@ -142,7 +147,11 @@ export const DriverProfilingTab: React.FC = () => {
         <GlassCard glow={bsi > 0.6 ? "crimson" : bsi > 0.4 ? "amber" : "purple"} className="text-center">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>Battery Stress Index (BSI)</span>
-            <Zap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            <MetricExplainer
+              metricKey="driver_ai"
+              currentValue={`BSI = ${bsi.toFixed(3)}`}
+              label="How it works"
+            />
           </div>
           <div className="my-4">
             <div className="text-5xl font-extrabold font-mono tracking-tight">

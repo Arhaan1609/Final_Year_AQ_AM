@@ -28,7 +28,7 @@ export const CopilotDrawer: React.FC = () => {
   const suggestedQuestions = [
     "Is GJ05CV6564 at risk of thermal failure?",
     "Which vehicle is closest to its degradation knee point?",
-    "How is Rajesh Sharma driving on battery stress?",
+    "How is vehicle DL1LAN0707 driving on battery stress?",
     "Give full digital-twin diagnosis for GJ05AX4321",
   ];
 

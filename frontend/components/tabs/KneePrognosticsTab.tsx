@@ -17,7 +17,9 @@ import {
   Info,
   Truck,
   ShieldCheck,
+  BookOpen,
 } from "lucide-react";
+import { MetricExplainer } from "../ui/MetricExplainer";
 
 export const KneePrognosticsTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
@@ -172,7 +174,11 @@ export const KneePrognosticsTab: React.FC = () => {
         >
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>Cycles to Knee Point</span>
-            <TrendingDown className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+            <MetricExplainer
+              metricKey="knee"
+              currentValue={`~${remainingKneeCycles} cycles`}
+              label="How it works"
+            />
           </div>
           <div>
             <div className="text-4xl sm:text-5xl font-extrabold font-mono tracking-tight">

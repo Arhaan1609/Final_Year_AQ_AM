@@ -4,7 +4,25 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useFleetStore } from "../../lib/store/useFleetStore";
 import { predictSOC, predictSOH, predictRUL, predictMileage } from "../../lib/api/client";
 import { ModelPredictionResponse } from "../../lib/api/types";
-import { RefreshCw, Zap, Cpu, Activity, ShieldCheck, Flame, Gauge } from "lucide-react";
+import {
+  RefreshCw,
+  Zap,
+  Cpu,
+  Activity,
+  ShieldCheck,
+  Flame,
+  Gauge,
+  Info,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  SlidersHorizontal,
+  BatteryCharging,
+  Clock,
+  Compass,
+  Sparkles,
+} from "lucide-react";
+import { MetricExplainer } from "../ui/MetricExplainer";
 
 export const StateEstimationTab: React.FC = () => {
   const { telemetry, updateTelemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
@@ -15,10 +33,12 @@ export const StateEstimationTab: React.FC = () => {
   const [rulRes, setRulRes] = useState<ModelPredictionResponse | null>(null);
   const [mileageRes, setMileageRes] = useState<ModelPredictionResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
-  // Debounced API fetch across all 4 Module A endpoints
+  // Debounced API fetch across all 4 Module A endpoints with full 12 features
   const fetchModuleAPredictions = useCallback(async () => {
     setLoading(true);
+    const effectiveCycles = Math.round(telemetry.odometer / 58) || telemetry.cycleCount || 150;
     try {
       const [soc, soh, rul, mileage] = await Promise.all([
         predictSOC({
@@ -27,22 +47,44 @@ export const StateEstimationTab: React.FC = () => {
           battery_current: telemetry.current,
           abs_current: Math.abs(telemetry.current),
           odometer: telemetry.odometer,
+          charge_cycle_count: effectiveCycles,
+          drive_mode_encoded: telemetry.driveMode,
+          is_charging: telemetry.isCharging,
+          temp_stress_index: telemetry.tempStressIndex,
+          voltage_deviation: Number((telemetry.voltage - 72.0).toFixed(2)),
         }),
         predictSOH({
           battery_voltage: telemetry.voltage,
           battery_temp: telemetry.temperature,
           battery_current: telemetry.current,
+          abs_current: Math.abs(telemetry.current),
           odometer: telemetry.odometer,
-          charge_cycle_count: telemetry.cycleCount,
+          charge_cycle_count: effectiveCycles,
+          days_in_service: telemetry.daysInService,
+          temp_stress_index: telemetry.tempStressIndex,
+          voltage_deviation: Number((telemetry.voltage - 72.0).toFixed(2)),
+          miles_per_charge: Math.max(35, Math.min(130, 120 - effectiveCycles * 0.045)),
         }),
         predictRUL({
           odometer: telemetry.odometer,
-          soc_at_charge: vehicle.soc || 85,
+          soc_at_charge: telemetry.voltage > 78 ? 95 : (telemetry.voltage / 84) * 100,
+          charge_cycle_count: effectiveCycles,
+          battery_temp: telemetry.temperature,
+          days_in_service: telemetry.daysInService,
+          degradation_factor: Number((effectiveCycles / 1400.0).toFixed(3)),
+          soh_mean: sohRes?.prediction ?? 90,
         }),
         predictMileage({
-          run_kms: 45,
-          avg_speed: telemetry.avgSpeed,
-          max_speed: telemetry.maxSpeed,
+          run_kms: telemetry.runKms || 45,
+          avg_speed: telemetry.avgSpeed || 32,
+          max_speed: telemetry.maxSpeed || 55,
+          odometer: telemetry.odometer,
+          charge_cycle_count: effectiveCycles,
+          battery_temp: telemetry.temperature,
+          battery_voltage: telemetry.voltage,
+          stoppage_count: telemetry.stoppageCount || 3,
+          energy_utilized: telemetry.energyUtilized || 7.2,
+          trip_duration_hrs: Number(((telemetry.runKms || 45) / Math.max(15, telemetry.avgSpeed || 32)).toFixed(2)),
         }),
       ]);
 
@@ -55,7 +97,7 @@ export const StateEstimationTab: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [telemetry, vehicle.soc]);
+  }, [telemetry]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -73,6 +115,13 @@ export const StateEstimationTab: React.FC = () => {
       cycleCount: vehicle.charge_cycle_count || 150,
       avgSpeed: vehicle.speed || 30.0,
       maxSpeed: (vehicle.speed || 30.0) + 25,
+      daysInService: Math.round((vehicle.charge_cycle_count || 150) * 1.4),
+      driveMode: 1,
+      isCharging: vehicle.status === "charging" ? 1 : 0,
+      runKms: 45.0,
+      stoppageCount: 3,
+      energyUtilized: 7.2,
+      tempStressIndex: Math.max(0, Math.min(1, ((vehicle.battery_temp || 32) - 25) / 30)),
     });
   };
 
@@ -116,9 +165,9 @@ export const StateEstimationTab: React.FC = () => {
           </div>
 
           {/* Sliders Stack */}
-          <div className="space-y-6 relative z-10">
+          <div className="space-y-5 relative z-10">
             {/* Voltage */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between items-baseline text-xs font-semibold">
                 <label className="text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono">Pack Voltage (V)</label>
                 <span className="text-sm font-bold text-cyan-600 dark:text-cyan-400 font-mono">{telemetry.voltage.toFixed(1)} V</span>
@@ -139,7 +188,7 @@ export const StateEstimationTab: React.FC = () => {
             </div>
 
             {/* Current */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between items-baseline text-xs font-semibold">
                 <label className="text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono">Pack Current (A)</label>
                 <span className="text-sm font-bold text-amber-600 dark:text-amber-400 font-mono">{telemetry.current.toFixed(1)} A</span>
@@ -160,7 +209,7 @@ export const StateEstimationTab: React.FC = () => {
             </div>
 
             {/* Avg Temp */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between items-baseline text-xs font-semibold">
                 <label className="text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono">Avg Temp (°C)</label>
                 <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">{telemetry.temperature.toFixed(1)} °C</span>
@@ -181,7 +230,7 @@ export const StateEstimationTab: React.FC = () => {
             </div>
 
             {/* Odometer */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex justify-between items-baseline text-xs font-semibold">
                 <label className="text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono">Odometer (km)</label>
                 <span className="text-sm font-bold text-purple-600 dark:text-purple-400 font-mono">{Math.round(telemetry.odometer).toLocaleString()} km</span>
@@ -199,6 +248,168 @@ export const StateEstimationTab: React.FC = () => {
                 <span>0 km</span>
                 <span>60,000 km</span>
               </div>
+            </div>
+
+            {/* Collapsible Extended Engineering Telemetry */}
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="w-full flex items-center justify-between py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+              >
+                <span className="flex items-center gap-1.5">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-500" />
+                  <span>Engineering Inputs (12 Features)</span>
+                </span>
+                {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+
+              {showAdvanced && (
+                <div className="space-y-4 pt-3 mt-2 border-t border-slate-100 dark:border-slate-800/80 animate-in fade-in duration-200">
+                  {/* Drive Mode Selector */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase">
+                      Drive Mode Profile
+                    </label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {[
+                        { label: "Eco", val: 0 },
+                        { label: "Normal", val: 1 },
+                        { label: "Sport", val: 2 },
+                      ].map((m) => (
+                        <button
+                          key={m.val}
+                          type="button"
+                          onClick={() => updateTelemetry({ driveMode: m.val })}
+                          className={`py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                            telemetry.driveMode === m.val
+                              ? "bg-cyan-600 text-white shadow-sm"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Charge State Toggle */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase">
+                      Power Flow Status
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => updateTelemetry({ isCharging: 0, current: -Math.abs(telemetry.current || 18) })}
+                        className={`py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                          telemetry.isCharging === 0
+                            ? "bg-amber-600 text-white shadow-sm"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                        }`}
+                      >
+                        Discharge (Route)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateTelemetry({ isCharging: 1, current: Math.abs(telemetry.current || 18) })}
+                        className={`py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                          telemetry.isCharging === 1
+                            ? "bg-emerald-600 text-white shadow-sm"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                        }`}
+                      >
+                        Charging (Hub)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Days in Service Slider */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-slate-500 dark:text-slate-400 uppercase">Days in Service</span>
+                      <span className="font-bold text-cyan-600 dark:text-cyan-400">{telemetry.daysInService} days</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1"
+                      max="1000"
+                      step="10"
+                      value={telemetry.daysInService}
+                      onChange={(e) => updateTelemetry({ daysInService: parseInt(e.target.value) })}
+                      className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full appearance-none outline-none accent-cyan-600 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Trip Distance (run_kms) */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-slate-500 dark:text-slate-400 uppercase">Trip Distance (run_kms)</span>
+                      <span className="font-bold text-cyan-600 dark:text-cyan-400">{telemetry.runKms} km</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="5"
+                      max="150"
+                      step="5"
+                      value={telemetry.runKms}
+                      onChange={(e) => updateTelemetry({ runKms: parseFloat(e.target.value) })}
+                      className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full appearance-none outline-none accent-cyan-600 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Avg Speed */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-slate-500 dark:text-slate-400 uppercase">Avg Route Speed</span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400">{telemetry.avgSpeed} km/h</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="10"
+                      max="80"
+                      step="2"
+                      value={telemetry.avgSpeed}
+                      onChange={(e) => updateTelemetry({ avgSpeed: parseFloat(e.target.value), maxSpeed: parseFloat(e.target.value) + 25 })}
+                      className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full appearance-none outline-none accent-emerald-600 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Delivery Stoppages Count */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-slate-500 dark:text-slate-400 uppercase">Route Stoppages</span>
+                      <span className="font-bold text-purple-600 dark:text-purple-400">{telemetry.stoppageCount} stops</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="20"
+                      step="1"
+                      value={telemetry.stoppageCount}
+                      onChange={(e) => updateTelemetry({ stoppageCount: parseInt(e.target.value) })}
+                      className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full appearance-none outline-none accent-purple-600 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Energy Consumed (kWh) */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-slate-500 dark:text-slate-400 uppercase">Energy Utilized</span>
+                      <span className="font-bold text-amber-600 dark:text-amber-400">{telemetry.energyUtilized.toFixed(1)} kWh</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1.0"
+                      max="15.0"
+                      step="0.5"
+                      value={telemetry.energyUtilized}
+                      onChange={(e) => updateTelemetry({ energyUtilized: parseFloat(e.target.value) })}
+                      className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full appearance-none outline-none accent-amber-500 cursor-pointer"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -284,9 +495,9 @@ export const StateEstimationTab: React.FC = () => {
                   {socVal.toFixed(1)}<span className="text-xl text-slate-400 font-normal">%</span>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] text-slate-400 uppercase font-mono">R² Confidence</div>
-                <div className="text-sm font-bold text-cyan-600 dark:text-cyan-400 font-mono">0.9958</div>
+              <div className="flex flex-col items-end gap-1">
+                <MetricExplainer metricKey="soc" currentValue={`${socVal.toFixed(1)}%`} label="How it works" />
+                <div className="text-[10px] text-slate-400 font-mono">R² = 0.9958</div>
               </div>
             </div>
 
@@ -340,9 +551,9 @@ export const StateEstimationTab: React.FC = () => {
                   {sohVal.toFixed(1)}<span className="text-xl text-slate-400 font-normal">%</span>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] text-slate-400 uppercase font-mono">R² Confidence</div>
-                <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">0.9820</div>
+              <div className="flex flex-col items-end gap-1">
+                <MetricExplainer metricKey="soh" currentValue={`${sohVal.toFixed(1)}%`} label="How it works" />
+                <div className="text-[10px] text-slate-400 font-mono">R² = 0.9820</div>
               </div>
             </div>
 
@@ -386,9 +597,9 @@ export const StateEstimationTab: React.FC = () => {
                   {rulVal.toLocaleString()}<span className="text-xl text-slate-400 font-normal">cycles</span>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] text-slate-400 uppercase font-mono">R² Confidence</div>
-                <div className="text-sm font-bold text-purple-600 dark:text-purple-400 font-mono">0.9997</div>
+              <div className="flex flex-col items-end gap-1">
+                <MetricExplainer metricKey="rul" currentValue={`${rulVal} cycles`} label="How it works" />
+                <div className="text-[10px] text-slate-400 font-mono">R² = 0.9997</div>
               </div>
             </div>
 
@@ -425,9 +636,9 @@ export const StateEstimationTab: React.FC = () => {
                   {mileageVal.toFixed(1)}<span className="text-xl text-slate-400 font-normal">km</span>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-[10px] text-slate-400 uppercase font-mono">R² Confidence</div>
-                <div className="text-sm font-bold text-amber-600 dark:text-amber-400 font-mono">0.9445</div>
+              <div className="flex flex-col items-end gap-1">
+                <MetricExplainer metricKey="soc" currentValue={`${mileageVal.toFixed(1)} km`} label="How it works" />
+                <div className="text-[10px] text-slate-400 font-mono">R² = 0.9445</div>
               </div>
             </div>
 

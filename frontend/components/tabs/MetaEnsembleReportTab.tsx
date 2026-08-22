@@ -6,7 +6,8 @@ import { GlassCard } from "../ui/GlassCard";
 import { Badge } from "../ui/Badge";
 import { predictMetaEnsemble, diagnoseVehicle } from "../../lib/api/client";
 import { MetaEnsembleResponse, DiagnoseResponse } from "../../lib/api/types";
-import { FileText, Printer, CheckCircle2, Cpu, Flame, Gauge } from "lucide-react";
+import { FileText, Printer, CheckCircle2, Cpu, Flame, Gauge, Sparkles } from "lucide-react";
+import { MetricExplainer } from "../ui/MetricExplainer";
 
 export const MetaEnsembleReportTab: React.FC = () => {
   const { telemetry, selectedVehicleId, getSelectedVehicle } = useFleetStore();
@@ -113,9 +114,12 @@ export const MetaEnsembleReportTab: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Pillar A */}
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">
-              <Cpu className="w-4 h-4" />
-              Pillar A: Fleet Telematics
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider">
+                <Cpu className="w-4 h-4" />
+                Pillar A: Fleet Telematics
+              </div>
+              <MetricExplainer metricKey="soc" label="PoC" />
             </div>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>State of Charge: <strong>{vehicle.soc.toFixed(1)}%</strong></div>
@@ -127,9 +131,12 @@ export const MetaEnsembleReportTab: React.FC = () => {
 
           {/* Pillar B */}
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-              <Flame className="w-4 h-4" />
-              Pillar B: Thermal & Health
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+                <Flame className="w-4 h-4" />
+                Pillar B: Thermal & Health
+              </div>
+              <MetricExplainer metricKey="thermal" label="PoC" />
             </div>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>Digital Twin Score: <strong>{diagData?.overall_health_score !== undefined ? diagData.overall_health_score.toFixed(1) : vehicle.soh.toFixed(1)} / 100</strong></div>
@@ -141,9 +148,12 @@ export const MetaEnsembleReportTab: React.FC = () => {
 
           {/* Pillar C */}
           <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">
-              <Gauge className="w-4 h-4" />
-              Pillar C: BA-BMS & Knee
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">
+                <Gauge className="w-4 h-4" />
+                Pillar C: BA-BMS & Knee
+              </div>
+              <MetricExplainer metricKey="knee" label="PoC" />
             </div>
             <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 pt-1">
               <div>Driver Aggressiveness: <strong>{metaData?.driver_aggressiveness_index !== undefined ? metaData.driver_aggressiveness_index.toFixed(2) : (vehicle.status === "critical" ? "0.48" : "0.16")}</strong></div>

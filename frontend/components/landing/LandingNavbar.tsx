@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useFleetStore } from "../../lib/store/useFleetStore";
-import { Sun, Moon, ArrowRight, Activity, ShieldCheck, Cpu, Terminal, BookOpen } from "lucide-react";
+import { Sun, Moon, ArrowRight, Terminal } from "lucide-react";
 
 export const LandingNavbar: React.FC = () => {
   const { theme, toggleTheme } = useFleetStore();
@@ -21,14 +21,14 @@ export const LandingNavbar: React.FC = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-slate-950/85 dark:bg-[#0A0D14]/90 backdrop-blur-xl border-b border-slate-800/80 shadow-lg py-3"
+          ? "bg-slate-950/85 dark:bg-[#07090E]/90 backdrop-blur-xl border-b border-slate-800/80 shadow-lg py-3"
           : "bg-slate-950/60 backdrop-blur-md border-b border-white/10 py-3.5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
-        {/* Brand Logo & Pill */}
+        {/* Brand Logo & Live Model Pill */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-emerald-500 to-emerald-400 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-emerald-500 to-emerald-400 flex items-center justify-center text-slate-950 font-extrabold text-sm shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
             EV
           </div>
           <div>
@@ -41,26 +41,23 @@ export const LandingNavbar: React.FC = () => {
                 74 Models Live
               </span>
             </div>
-            <p className="text-[11px] text-slate-300 font-mono hidden sm:block">
-              Commercial Fleet AI Platform • Sub-second BMS Inference
+            <p className="text-[11px] text-slate-400 font-mono hidden sm:block">
+              Commercial Fleet AI Platform • Sub-Second Telemetry Ingestion
             </p>
           </div>
         </Link>
 
         {/* Center Quick Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-200">
-          <a href="#pipeline" className="hover:text-emerald-400 transition-colors">
-            4-Stage Pipeline
-          </a>
+        <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-300">
           <a href="#sandbox" className="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             Live Model Sandbox
           </a>
           <a href="#architecture" className="hover:text-emerald-400 transition-colors">
-            Tri-Pillar AI
+            Tri-Pillar Architecture
           </a>
           <a href="#roi" className="hover:text-emerald-400 transition-colors">
-            Fleet ROI
+            Fleet ROI Simulator
           </a>
           <a href="#comparison" className="hover:text-emerald-400 transition-colors">
             Vs Legacy BMS
@@ -78,7 +75,7 @@ export const LandingNavbar: React.FC = () => {
             {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
 
-          {/* Swagger docs link */}
+          {/* Swagger Docs Link */}
           <a
             href="http://localhost:8000/docs"
             target="_blank"
@@ -102,4 +99,5 @@ export const LandingNavbar: React.FC = () => {
     </header>
   );
 };
+
 export default LandingNavbar;

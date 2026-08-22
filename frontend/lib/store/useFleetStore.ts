@@ -26,6 +26,13 @@ interface TelemetryInputs {
   harshAccel: number;
   harshBrake: number;
   harshCorner: number;
+  daysInService: number;
+  driveMode: number; // 0=Eco, 1=Normal, 2=Sport
+  isCharging: number; // 0=Discharge, 1=Charging
+  runKms: number;
+  stoppageCount: number;
+  energyUtilized: number;
+  tempStressIndex: number;
 }
 
 interface FleetStoreState {
@@ -58,22 +65,22 @@ interface FleetStoreState {
   clearCopilot: () => void;
   updateTelemetry: (inputs: Partial<TelemetryInputs>) => void;
   toggleLiveUpdating: () => void;
+  lookupOrAddVehicle: (id: string) => FleetVehicle;
   getSelectedVehicle: () => FleetVehicle;
 
   // Enterprise lookup actions
   setSearchQuery: (q: string) => void;
   setStatusFilter: (s: VehicleStatusFilter) => void;
   setHubFilter: (h: string) => void;
-  lookupOrAddVehicle: (id: string) => FleetVehicle;
   getFilteredVehicles: () => FleetVehicle[];
 }
 
 const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
   {
-    id: "welcome-1",
+    id: "m-welcome",
     sender: "assistant",
-    text: "👋 **Hello! I am your Enterprise Fleet Copilot.**\n\nI have direct access to your 74 trained models across all 3 modules and the SQL database. You can ask me to evaluate ANY vehicle in the enterprise fleet, lookup thermal hazards, predict knee points, or analyze driver strain.",
-    timestamp: "Just now",
+    text: "⚡ **EV Battery Intelligence Copilot Ready.**\n\nI am wired into your multi-zone battery models, fleet telemetry, and degradation prognostics engines. Ask me to diagnose a chassis, explain an alert, or simulate dispatch workloads.",
+    timestamp: "System Online",
   },
 ];
 
@@ -103,6 +110,13 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
     harshAccel: 1,
     harshBrake: 1,
     harshCorner: 1,
+    daysInService: Math.round((MOCK_VEHICLES[0]?.charge_cycle_count || 80) * 1.4),
+    driveMode: 1,
+    isCharging: 0,
+    runKms: 45.0,
+    stoppageCount: 3,
+    energyUtilized: 7.2,
+    tempStressIndex: 0.15,
   },
 
   setTheme: (theme: ThemeMode) => set({ theme }),
@@ -135,6 +149,13 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
           harshAccel: v.status === "warning" ? 5 : v.status === "critical" ? 8 : 1,
           harshBrake: v.status === "critical" ? 6 : 1,
           harshCorner: 1,
+          daysInService: Math.round(v.charge_cycle_count * 1.4),
+          driveMode: 1,
+          isCharging: v.status === "charging" ? 1 : 0,
+          runKms: 45.0,
+          stoppageCount: 3,
+          energyUtilized: 7.2,
+          tempStressIndex: Math.max(0, Math.min(1, (v.battery_temp - 25) / 30)),
         },
       });
     }
@@ -199,7 +220,8 @@ export const useFleetStore = create<FleetStoreState>((set, get) => ({
         const q = searchQuery.toLowerCase().trim();
         const matches =
           v.id.toLowerCase().includes(q) ||
-          v.driver.toLowerCase().includes(q) ||
+          (v.chassis && v.chassis.toLowerCase().includes(q)) ||
+          (v.driver && v.driver.toLowerCase().includes(q)) ||
           v.fleet.toLowerCase().includes(q) ||
           v.model.toLowerCase().includes(q);
         if (!matches) return false;

@@ -21,9 +21,9 @@ class SOCRequest(BaseSchema):
     battery_voltage: float = Field(..., ge=20, le=150, description="Battery voltage (V)")
     battery_temp: float = Field(..., ge=-20, le=70, description="Battery temperature (°C)")
     battery_current: float = Field(..., description="Battery current (A, negative=discharge)")
-    abs_current: float = Field(..., ge=0, description="Absolute current magnitude (A)")
+    abs_current: Optional[float] = Field(None, ge=0, description="Absolute current magnitude (A)")
     is_charging: int = Field(0, ge=0, le=1, description="1 if charging, 0 if discharging")
-    odometer: float = Field(..., ge=0, description="Cumulative odometer (km)")
+    odometer: float = Field(12000.0, ge=0, description="Cumulative odometer (km)")
     odometer_diff: float = Field(0.0, description="Recent trip distance (km)")
     voltage_deviation: float = Field(0.0, description="Deviation from 72V nominal")
     temp_stress_index: float = Field(0.0, ge=0, le=1, description="Temp stress (0-1)")
@@ -210,6 +210,7 @@ class KneePredictionResponse(BaseSchema):
     current_cycle_count: float
     rul_to_knee_cycles: float
     estimated_knee_cycle: float
+    is_post_knee: bool = False
     knee_risk_state: str
     recommended_action: str
     model_used: str

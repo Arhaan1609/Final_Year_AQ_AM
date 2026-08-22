@@ -33,6 +33,7 @@ export interface SOCRequest {
   abs_current?: number;
   is_charging?: number;
   odometer?: number;
+  charge_cycle_count?: number;
   odometer_diff?: number;
   voltage_deviation?: number;
   temp_stress_index?: number;
@@ -66,6 +67,8 @@ export interface SOHRequest {
 
 export interface RULRequest {
   odometer?: number;
+  charge_cycle_count?: number;
+  battery_temp?: number;
   soc_at_charge?: number;
   mile_avg?: number;
   miles_per_charge?: number;
@@ -83,6 +86,10 @@ export interface MileageRequest {
   run_kms: number;
   avg_speed: number;
   max_speed: number;
+  odometer?: number;
+  charge_cycle_count?: number;
+  battery_temp?: number;
+  battery_voltage?: number;
   trip_duration_hrs?: number;
   stoppage_count?: number;
   energy_efficiency?: number;
@@ -178,8 +185,12 @@ export interface DriverBehaviorResponse {
   aggressiveness_index: number;
   battery_stress_index: number;
   driver_classification: string;
-  estimated_annual_soh_penalty_pct: number;
-  recommendations: string[];
+  annual_soh_penalty_percent?: number;
+  estimated_annual_soh_penalty_pct?: number;
+  behavioral_impact_description?: string;
+  bms_recommended_directive?: string;
+  recommendations?: string[];
+  sub_scores?: Record<string, number>;
 }
 
 export interface KneePredictionRequest {
@@ -196,11 +207,15 @@ export interface KneePredictionRequest {
 }
 
 export interface KneePredictionResponse {
+  current_cycle_count?: number;
   rul_to_knee_cycles: number;
+  estimated_knee_cycle?: number;
   is_post_knee: boolean;
   knee_risk_state: string;
-  aging_rate_slope: number;
-  bms_directive: string;
+  aging_rate_slope?: number;
+  recommended_action?: string;
+  bms_directive?: string;
+  model_used?: string;
 }
 
 export interface MetaEnsembleRequest {
@@ -227,9 +242,10 @@ export interface MetaEnsembleResponse {
 // 5. Vehicle Entity for UI Selection
 export interface FleetVehicle {
   id: string;
+  chassis?: string;
   model: string;
   fleet: string;
-  driver: string;
+  driver?: string;
   soc: number;
   soh: number;
   rul: number;

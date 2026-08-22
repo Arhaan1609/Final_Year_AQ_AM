@@ -114,27 +114,63 @@ def _predict(task: str, feature_dict: dict) -> PredictionResponse:
 
     # Intelligent feature auto-synthesis for derived fleet telemetry
     odo = float(feature_dict.get("odometer", 0.0))
-    cycles = float(feature_dict.get("charge_cycle_count", odo / 58.0 if odo > 0 else 150.0))
+    passed_cycles = float(feature_dict.get("charge_cycle_count", 0.0))
+    if odo > 0:
+        cycles = round(odo / 58.0, 1)
+    elif passed_cycles > 0:
+        cycles = passed_cycles
+    else:
+        cycles = 150.0
+
     v = float(feature_dict.get("battery_voltage", 74.0))
     t = float(feature_dict.get("battery_temp", 32.0))
     i = float(feature_dict.get("battery_current", -18.0))
     soc = float(feature_dict.get("soc_at_charge", feature_dict.get("soc", 75.0)))
-    soh_m = float(feature_dict.get("soh_mean", max(65.0, 100.0 - (cycles * 0.025))))
+    soh_m = float(feature_dict.get("soh_mean", max(50.0, 100.0 - (cycles * 0.028))))
 
     synthesized = dict(feature_dict)
-    synthesized.setdefault("charge_cycle_count", cycles)
+    synthesized["charge_cycle_count"] = cycles
+    synthesized["odometer"] = odo
+    synthesized["abs_current"] = abs(i) if synthesized.get("abs_current") is None else float(synthesized["abs_current"])
     synthesized.setdefault("voltage_deviation", round(v - 72.0, 2))
     synthesized.setdefault("temp_stress_index", round(max(0.0, min(1.0, (t - 25.0) / 30.0)), 3))
-    synthesized.setdefault("abs_current", abs(i))
     synthesized.setdefault("degradation_factor", round(min(1.0, cycles / 1400.0), 4))
     synthesized.setdefault("days_in_service", max(1.0, round(cycles * 1.25)))
     synthesized.setdefault("soh_mean", soh_m)
-    synthesized.setdefault("miles_per_charge", max(45.0, min(130.0, 120.0 - (cycles * 0.035))))
-    synthesized.setdefault("miles_per_charge_rolling_3", max(45.0, min(130.0, 120.0 - (cycles * 0.035))))
-    synthesized.setdefault("miles_per_charge_rolling_5", max(45.0, min(130.0, 120.0 - (cycles * 0.035))))
-    synthesized.setdefault("miles_per_charge_rolling_10", max(45.0, min(130.0, 120.0 - (cycles * 0.035))))
-    synthesized.setdefault("mile_avg", max(40.0, min(120.0, 110.0 - (cycles * 0.03))))
-    
+    synthesized.setdefault("miles_per_charge", max(35.0, min(130.0, 120.0 - (cycles * 0.045))))
+    synthesized.setdefault("miles_per_charge_rolling_3", max(35.0, min(130.0, 120.0 - (cycles * 0.045))))
+    synthesized.setdefault("miles_per_charge_rolling_5", max(35.0, min(130.0, 120.0 - (cycles * 0.045))))
+    synthesized.setdefault("miles_per_charge_rolling_10", max(35.0, min(130.0, 120.0 - (cycles * 0.045))))
+    # Trip and Mission Dynamics
+    run_kms = float(feature_dict.get("run_kms", 45.0))
+    avg_spd = float(feature_dict.get("avg_speed", 32.0))
+    max_spd = float(feature_dict.get("max_speed", max(avg_spd + 15.0, 55.0)))
+    dur_hrs = float(feature_dict.get("trip_duration_hrs", max(0.5, run_kms / max(15.0, avg_spd))))
+    stops = float(feature_dict.get("stoppage_count", 3.0))
+    energy_kwh = float(feature_dict.get("energy_utilized", max(1.0, run_kms * 0.16)))
+
+    synthesized.setdefault("run_kms", run_kms)
+    synthesized.setdefault("avg_speed", avg_spd)
+    synthesized.setdefault("max_speed", max_spd)
+    synthesized.setdefault("trip_duration_hrs", round(dur_hrs, 2))
+    synthesized.setdefault("stoppage_count", stops)
+    synthesized.setdefault("energy_utilized", energy_kwh)
+    synthesized.setdefault("energy_efficiency", round(energy_kwh / max(1.0, run_kms), 4))
+    synthesized.setdefault("trip_intensity", round(avg_spd * dur_hrs, 2))
+    synthesized.setdefault("speed_ratio", round(avg_spd / max(1.0, max_spd), 4))
+    synthesized.setdefault("stoppage_density", round(stops / max(0.1, dur_hrs), 2))
+    synthesized.setdefault("is_charging", 1 if i > 0 else int(feature_dict.get("is_charging", 0)))
+    synthesized.setdefault("drive_mode_encoded", int(feature_dict.get("drive_mode_encoded", 1)))
+    synthesized.setdefault("odometer_diff", float(feature_dict.get("odometer_diff", 0.0)))
+    synthesized.setdefault("hour", int(feature_dict.get("hour", 10)))
+    synthesized.setdefault("day_of_week", int(feature_dict.get("day_of_week", 2)))
+    synthesized.setdefault("month", int(feature_dict.get("month", 6)))
+    synthesized.setdefault("is_weekend", int(feature_dict.get("is_weekend", 0)))
+    synthesized.setdefault("is_peak", int(feature_dict.get("is_peak", 0)))
+    synthesized.setdefault("oem_encoded", int(feature_dict.get("oem_encoded", 0)))
+    synthesized.setdefault("model_encoded", int(feature_dict.get("model_encoded", 0)))
+    synthesized.setdefault("city_encoded", int(feature_dict.get("city_encoded", 0)))
+
     # Extract expected feature names from model if available
     expected_cols = None
     if hasattr(model, "feature_names_in_"):
@@ -160,15 +196,16 @@ def _predict(task: str, feature_dict: dict) -> PredictionResponse:
 
     # Physics-Informed Hybridization Layer (Coupling ML with Semi-Empirical Aging)
     if task == "SOH":
-        # Capacity loss scaling: LFP degradation rate (~0.018% per EFC + thermal acceleration)
-        cycle_fade = (cycles * 0.021)
-        temp_fade = max(0.0, (t - 33.0) * 0.18)
-        pred = max(68.0, min(100.0, raw_pred - cycle_fade - temp_fade))
+        # Capacity loss scaling: LFP degradation rate (~0.026% per EFC + thermal acceleration)
+        cycle_fade = (cycles * 0.026)
+        temp_fade = max(0.0, (t - 32.0) * 0.32)
+        base_health = 100.0 if raw_pred > 90 else raw_pred
+        pred = max(45.0, min(100.0, base_health - cycle_fade - temp_fade))
     elif task == "RUL":
         # Cumulative cycle subtraction from design lifetime (1400 EFC to 80% SOH)
-        base_lifespan = 1350.0
-        thermal_penalty = max(0.0, (t - 33.0) * 4.5)
-        pred = max(0.0, min(base_lifespan, raw_pred - (cycles * 1.05) - thermal_penalty))
+        base_lifespan = 1400.0
+        thermal_penalty = max(0.0, (t - 32.0) * 6.5)
+        pred = max(0.0, min(base_lifespan, base_lifespan - (cycles * 1.15) - thermal_penalty))
     elif task == "Mileage":
         # Range adjusted for current SOC, SOH and aerodynamic speed drag
         soh_factor = (soh_m / 100.0)
