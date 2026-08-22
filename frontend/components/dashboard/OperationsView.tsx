@@ -66,6 +66,7 @@ export const OperationsView: React.FC = () => {
         battery_current: vehicle.current,
         abs_current: Math.abs(vehicle.current),
         odometer: vehicle.charge_cycle_count * 58,
+        charge_cycle_count: vehicle.charge_cycle_count,
       }),
       predictSOH({
         battery_voltage: vehicle.voltage,
@@ -73,11 +74,19 @@ export const OperationsView: React.FC = () => {
         battery_current: vehicle.current,
         charge_cycle_count: vehicle.charge_cycle_count,
         odometer: vehicle.charge_cycle_count * 58,
+        initial_soh: vehicle.soh,
+        soh: vehicle.soh,
+        chassis_no: vehicle.chassis,
+        vehicle_id: vehicle.id,
       }),
       predictMileage({
         run_kms: 45,
         avg_speed: vehicle.speed || 32,
         max_speed: (vehicle.speed || 32) + 20,
+        odometer: vehicle.charge_cycle_count * 58,
+        charge_cycle_count: vehicle.charge_cycle_count,
+        battery_temp: vehicle.battery_temp,
+        battery_voltage: vehicle.voltage,
       }),
       predictThermal({
         vbt: vehicle.battery_temp,
@@ -119,7 +128,7 @@ export const OperationsView: React.FC = () => {
       }
 
       if (thermRes.status === "fulfilled" && thermRes.value) {
-        setThermalSafe(thermRes.value.severity === "SAFE");
+        setThermalSafe(thermRes.value.severity === "NORMAL" || thermRes.value.severity === "SAFE");
       }
 
       if (driverRes.status === "fulfilled" && driverRes.value) {
@@ -135,6 +144,8 @@ export const OperationsView: React.FC = () => {
       active = false;
     };
   }, [selectedVehicleId, vehicle]);
+
+
 
   // Counts for triage bar
   const totalCount = vehicles.length;

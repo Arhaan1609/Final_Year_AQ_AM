@@ -63,6 +63,8 @@ export const LiveModelSandbox: React.FC = () => {
           battery_current: current,
           charge_cycle_count: cycleCount,
           odometer: cycleCount * 58,
+          initial_soh: sohVal,
+          soh: sohVal,
         }),
         // 3. Thermal Safety via Random Forest (200T)
         predictThermal({

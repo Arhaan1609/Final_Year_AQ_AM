@@ -101,7 +101,7 @@ export const StateEstimationTab: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [telemetry]);
+  }, [telemetry, vehicle.id, vehicle.chassis, vehicle.soh]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

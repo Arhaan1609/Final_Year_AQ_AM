@@ -337,7 +337,7 @@ export const FleetOverviewTab: React.FC = () => {
                 <th className="py-2.5 px-3">Chassis / Model</th>
                 <th className="py-2.5 px-3">Status</th>
                 <th className="py-2.5 px-3">SOC</th>
-                <th className="py-2.5 px-3">SOH</th>
+                <th className="py-2.5 px-3">SOH (Live / SOH₀)</th>
                 <th className="py-2.5 px-3">Pack Temp</th>
                 <th className="py-2.5 px-3">Cycles</th>
                 <th className="py-2.5 px-3 text-right">Action</th>
@@ -384,8 +384,23 @@ export const FleetOverviewTab: React.FC = () => {
                         {v.status}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3">{v.soc.toFixed(1)}%</td>
-                    <td className="py-2.5 px-3">{v.soh.toFixed(1)}%</td>
+                    <td className="py-2.5 px-3">
+                      {isSelected && livePredictions.soc !== undefined ? (
+                        <span className="font-bold text-cyan-600 dark:text-cyan-400">{livePredictions.soc.toFixed(1)}%</span>
+                      ) : (
+                        <span>{v.soc.toFixed(1)}%</span>
+                      )}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      {isSelected && livePredictions.soh !== undefined ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">{livePredictions.soh.toFixed(1)}%</span>
+                          <span className="text-[9px] text-slate-400 font-normal">({v.soh.toFixed(1)}% SOH₀)</span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-600 dark:text-slate-300">{v.soh.toFixed(1)}% <span className="text-[9px] text-slate-400">SOH₀</span></span>
+                      )}
+                    </td>
                     <td className="py-2.5 px-3">{v.battery_temp.toFixed(1)}°C</td>
                     <td className="py-2.5 px-3">{v.charge_cycle_count}</td>
                     <td className="py-2.5 px-3 text-right">
