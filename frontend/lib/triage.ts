@@ -85,7 +85,7 @@ export function getVehicleTriage(v: { status: string }): TriageLevel {
 
 export function triageLabel(level: TriageLevel): string {
   if (level === "CRITICAL") return "SERVICE HOLD";
-  if (level === "WARNING")  return "ADVISORY";
+  if (level === "WARNING")  return "ROUTE ADVISORY";
   return "ACTIVE";
 }
 

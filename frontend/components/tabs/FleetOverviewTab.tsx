@@ -20,7 +20,10 @@ import {
 } from "lucide-react";
 import { MetricExplainer } from "../ui/MetricExplainer";
 import { AIInsightsCard } from "../dashboard/AIInsightsCard";
-import { getVehicleTriage, triageLabel, triageBadgeClass, triageDotClass } from "../../lib/triage";
+import { getLiveTriage, getVehicleTriage, triageLabel, triageBadgeClass, triageDotClass } from "../../lib/triage";
+
+
+
 
 
 const PAGE_SIZE = 25;
@@ -129,19 +132,23 @@ export const FleetOverviewTab: React.FC = () => {
               <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
                 Commercial Telematics Active
               </h2>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
-                vehicle.status === "critical" || (livePredictions.soh ?? vehicle.soh) < 75 || vehicle.battery_temp > 48
-                  ? "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
-                  : vehicle.status === "warning" || (livePredictions.soh ?? vehicle.soh) < 85 || (livePredictions.soc ?? vehicle.soc) < 30 || vehicle.battery_temp > 40
-                  ? "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
-                  : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-              }`}>
-                {vehicle.status === "critical" || (livePredictions.soh ?? vehicle.soh) < 75 || vehicle.battery_temp > 48
-                  ? "SERVICE HOLD"
-                  : vehicle.status === "warning" || (livePredictions.soh ?? vehicle.soh) < 85 || (livePredictions.soc ?? vehicle.soc) < 30 || vehicle.battery_temp > 40
-                  ? "ROUTE ADVISORY"
-                  : "APPROVED FOR DISPATCH"}
-              </span>
+              {(() => {
+                const liveTriage = getLiveTriage(
+                  livePredictions.soh ?? vehicle.soh,
+                  livePredictions.soc ?? vehicle.soc,
+                  vehicle.battery_temp,
+                  vehicle.status
+                );
+                return (
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${triageBadgeClass(liveTriage)}`}>
+                    {liveTriage === "CRITICAL"
+                      ? "SERVICE HOLD"
+                      : liveTriage === "WARNING"
+                      ? "ROUTE ADVISORY"
+                      : "APPROVED FOR DISPATCH"}
+                  </span>
+                );
+              })()}
 
             </div>
             <p className="text-[11px] text-slate-500 font-mono mt-0.5">

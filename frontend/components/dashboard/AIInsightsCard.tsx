@@ -93,7 +93,7 @@ export const AIInsightsCard: React.FC<AIInsightsCardProps> = ({ vehicle, livePre
                   ? "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
                   : "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
               }`}>
-                {isCritical ? "SERVICE HOLD" : isWarning ? "ROUTE ADVISORY" : "READY FOR DISPATCH"}
+                {isCritical ? "SERVICE HOLD" : isWarning ? "ROUTE ADVISORY" : "APPROVED FOR DISPATCH"}
               </span>
 
             </h3>

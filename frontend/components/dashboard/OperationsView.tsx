@@ -296,7 +296,7 @@ export const OperationsView: React.FC = () => {
                     : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-400"
                 }`}
               >
-                {isCritical ? "Service Hold" : isWarning ? "Route Advisory" : "Approved for Dispatch"}
+                {isCritical ? "SERVICE HOLD" : isWarning ? "ROUTE ADVISORY" : "APPROVED FOR DISPATCH"}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
