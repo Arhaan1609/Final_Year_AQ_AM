@@ -98,8 +98,11 @@ export const MetaEnsembleReportTab: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">Unified Health Rating</div>
+            <div className="text-right flex flex-col items-end">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                <span>Unified Health Rating</span>
+                <MetricExplainer metricKey="meta_ensemble" label="How it works" />
+              </div>
               <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
                 {metaData?.unified_health_grade ?? (loading ? "Computing Grade..." : "Grade Pending")}
               </div>
@@ -108,6 +111,7 @@ export const MetaEnsembleReportTab: React.FC = () => {
               {metaData?.unified_health_grade?.charAt(6) ?? (loading ? "..." : "-")}
             </div>
           </div>
+
         </div>
 
         {/* 3 Pillars Summary Grid */}

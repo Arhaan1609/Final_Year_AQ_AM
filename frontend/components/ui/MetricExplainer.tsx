@@ -5,12 +5,28 @@ import { Info, Sparkles, HelpCircle, FileText } from "lucide-react";
 import { ProofOfConceptModal } from "./ProofOfConceptModal";
 
 interface MetricExplainerProps {
-  metricKey: "soc" | "soh" | "rul" | "thermal" | "knee" | "driver_ai" | "roi" | "dataset";
+  metricKey:
+    | "soc"
+    | "soh"
+    | "rul"
+    | "thermal"
+    | "knee"
+    | "driver_ai"
+    | "roi"
+    | "dataset"
+    | "mileage"
+    | "can_oscilloscope"
+    | "digital_twin"
+    | "copilot_ai"
+    | "meta_ensemble"
+    | "triage"
+    | string;
   currentValue?: string | number;
   label?: string;
   variant?: "badge" | "icon" | "button" | "pill";
   className?: string;
 }
+
 
 export const MetricExplainer: React.FC<MetricExplainerProps> = ({
   metricKey,

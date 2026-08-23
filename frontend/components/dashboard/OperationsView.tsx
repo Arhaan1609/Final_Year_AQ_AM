@@ -29,6 +29,8 @@ import {
   Cpu,
 } from "lucide-react";
 import { AIInsightsCard } from "./AIInsightsCard";
+import { MetricExplainer } from "../ui/MetricExplainer";
+
 
 
 export const OperationsView: React.FC = () => {
@@ -354,23 +356,23 @@ export const OperationsView: React.FC = () => {
         {/* ─── 3. FOUR PLAIN-ENGLISH HEALTH CARDS ─── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Card 1: Fuel / Battery Level */}
-          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <BatteryCharging className="w-4 h-4 text-cyan-500" />
-                <span>Battery Level (Fuel)</span>
-              </span>
-              <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold bg-cyan-50 dark:bg-cyan-950 px-2 py-0.5 rounded-full border border-cyan-300 dark:border-cyan-800">
-                SOC
-              </span>
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <BatteryCharging className="w-4 h-4 text-cyan-500" />
+                  <span>Battery Level (Fuel)</span>
+                </span>
+                <MetricExplainer metricKey="soc" currentValue={`${soc.toFixed(1)}%`} label="How it works" />
+              </div>
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
+                {soc.toFixed(1)}%
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                Estimated Range: <strong className="text-cyan-600 dark:text-cyan-400">{range.toFixed(0)} km</strong>
+              </div>
             </div>
-            <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
-              {soc.toFixed(1)}%
-            </div>
-            <div className="text-xs text-slate-600 dark:text-slate-300">
-              Estimated Range: <strong className="text-cyan-600 dark:text-cyan-400">{range.toFixed(0)} km</strong>
-            </div>
-            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden mt-3">
               <div
                 className="bg-cyan-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${Math.max(0, Math.min(100, soc))}%` }}
@@ -379,73 +381,73 @@ export const OperationsView: React.FC = () => {
           </div>
 
           {/* Card 2: Battery Lifespan / Health */}
-          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span>Battery Lifespan</span>
-              </span>
-              <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
-                SOH
-              </span>
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span>Battery Lifespan</span>
+                </span>
+                <MetricExplainer metricKey="soh" currentValue={`${soh.toFixed(1)}%`} label="How it works" />
+              </div>
+              <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
+                {soh.toFixed(1)}%
+              </div>
+              <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-300 mt-1">
+                <span>Estimated Life: <strong className="text-emerald-600 dark:text-emerald-400">~{estimatedYearsLeft} Years</strong></span>
+                <span className="font-mono text-[10px] text-slate-400">({rul} cyc)</span>
+              </div>
             </div>
-            <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
-              {soh.toFixed(1)}%
-            </div>
-            <div className="flex justify-between items-center text-xs text-slate-600 dark:text-slate-300">
-              <span>Estimated Life: <strong className="text-emerald-600 dark:text-emerald-400">~{estimatedYearsLeft} Years</strong></span>
-              <span className="font-mono text-[10px] text-slate-400">({rul} cyc)</span>
-            </div>
-            <div className="text-[11px] text-slate-400">
+            <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
               Grade: {soh > 92 ? "Grade A (Excellent)" : soh > 82 ? "Grade B (Good)" : "Grade C (Degrading)"}
             </div>
           </div>
 
           {/* Card 3: Operating Temperature */}
-          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <Thermometer className="w-4 h-4 text-amber-500" />
-                <span>Operating Temperature</span>
-              </span>
-              <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded-full border border-amber-300 dark:border-amber-800">
-                Thermal
-              </span>
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <Thermometer className="w-4 h-4 text-amber-500" />
+                  <span>Operating Temperature</span>
+                </span>
+                <MetricExplainer metricKey="thermal" currentValue={`${vehicle.battery_temp.toFixed(1)}°C`} label="How it works" />
+              </div>
+              <div className={`text-3xl font-extrabold font-mono ${vehicle.battery_temp > 45 ? "text-amber-500" : "text-slate-900 dark:text-white"}`}>
+                {vehicle.battery_temp.toFixed(1)}°C
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                Cooling Status: <strong className={thermalSafe ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}>{thermalSafe ? "Normal (0.00% Risk)" : "Active High"}</strong>
+              </div>
             </div>
-            <div className={`text-3xl font-extrabold font-mono ${vehicle.battery_temp > 45 ? "text-amber-500" : "text-slate-900 dark:text-white"}`}>
-              {vehicle.battery_temp.toFixed(1)}°C
-            </div>
-            <div className="text-xs text-slate-600 dark:text-slate-300">
-              Cooling Status: <strong className={thermalSafe ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}>{thermalSafe ? "Normal" : "Active High"}</strong>
-            </div>
-            <div className="text-[11px] text-slate-400">
+            <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
               Thermal Runaway Risk: <strong className={thermalSafe ? "text-emerald-500" : "text-amber-500"}>{thermalSafe ? "0.00% (Safe)" : "Elevated Advisory"}</strong>
             </div>
           </div>
 
-
           {/* Card 4: Driver Score */}
-          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <User className="w-4 h-4 text-purple-500" />
-                <span>Driver Behavior</span>
-              </span>
-              <span className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold bg-purple-50 dark:bg-purple-950 px-2 py-0.5 rounded-full border border-purple-300 dark:border-purple-800">
-                AI Rating
-              </span>
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <User className="w-4 h-4 text-purple-500" />
+                  <span>Driver Behavior</span>
+                </span>
+                <MetricExplainer metricKey="driver_ai" currentValue={driverScore.split(" ")[0]} label="How it works" />
+              </div>
+              <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
+                {driverScore.split(" ")[0]}
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                Battery Strain: <strong className="text-purple-600 dark:text-purple-400">Low Impact</strong>
+              </div>
             </div>
-            <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
-              {driverScore.split(" ")[0]}
-            </div>
-            <div className="text-xs text-slate-600 dark:text-slate-300">
-              Battery Strain: <strong className="text-purple-600 dark:text-purple-400">Low Impact</strong>
-            </div>
-            <div className="text-[11px] text-slate-400">
+            <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
               {driverScore.includes("Aggressive") ? "⚠️ Harsh acceleration detected" : "✅ Eco-driving saves +1.4% health"}
             </div>
           </div>
         </div>
+
 
         {/* ─── AI POWERTRAIN DIAGNOSTIC & ROOT CAUSE (GPT-OSS 120B) ─── */}
         <AIInsightsCard

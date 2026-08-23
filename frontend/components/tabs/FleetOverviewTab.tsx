@@ -235,7 +235,7 @@ export const FleetOverviewTab: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
                 Range per Charge
               </span>
-              <MetricExplainer metricKey="soc" currentValue={`${mileageDisplay} km`} label="How it works" />
+              <MetricExplainer metricKey="mileage" currentValue={`${mileageDisplay} km`} label="How it works" />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-mono tracking-tight">
@@ -272,17 +272,26 @@ export const FleetOverviewTab: React.FC = () => {
 
         {/* Right 5 Cols: CAN Oscilloscope & Vehicle Card */}
         <div className="lg:col-span-5 space-y-4">
-          <CanOscilloscope
-            voltage={vehicle.voltage}
-            current={vehicle.current}
-            temperature={vehicle.battery_temp}
-          />
+          <div className="relative">
+            <CanOscilloscope
+              voltage={vehicle.voltage}
+              current={vehicle.current}
+              temperature={vehicle.battery_temp}
+            />
+            <div className="absolute top-3.5 right-3.5 z-10">
+              <MetricExplainer metricKey="can_oscilloscope" label="How to read CAN" />
+            </div>
+          </div>
 
           <div className="rounded-xl p-4 bg-white dark:bg-[#0D111A] border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5 font-mono text-xs">
             <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-              <span className="text-slate-400 uppercase font-semibold text-[10px]">Chassis Metadata</span>
+              <span className="text-slate-400 uppercase font-semibold text-[10px] flex items-center gap-1.5">
+                <span>Chassis Metadata</span>
+                <MetricExplainer metricKey="dataset" variant="icon" />
+              </span>
               <span className="text-slate-900 dark:text-slate-100 font-bold">{vehicle.id}</span>
             </div>
+
             <div className="space-y-1.5 text-slate-600 dark:text-slate-300 text-[11px]">
               <div className="flex justify-between">
                 <span>Model:</span>

@@ -444,10 +444,14 @@ export const StateEstimationTab: React.FC = () => {
           <div className="absolute right-2 bottom-0 text-[100px] font-extrabold text-slate-200 dark:text-slate-800/40 leading-none pointer-events-none select-none font-mono">
             ML
           </div>
-          <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4 relative z-10">
-            Active Ensemble
-          </h3>
+          <div className="flex justify-between items-center mb-4 relative z-10">
+            <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Active Ensemble Architecture
+            </h3>
+            <MetricExplainer metricKey="meta_ensemble" label="How it works" />
+          </div>
           <div className="space-y-3 relative z-10 text-xs">
+
             <div className="flex items-center justify-between">
               <span className="text-slate-700 dark:text-slate-300 flex items-center gap-2 font-medium">
                 <span className="w-2 h-2 rounded-full bg-cyan-500" />
@@ -648,9 +652,10 @@ export const StateEstimationTab: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <MetricExplainer metricKey="soc" currentValue={`${mileageVal.toFixed(1)} km`} label="How it works" />
+                <MetricExplainer metricKey="mileage" currentValue={`${mileageVal.toFixed(1)} km`} label="How it works" />
                 <div className="text-[10px] text-slate-400 font-mono">R² = 0.9445</div>
               </div>
+
             </div>
 
             {/* Stitch Dynamic Sparkline Curve */}

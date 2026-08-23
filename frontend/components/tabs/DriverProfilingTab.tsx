@@ -180,8 +180,9 @@ export const DriverProfilingTab: React.FC = () => {
         <GlassCard glow="amber" className="text-center flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>Annual SOH Penalty</span>
-            <TrendingDown className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <MetricExplainer metricKey="driver_ai" currentValue={`-${annualPenalty.toFixed(1)}%`} label="How it works" />
           </div>
+
           <div className="my-3">
             <div className="text-4xl font-extrabold font-mono tracking-tight text-amber-600 dark:text-amber-400">
               -<AnimatedNumber value={annualPenalty} decimals={1} suffix="%" />
