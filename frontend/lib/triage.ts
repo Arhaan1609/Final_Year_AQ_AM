@@ -1,17 +1,21 @@
 /**
- * Centralized dispatch triage utility.
- * Single source of truth – same thresholds used by:
- *   - Header.tsx dropdown
- *   - FleetOverviewTab.tsx table STATUS column
- *   - OperationsView.tsx fleet switcher cards
- *   - OperationsView.tsx top banner (via isCritical / isWarning)
- *   - AIInsightsCard.tsx AI badge
+ * Centralized dispatch triage utility — TWO distinct functions:
  *
- * Rules (mirror copilot_service.py):
- *  CRITICAL  → SOH < 75 OR Temp > 48 OR raw status === "critical"
- *  WARNING   → SOH < 85 OR SOC < 30 OR Temp > 40 OR raw status === "warning"
- *              OR motor-battery thermal gradient > 12°C
- *  NOMINAL   → everything else
+ * 1. getStaticTriage(v)
+ *    ─ Used by: Header dropdown, Fleet table STATUS column, fleet switcher cards
+ *    ─ Source: raw JSON `status` field only ("active" / "warning" / "critical")
+ *    ─ Reason: we cannot run live ML on all 778 vehicles simultaneously;
+ *              the fleet database `status` is already the fleet operator's
+ *              assessment and is the correct reference for the directory.
+ *
+ * 2. getLiveTriage(soh, soc, temp, motorTemp, rawStatus)
+ *    ─ Used by: OperationsView banner, AIInsightsCard badge (selected vehicle only)
+ *    ─ Source: live ML predictions + same threshold rules as copilot_service.py
+ *    ─ Rules:
+ *        CRITICAL  → SOH < 75  OR  Temp > 48  OR  raw status === "critical"
+ *        WARNING   → SOH < 85  OR  SOC < 30   OR  Temp > 40
+ *                    OR motor-battery gradient > 12°C  OR raw status === "warning"
+ *        NOMINAL   → everything else
  */
 
 export type TriageLevel = "CRITICAL" | "WARNING" | "NOMINAL";
@@ -21,32 +25,54 @@ export interface TriageVehicle {
   soc: number;
   battery_temp: number;
   motor_temp?: number;
-  status: string; // raw JSON status field
+  status: string; // raw JSON status field: "active" | "warning" | "critical"
 }
 
-export function getVehicleTriage(v: TriageVehicle): TriageLevel {
-  const thermalGradient = (v.motor_temp ?? 0) - v.battery_temp;
+// ─── 1. STATIC TRIAGE (fleet-wide, no live ML) ──────────────────────────────
+// Uses only the raw `status` field from fleet_vehicles.json.
+// This is what the dropdown and fleet table should show for all 778 vehicles.
 
-  if (
-    v.status === "critical" ||
-    v.soh < 75 ||
-    v.battery_temp > 48
-  ) {
+export function getStaticTriage(v: Pick<TriageVehicle, "status">): TriageLevel {
+  if (v.status === "critical") return "CRITICAL";
+  if (v.status === "warning")  return "WARNING";
+  return "NOMINAL";
+}
+
+// ─── 2. LIVE TRIAGE (selected vehicle only, uses ML-predicted values) ────────
+// Used in OperationsView banner and AIInsightsCard for the currently selected
+// vehicle where SOC/SOH/temp come from live ML predictions.
+
+export function getLiveTriage(
+  soh: number,
+  soc: number,
+  temp: number,
+  motorTemp: number | undefined,
+  rawStatus: string
+): TriageLevel {
+  const gradient = (motorTemp ?? 0) - temp;
+
+  if (rawStatus === "critical" || soh < 75 || temp > 48) {
     return "CRITICAL";
   }
-
   if (
-    v.status === "warning" ||
-    v.soh < 85 ||
-    v.soc < 30 ||
-    v.battery_temp > 40 ||
-    thermalGradient > 12
+    rawStatus === "warning" ||
+    soh < 85 ||
+    soc < 30 ||
+    temp > 40 ||
+    gradient > 12
   ) {
     return "WARNING";
   }
-
   return "NOMINAL";
 }
+
+// ─── Legacy alias (for callers that still use getVehicleTriage) ──────────────
+// Maps to STATIC triage to avoid breaking anything.
+export function getVehicleTriage(v: Pick<TriageVehicle, "status">): TriageLevel {
+  return getStaticTriage(v);
+}
+
+// ─── Label helpers ───────────────────────────────────────────────────────────
 
 /** Human-readable label for dropdown / table */
 export function triageLabel(level: TriageLevel): string {

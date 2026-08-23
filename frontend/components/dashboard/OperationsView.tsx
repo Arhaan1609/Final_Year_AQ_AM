@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { AIInsightsCard } from "./AIInsightsCard";
 import { MetricExplainer } from "../ui/MetricExplainer";
-import { getVehicleTriage } from "../../lib/triage";
+import { getLiveTriage, getVehicleTriage } from "../../lib/triage";
 
 
 
@@ -176,9 +176,15 @@ export const OperationsView: React.FC = () => {
   const warningCount = vehicles.filter((v) => v.status === "warning").length;
   const criticalCount = vehicles.filter((v) => v.status === "critical").length;
 
-  const isCritical = aiUrgency === "CRITICAL" || vehicle.status === "critical" || vehicle.battery_temp > 48.0 || soh < 75.0;
-  const isWarning = !isCritical && (aiUrgency === "WARNING" || vehicle.status === "warning" || soh < 85.0 || soc < 30.0 || vehicle.battery_temp > 40.0 || !thermalSafe);
+  // Live triage for the selected vehicle (uses ML-predicted soh/soc/temp)
+  const liveTriage = aiUrgency === "CRITICAL"
+    ? "CRITICAL"
+    : aiUrgency === "WARNING"
+    ? "WARNING"
+    : getLiveTriage(soh, soc, vehicle.battery_temp, vehicle.motor_temp, vehicle.status);
 
+  const isCritical = liveTriage === "CRITICAL";
+  const isWarning  = liveTriage === "WARNING";
 
   // Estimated years of battery life left dynamically derived from ML RUL cycles (250 cycles/yr commercial fleet duty cycle)
   const estimatedYearsLeft = Math.max(0.1, Number((rul / 250).toFixed(1))).toFixed(1);
