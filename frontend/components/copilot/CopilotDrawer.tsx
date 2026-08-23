@@ -16,8 +16,10 @@ import {
 } from "lucide-react";
 
 export const CopilotDrawer: React.FC = () => {
-  const { copilotOpen, setCopilotOpen, copilotMessages, addCopilotMessage, clearCopilot } =
+  const { copilotOpen, setCopilotOpen, copilotMessages, addCopilotMessage, clearCopilot, getSelectedVehicle } =
     useFleetStore();
+
+  const activeVehicle = getSelectedVehicle();
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,10 +28,10 @@ export const CopilotDrawer: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const suggestedQuestions = [
-    "Is GJ05CV6564 at risk of thermal failure?",
-    "Which vehicle is closest to its degradation knee point?",
-    "How is vehicle DL1LAN0707 driving on battery stress?",
-    "Give full digital-twin diagnosis for GJ05AX4321",
+    activeVehicle ? `Why is ${activeVehicle.id} in ${activeVehicle.status.toUpperCase()} state?` : "Why is DL1LAP5083 in critical hold?",
+    activeVehicle ? `Can ${activeVehicle.id} complete a 90 km commercial route?` : "Can DL1LAK7207 complete a 90 km route?",
+    "Explain the difference between live SOH and baseline SOH₀.",
+    "What are the best charging practices for Euler HiLoad 12.4 kWh LFP?",
   ];
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export const CopilotDrawer: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await askCopilot(text, copilotMessages);
+      const res = await askCopilot(text, copilotMessages, activeVehicle);
       addCopilotMessage({
         sender: "assistant",
         text: res.reply,
@@ -57,7 +59,7 @@ export const CopilotDrawer: React.FC = () => {
       console.error(e);
       addCopilotMessage({
         sender: "assistant",
-        text: "I encountered an issue querying the telemetry models. Please try again.",
+        text: "I encountered an issue connecting to the AI intelligence models. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -92,17 +94,22 @@ export const CopilotDrawer: React.FC = () => {
             {/* Header */}
             <div className="p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between bg-slate-50 dark:bg-slate-950/40">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-cyan-100 dark:bg-cyan-950/60 border border-cyan-300 dark:border-cyan-800 flex items-center justify-center text-cyan-700 dark:text-cyan-400">
+                <div className="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 border border-indigo-300 dark:border-indigo-800 flex items-center justify-center text-indigo-700 dark:text-indigo-400">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     Fleet Telemetry Copilot
-                    <Badge variant="cyan" size="sm">Rule-Based + Live ML</Badge>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                      GPT-OSS 120B
+                    </span>
                   </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Rule-based assistant (live model grounding)</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    {activeVehicle ? `Ground truth context: ${activeVehicle.id}` : "Fleet-wide situational context"}
+                  </p>
                 </div>
               </div>
+
 
               <div className="flex items-center gap-1">
                 <button

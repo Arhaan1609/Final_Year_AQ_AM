@@ -19,8 +19,11 @@ import {
   Info,
 } from "lucide-react";
 import { MetricExplainer } from "../ui/MetricExplainer";
+import { AIInsightsCard } from "../dashboard/AIInsightsCard";
+
 
 const PAGE_SIZE = 25;
+
 
 export const FleetOverviewTab: React.FC = () => {
   const {
@@ -247,8 +250,12 @@ export const FleetOverviewTab: React.FC = () => {
         </div>
       </div>
 
+      {/* AI Powertrain Diagnostic & Root Cause Breakdown (GPT-OSS 120B) */}
+      <AIInsightsCard vehicle={vehicle} livePredictions={livePredictions} />
+
       {/* 3. Center Dual Stage: 3D Digital Twin + CAN Oscilloscope */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
         {/* Left 7 Cols: 3D Digital Twin */}
         <div className="lg:col-span-7 space-y-4">
           <BatteryPack3D

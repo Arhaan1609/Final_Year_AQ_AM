@@ -28,6 +28,8 @@ import {
   Gauge,
   Cpu,
 } from "lucide-react";
+import { AIInsightsCard } from "./AIInsightsCard";
+
 
 export const OperationsView: React.FC = () => {
   const {
@@ -445,8 +447,15 @@ export const OperationsView: React.FC = () => {
           </div>
         </div>
 
+        {/* ─── AI POWERTRAIN DIAGNOSTIC & ROOT CAUSE (GPT-OSS 120B) ─── */}
+        <AIInsightsCard
+          vehicle={vehicle}
+          livePredictions={{ soc, soh, rul, mileage: range }}
+        />
+
         {/* ─── 4. QUICK FLEET SWITCHER TABLE ─── */}
         <div className="border-t border-slate-200 dark:border-slate-800 pt-6">
+
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <Truck className="w-4 h-4 text-cyan-500" />

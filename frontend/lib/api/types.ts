@@ -285,4 +285,18 @@ export interface CopilotMessage {
 export interface CopilotResponse {
   reply: string;
   toolCalls?: CopilotToolCall[];
+  model_used?: string;
+  vehicle_context?: string;
 }
+
+export interface VehicleInsightResponse {
+  vehicle_id: string;
+  summary: string;
+  why_performing_this_way: string;
+  root_causes: string[];
+  prescriptive_actions: string[];
+  urgency: "CRITICAL" | "WARNING" | "NOMINAL";
+  model_used: string;
+  cached?: boolean;
+}
+
