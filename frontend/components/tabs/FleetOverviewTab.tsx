@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { MetricExplainer } from "../ui/MetricExplainer";
 import { AIInsightsCard } from "../dashboard/AIInsightsCard";
+import { getVehicleTriage, triageLabel, triageBadgeClass, triageDotClass } from "../../lib/triage";
 
 
 const PAGE_SIZE = 25;
@@ -394,26 +395,15 @@ export const FleetOverviewTab: React.FC = () => {
                       {v.chassis || v.model}
                     </td>
                     <td className="py-2.5 px-3">
-                      <span
-                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold ${
-                          v.status === "active"
-                            ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300"
-                            : v.status === "warning"
-                            ? "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300"
-                            : "bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300"
-                        }`}
-                      >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            v.status === "active"
-                              ? "bg-emerald-500"
-                              : v.status === "warning"
-                              ? "bg-amber-500"
-                              : "bg-red-500"
-                          }`}
-                        />
-                        {v.status}
-                      </span>
+                      {(() => {
+                        const triage = getVehicleTriage(v);
+                        return (
+                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold ${triageBadgeClass(triage)}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${triageDotClass(triage)}`} />
+                            {triageLabel(triage)}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="py-2.5 px-3">
                       {isSelected && livePredictions.soc !== undefined ? (

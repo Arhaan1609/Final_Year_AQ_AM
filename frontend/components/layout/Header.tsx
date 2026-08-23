@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useFleetStore } from "../../lib/store/useFleetStore";
 import { Sparkles, Sun, Moon, ArrowLeft, Activity } from "lucide-react";
+import { getVehicleTriage, triageLabel } from "../../lib/triage";
 
 export const Header: React.FC = () => {
   const {
@@ -56,11 +57,14 @@ export const Header: React.FC = () => {
           onChange={(e) => setSelectedVehicle(e.target.value)}
           className="bg-transparent text-xs font-mono font-bold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer pr-1"
         >
-          {vehicles.map((v) => (
-            <option key={v.id} value={v.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">
-              {v.id} — {v.model.split(" ")[0]} ({v.status.toUpperCase()}) • {v.fleet.split(" ")[0]}
-            </option>
-          ))}
+          {vehicles.map((v) => {
+            const triage = getVehicleTriage(v);
+            return (
+              <option key={v.id} value={v.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">
+                {v.id} — {v.model.split(" ")[0]} ({triageLabel(triage)}) • {v.fleet.split(" ")[0]}
+              </option>
+            );
+          })}
         </select>
       </div>
 

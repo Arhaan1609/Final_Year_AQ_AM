@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { AIInsightsCard } from "./AIInsightsCard";
 import { MetricExplainer } from "../ui/MetricExplainer";
+import { getVehicleTriage } from "../../lib/triage";
 
 
 
@@ -506,7 +507,7 @@ export const OperationsView: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <div className="font-bold">{v.soc.toFixed(0)}% SOC</div>
-                  <div className={`text-[10px] ${v.status === 'critical' ? 'text-rose-500' : v.status === 'warning' ? 'text-amber-500' : 'text-emerald-500'}`}>
+                  <div className={`text-[10px] ${getVehicleTriage(v) === 'CRITICAL' ? 'text-rose-500' : getVehicleTriage(v) === 'WARNING' ? 'text-amber-500' : 'text-emerald-500'}`}>
                     {v.soh.toFixed(0)}% SOH
                   </div>
                 </div>
