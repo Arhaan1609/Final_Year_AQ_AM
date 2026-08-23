@@ -176,12 +176,14 @@ export const OperationsView: React.FC = () => {
   const warningCount = vehicles.filter((v) => v.status === "warning").length;
   const criticalCount = vehicles.filter((v) => v.status === "critical").length;
 
-  // Live triage for the selected vehicle (uses ML-predicted soh/soc/temp)
+  // Live triage for the selected vehicle (uses ML-predicted soh/soc/temp).
+  // AI copilot urgency takes highest priority if available.
+  // getLiveTriage only escalates from base status — never de-escalates.
   const liveTriage = aiUrgency === "CRITICAL"
     ? "CRITICAL"
     : aiUrgency === "WARNING"
     ? "WARNING"
-    : getLiveTriage(soh, soc, vehicle.battery_temp, vehicle.motor_temp, vehicle.status);
+    : getLiveTriage(soh, soc, vehicle.battery_temp, vehicle.status);
 
   const isCritical = liveTriage === "CRITICAL";
   const isWarning  = liveTriage === "WARNING";

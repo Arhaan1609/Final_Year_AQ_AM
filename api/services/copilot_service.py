@@ -71,10 +71,12 @@ def generate_deterministic_insight(vehicle_id: str, telemetry: Dict[str, Any], p
     temp = telemetry.get("battery_temp", 30.0)
     controller_temp = telemetry.get("controller_temp", temp + 5)
     motor_temp = telemetry.get("motor_temp", temp + 10)
-    is_critical = status == "critical" or soh < 75 or temp > 48 or motor_temp > 65
-    thermal_disparity = (motor_temp - temp) > 12.0 or (controller_temp - temp) > 10.0 or temp > 40.0
-    is_warning = not is_critical and (status == "warning" or soh < 85 or temp > 40 or soc < 30 or thermal_disparity)
+    cycles = telemetry.get("charge_cycle_count", 250)
+    status = telemetry.get("status", "active")
 
+    # Consistent Clean Platform Triage Rules
+    is_critical = status == "critical" or soh < 74.0 or temp > 52.0 or motor_temp > 70.0
+    is_warning = not is_critical and (status == "warning" or soh < 79.0 or temp > 46.0 or soc < 20.0)
 
     if is_critical:
         summary = f"Vehicle {vehicle_id} is under Critical Service Hold. Usable capacity has degraded to {soh:.1f}% with {cycles} equivalent full cycles."
@@ -118,6 +120,7 @@ def generate_deterministic_insight(vehicle_id: str, telemetry: Dict[str, Any], p
             "Maintain standard overnight AC trickle charging cycle."
         ]
         urgency = "NOMINAL"
+
 
     return {
         "vehicle_id": vehicle_id,
@@ -183,9 +186,8 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
     status = telemetry.get("status", "active")
 
     # Standardized Universal Platform Triage Rules
-    is_critical = status == "critical" or soh < 75.0 or temp > 48.0 or motor_temp > 65.0
-    thermal_disparity = (motor_temp - temp) > 12.0 or (controller_temp - temp) > 10.0 or temp > 40.0
-    is_warning = not is_critical and (status == "warning" or soh < 85.0 or temp > 40.0 or soc < 30.0 or thermal_disparity)
+    is_critical = status == "critical" or soh < 74.0 or temp > 52.0 or motor_temp > 70.0
+    is_warning = not is_critical and (status == "warning" or soh < 79.0 or temp > 46.0 or soc < 20.0)
     official_urgency = "CRITICAL" if is_critical else ("WARNING" if is_warning else "NOMINAL")
 
 
