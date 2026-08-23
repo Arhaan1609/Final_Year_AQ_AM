@@ -69,11 +69,12 @@ def generate_deterministic_insight(vehicle_id: str, telemetry: Dict[str, Any], p
     rul = predictions.get("rul", telemetry.get("rul", 1000))
     range_km = predictions.get("mileage", telemetry.get("mileage", 100))
     temp = telemetry.get("battery_temp", 30.0)
-    status = telemetry.get("status", "active")
-    cycles = telemetry.get("charge_cycle_count", 250)
+    controller_temp = telemetry.get("controller_temp", temp + 5)
+    motor_temp = telemetry.get("motor_temp", temp + 10)
+    is_critical = status == "critical" or soh < 75 or temp > 48 or motor_temp > 65
+    thermal_disparity = (motor_temp - temp) > 12.0 or (controller_temp - temp) > 10.0 or temp > 40.0
+    is_warning = not is_critical and (status == "warning" or soh < 85 or temp > 40 or soc < 30 or thermal_disparity)
 
-    is_critical = status == "critical" or soh < 75 or temp > 48
-    is_warning = not is_critical and (status == "warning" or soh < 85 or temp > 40 or soc < 30)
 
     if is_critical:
         summary = f"Vehicle {vehicle_id} is under Critical Service Hold. Usable capacity has degraded to {soh:.1f}% with {cycles} equivalent full cycles."
@@ -182,9 +183,11 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
     status = telemetry.get("status", "active")
 
     # Standardized Universal Platform Triage Rules
-    is_critical = status == "critical" or soh < 75.0 or temp > 48.0
-    is_warning = not is_critical and (status == "warning" or soh < 85.0 or temp > 40.0 or soc < 30.0)
+    is_critical = status == "critical" or soh < 75.0 or temp > 48.0 or motor_temp > 65.0
+    thermal_disparity = (motor_temp - temp) > 12.0 or (controller_temp - temp) > 10.0 or temp > 40.0
+    is_warning = not is_critical and (status == "warning" or soh < 85.0 or temp > 40.0 or soc < 30.0 or thermal_disparity)
     official_urgency = "CRITICAL" if is_critical else ("WARNING" if is_warning else "NOMINAL")
+
 
     system_prompt = (
         "You are an expert Commercial EV Powertrain & Battery Intelligence Diagnostic Copilot for Euler HiLoad 12.4 kWh LFP electric trucks.\n"

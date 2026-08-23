@@ -353,6 +353,8 @@ export const OperationsView: React.FC = () => {
                   ? `Battery capacity shows moderate wear (SOH: ${soh.toFixed(1)}%). Suitable for standard delivery routes up to ${range.toFixed(0)} km.`
                   : soc < 30.0
                   ? `Battery level is low (${soc.toFixed(0)}%). Recommend quick 30-min top-up before afternoon dispatch runs.`
+                  : !thermalSafe
+                  ? `Drivetrain thermal gradient detected (Motor: ${(vehicle.motor_temp || 45.0).toFixed(1)}°C vs Pack: ${vehicle.battery_temp.toFixed(1)}°C). Monitor cooling airflow under heavy load.`
                   : `Operating under thermal advisory (${vehicle.battery_temp.toFixed(1)}°C). Monitor thermal cooling during peak load.`
                 : `Battery level is at ${soc.toFixed(0)}% with ${range.toFixed(0)} km delivery range. Temperatures and cell health are in Grade-A condition.`}
             </p>
@@ -424,13 +426,18 @@ export const OperationsView: React.FC = () => {
                 {vehicle.battery_temp.toFixed(1)}°C
               </div>
               <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                Cooling Status: <strong className={thermalSafe ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}>{thermalSafe ? "Normal (0.00% Risk)" : "Active High"}</strong>
+                Cooling Status: <strong className={thermalSafe ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}>
+                  {thermalSafe ? "Normal (0.00% Risk)" : `Active Gradient (${(vehicle.motor_temp || 45.0).toFixed(0)}°C Motor)`}
+                </strong>
               </div>
             </div>
             <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-              Thermal Runaway Risk: <strong className={thermalSafe ? "text-emerald-500" : "text-amber-500"}>{thermalSafe ? "0.00% (Safe)" : "Elevated Advisory"}</strong>
+              Thermal Runaway Risk: <strong className={thermalSafe ? "text-emerald-500" : "text-amber-500"}>
+                {thermalSafe ? "0.00% (Safe)" : "Gradient Advisory"}
+              </strong>
             </div>
           </div>
+
 
           {/* Card 4: Driver Score */}
           <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3 flex flex-col justify-between">
