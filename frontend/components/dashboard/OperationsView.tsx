@@ -58,11 +58,14 @@ export const OperationsView: React.FC = () => {
   const [thermalSafe, setThermalSafe] = useState<boolean>(true);
   const [driverScore, setDriverScore] = useState<string>("Smooth (Eco)");
   const [loading, setLoading] = useState<boolean>(false);
+  const [aiUrgency, setAiUrgency] = useState<"CRITICAL" | "WARNING" | "NOMINAL" | null>(null);
 
   // Sync and fetch whenever selectedVehicleId changes
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setAiUrgency(null);
+
 
     Promise.allSettled([
       predictSOC({
@@ -172,8 +175,9 @@ export const OperationsView: React.FC = () => {
   const warningCount = vehicles.filter((v) => v.status === "warning").length;
   const criticalCount = vehicles.filter((v) => v.status === "critical").length;
 
-  const isCritical = vehicle.status === "critical" || vehicle.battery_temp > 48.0 || soh < 75.0;
-  const isWarning = !isCritical && (vehicle.status === "warning" || soh < 85.0 || soc < 30.0 || vehicle.battery_temp > 40.0 || !thermalSafe);
+  const isCritical = aiUrgency === "CRITICAL" || vehicle.status === "critical" || vehicle.battery_temp > 48.0 || soh < 75.0;
+  const isWarning = !isCritical && (aiUrgency === "WARNING" || vehicle.status === "warning" || soh < 85.0 || soc < 30.0 || vehicle.battery_temp > 40.0 || !thermalSafe);
+
 
   // Estimated years of battery life left dynamically derived from ML RUL cycles (250 cycles/yr commercial fleet duty cycle)
   const estimatedYearsLeft = Math.max(0.1, Number((rul / 250).toFixed(1))).toFixed(1);
@@ -338,12 +342,13 @@ export const OperationsView: React.FC = () => {
           <div>
             <h4 className="font-bold text-sm sm:text-base">
               {isCritical
-                ? "HOLD VEHICLE — SCHEDULE MAINTENANCE INSPECTION"
+                ? "DISPATCH AUTHORIZATION: CRITICAL SERVICE HOLD"
                 : isWarning
-                ? "DISPATCH ADVISORY — CHARGE OR MONITOR BATTERY"
-                : "READY FOR DISPATCH — VEHICLE IN OPTIMAL HEALTH"}
+                ? "DISPATCH AUTHORIZATION: ROUTE ADVISORY"
+                : "DISPATCH AUTHORIZATION: APPROVED FOR ROUTE"}
             </h4>
             <p className="text-xs sm:text-sm mt-1 opacity-90 leading-relaxed">
+
               {isCritical
                 ? vehicle.battery_temp > 48
                   ? `Battery operating temperature is elevated (${vehicle.battery_temp.toFixed(1)}°C). Ground this vehicle for thermal cooling inspection before next dispatch.`
@@ -467,7 +472,9 @@ export const OperationsView: React.FC = () => {
         <AIInsightsCard
           vehicle={vehicle}
           livePredictions={{ soc, soh, rul, mileage: range }}
+          onUrgencyChange={(urg) => setAiUrgency(urg)}
         />
+
 
         {/* ─── 4. QUICK FLEET SWITCHER TABLE ─── */}
         <div className="border-t border-slate-200 dark:border-slate-800 pt-6">

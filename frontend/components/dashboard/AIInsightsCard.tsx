@@ -13,9 +13,10 @@ interface AIInsightsCardProps {
     rul?: number;
     mileage?: number;
   };
+  onUrgencyChange?: (urgency: "CRITICAL" | "WARNING" | "NOMINAL") => void;
 }
 
-export const AIInsightsCard: React.FC<AIInsightsCardProps> = ({ vehicle, livePredictions }) => {
+export const AIInsightsCard: React.FC<AIInsightsCardProps> = ({ vehicle, livePredictions, onUrgencyChange }) => {
   const [insight, setInsight] = useState<VehicleInsightResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
@@ -28,6 +29,9 @@ export const AIInsightsCard: React.FC<AIInsightsCardProps> = ({ vehicle, livePre
     try {
       const data = await explainVehicle(vehicle.id, vehicle, livePredictions, force);
       setInsight(data);
+      if (onUrgencyChange && data?.urgency) {
+        onUrgencyChange(data.urgency);
+      }
     } catch (e) {
       console.error("[AIInsightsCard] Failed to fetch diagnostic:", e);
     } finally {
@@ -35,6 +39,7 @@ export const AIInsightsCard: React.FC<AIInsightsCardProps> = ({ vehicle, livePre
       setIsRefreshing(false);
     }
   };
+
 
   useEffect(() => {
     fetchInsight(false);
