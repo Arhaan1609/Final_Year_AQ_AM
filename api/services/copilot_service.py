@@ -181,6 +181,11 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
     cycles = telemetry.get("charge_cycle_count", 250)
     status = telemetry.get("status", "active")
 
+    # Standardized Universal Platform Triage Rules
+    is_critical = status == "critical" or soh < 75.0 or temp > 48.0
+    is_warning = not is_critical and (status == "warning" or soh < 85.0 or temp > 40.0 or soc < 30.0)
+    official_urgency = "CRITICAL" if is_critical else ("WARNING" if is_warning else "NOMINAL")
+
     system_prompt = (
         "You are an expert Commercial EV Powertrain & Battery Intelligence Diagnostic Copilot for Euler HiLoad 12.4 kWh LFP electric trucks.\n"
         "Analyze the provided live telemetry and machine learning diagnostic predictions. Explain clearly:\n"
@@ -188,13 +193,14 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
         "2. Why is it performing this way?: Deep electro-thermal, cycle aging, and behavioral explanation.\n"
         "3. Root Causes: Specific contributing factors.\n"
         "4. Prescriptive Action Directives: Exact actionable instructions for the fleet dispatcher and maintenance team.\n\n"
+        f"IMPORTANT: The official fleet triage status for this vehicle is '{official_urgency}'. Your JSON response MUST set 'urgency' to '{official_urgency}'.\n\n"
         "Respond STRICTLY as a valid JSON object without extra commentary, with the following format:\n"
         "{\n"
         '  "summary": "...",\n'
         '  "why_performing_this_way": "...",\n'
         '  "root_causes": ["factor 1", "factor 2", ...],\n'
         '  "prescriptive_actions": ["action 1", "action 2", ...],\n'
-        '  "urgency": "CRITICAL" | "WARNING" | "NOMINAL"\n'
+        f'  "urgency": "{official_urgency}"\n'
         "}"
     )
 
@@ -202,7 +208,7 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
         f"Vehicle ID: {vehicle_id}\n"
         f"Chassis: {telemetry.get('chassis', vehicle_id)}\n"
         f"Fleet Hub: {telemetry.get('fleet', 'Delhi NCR Fleet Hub')}\n"
-        f"Status: {status.upper()}\n"
+        f"Official Triage Status: {official_urgency}\n"
         f"Live ML State of Charge (SOC): {soc:.1f}%\n"
         f"Live ML State of Health (SOH): {soh:.1f}% (Baseline Commissioning SOH₀: {telemetry.get('soh', soh):.1f}%)\n"
         f"Live ML Remaining Useful Life (RUL): {rul:.0f} cycles (~{(rul/250):.1f} years)\n"
@@ -219,7 +225,6 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
 
     llm_output = _call_groq(messages, response_format_json=False, max_tokens=1500)
 
-
     if llm_output:
         parsed = _extract_json(llm_output)
         if parsed and "summary" in parsed:
@@ -229,7 +234,7 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
                 "why_performing_this_way": parsed.get("why_performing_this_way", ""),
                 "root_causes": parsed.get("root_causes", []),
                 "prescriptive_actions": parsed.get("prescriptive_actions", []),
-                "urgency": parsed.get("urgency", "NOMINAL"),
+                "urgency": official_urgency,
                 "model_used": "GPT-OSS 120B (Groq)",
                 "cached": False
             }
@@ -238,8 +243,10 @@ def explain_vehicle_performance(vehicle_id: str, telemetry: Dict[str, Any], pred
 
     # Fallback if LLM unavailable
     fallback_res = generate_deterministic_insight(vehicle_id, telemetry, predictions)
+    fallback_res["urgency"] = official_urgency
     _INSIGHTS_CACHE[vehicle_id] = {"timestamp": time.time(), "data": fallback_res}
     return fallback_res
+
 
 
 

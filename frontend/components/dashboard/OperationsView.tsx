@@ -101,8 +101,8 @@ export const OperationsView: React.FC = () => {
       }),
       predictThermal({
         vbt: vehicle.battery_temp,
-        vct: vehicle.controller_temp || vehicle.battery_temp + 8,
-        vmt: vehicle.motor_temp || vehicle.battery_temp + 18,
+        vct: vehicle.controller_temp || (vehicle.battery_temp + 4),
+        vmt: vehicle.motor_temp || (vehicle.battery_temp + 8),
         vbv: vehicle.voltage,
         vbc: vehicle.current,
         soc: vehicle.soc,
@@ -146,10 +146,11 @@ export const OperationsView: React.FC = () => {
 
       if (thermRes.status === "fulfilled" && thermRes.value) {
         const val = thermRes.value as any;
-        const isSafe = !val.is_critical && (val.risk_probability === undefined || val.risk_probability < 0.25);
+        const isSafe = !val.is_critical && (val.risk_probability === undefined || val.risk_probability < 0.35 || vehicle.battery_temp <= 38.0);
         setThermalSafe(isSafe);
+      } else {
+        setThermalSafe(vehicle.battery_temp <= 40.0);
       }
-
 
       if (driverRes.status === "fulfilled" && driverRes.value) {
         const ai = (driverRes.value as any).aggressiveness_index ?? 0.28;
@@ -171,11 +172,12 @@ export const OperationsView: React.FC = () => {
   const warningCount = vehicles.filter((v) => v.status === "warning").length;
   const criticalCount = vehicles.filter((v) => v.status === "critical").length;
 
-  const isCritical = vehicle.status === "critical" || vehicle.battery_temp > 48 || soh < 80;
-  const isWarning = vehicle.status === "warning" || vehicle.battery_temp > 40 || soc < 30;
+  const isCritical = vehicle.status === "critical" || vehicle.battery_temp > 48.0 || soh < 75.0;
+  const isWarning = !isCritical && (vehicle.status === "warning" || soh < 85.0 || soc < 30.0 || vehicle.battery_temp > 40.0 || !thermalSafe);
 
   // Estimated years of battery life left dynamically derived from ML RUL cycles (250 cycles/yr commercial fleet duty cycle)
   const estimatedYearsLeft = Math.max(0.1, Number((rul / 250).toFixed(1))).toFixed(1);
+
 
 
   return (
@@ -343,15 +345,20 @@ export const OperationsView: React.FC = () => {
             </h4>
             <p className="text-xs sm:text-sm mt-1 opacity-90 leading-relaxed">
               {isCritical
-                ? vehicle.battery_temp > 45
+                ? vehicle.battery_temp > 48
                   ? `Battery operating temperature is elevated (${vehicle.battery_temp.toFixed(1)}°C). Ground this vehicle for thermal cooling inspection before next dispatch.`
                   : `Battery capacity shows accelerated degradation (SOH: ${soh.toFixed(1)}%, ${vehicle.charge_cycle_count} cycles). Ground this vehicle for terminal diagnostic inspection before next shift.`
                 : isWarning
-                ? `Battery level is at ${soc.toFixed(0)}%. Can complete routes up to ${range.toFixed(0)} km. Recommend quick 30-min top-up before afternoon runs.`
+                ? soh < 85.0
+                  ? `Battery capacity shows moderate wear (SOH: ${soh.toFixed(1)}%). Suitable for standard delivery routes up to ${range.toFixed(0)} km.`
+                  : soc < 30.0
+                  ? `Battery level is low (${soc.toFixed(0)}%). Recommend quick 30-min top-up before afternoon dispatch runs.`
+                  : `Operating under thermal advisory (${vehicle.battery_temp.toFixed(1)}°C). Monitor thermal cooling during peak load.`
                 : `Battery level is at ${soc.toFixed(0)}% with ${range.toFixed(0)} km delivery range. Temperatures and cell health are in Grade-A condition.`}
             </p>
           </div>
         </div>
+
 
         {/* ─── 3. FOUR PLAIN-ENGLISH HEALTH CARDS ─── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
